@@ -9,33 +9,31 @@ import java.rmi.server.UnicastRemoteObject;
  * Created by c12ton on 9/29/16.
  */
 public class Group extends UnicastRemoteObject implements GroupInterface{
-    private AbstractMember leader;
+    private InterfaceMember leader;
     private String groupName;
 
     protected Group() throws RemoteException {
     }
 
 
-    public Group(String groupName, AbstractMember leader) throws RemoteException {
-        super();
+    public Group(String groupName, InterfaceMember leader) throws RemoteException {
         this.groupName = groupName;
         this.leader = leader;
-
     }
 
 
-    public Status joinGroup(AbstractMember member) {
+    public Status joinGroup(InterfaceMember member) {
         //leader.getMembers
         // for each member
             //member.notifyJoin(member)
         return null;
     }
 
-    public Status setLeader(AbstractMember member) {
+    public Status setLeader(InterfaceMember member) {
         return null;
     }
 
-    public AbstractMember getLeader() {
+    public InterfaceMember getLeader() {
         return leader;
     }
 
