@@ -35,7 +35,9 @@ public class NameService extends UnicastRemoteObject implements  NameServiceInte
     }
 
 
-    public synchronized Status registerGroup(String groupName, InterfaceMember member) throws RemoteException{
+    public synchronized Status registerGroup(String groupName, InterfaceMember member)
+            throws RemoteException {
+
         if(!groups.containsKey(groupName)) {
             groups.put(groupName,member);
             return Status.CREATED_GROUP_SUCCESS;
@@ -52,7 +54,9 @@ public class NameService extends UnicastRemoteObject implements  NameServiceInte
      *
      * @return
      */
-    public static NameServiceInterFace getNameService(String host) throws RemoteException, NotBoundException {
+    public static NameServiceInterFace getNameService(String host)
+            throws RemoteException, NotBoundException {
+
         Registry registry = LocateRegistry.getRegistry(host);
         return (NameServiceInterFace) registry.lookup(NameService.class.getSimpleName());
     }

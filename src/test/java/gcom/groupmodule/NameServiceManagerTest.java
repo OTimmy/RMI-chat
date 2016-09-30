@@ -42,17 +42,15 @@ public class NameServiceManagerTest extends TestSuite {
     public void testRegisterGroup() throws RemoteException {
 
         Member member = new Member("user1","Group 1");
-        Status status = null;
 
-        status = nameService.registerGroup("Group 1", member);
+        Status status = nameService.registerGroup("Group 1", member);
 
+        System.out.println("Status: " + status.toString());
 
         if(status == Status.CANT_CONNECT_TO_NAME_SERVICE) {
-            System.out.println("Error: " + status.toString());
             Assert.fail();
         }
 
-        System.out.println("Status: " + status.toString());
         InterfaceMember[] leaders;
 
         leaders = nameService.getGroups();
