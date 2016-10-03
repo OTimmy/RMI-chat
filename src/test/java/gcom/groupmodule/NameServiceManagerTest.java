@@ -41,7 +41,7 @@ public class NameServiceManagerTest extends TestSuite {
     @Test
     public void testRegisterGroup() throws RemoteException {
 
-        Member member = new Member("user1","Group 1");
+        GroupMember member = new GroupMember("user1","Group 1");
 
         Status status = nameService.registerGroup("Group 1", member);
 
@@ -51,7 +51,7 @@ public class NameServiceManagerTest extends TestSuite {
             Assert.fail();
         }
 
-        InterfaceMember[] leaders;
+        Member[] leaders;
 
         leaders = nameService.getGroups();
         if(!leaders[0].getName().equals("user1")) {

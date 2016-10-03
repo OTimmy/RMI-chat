@@ -1,6 +1,6 @@
 package gcom.nameservice;
 
-import gcom.groupmodule.InterfaceMember;
+import gcom.groupmodule.Member;
 import gcom.status.Status;
 
 import java.rmi.NotBoundException;
@@ -14,28 +14,27 @@ import java.util.*;
  * Created by c12ton on 9/29/16.
  */
 public class NameService extends UnicastRemoteObject implements  NameServiceInterFace{
-    private HashMap<String,InterfaceMember> groups;
+    private HashMap<String,Member> groups;
 
     protected NameService() throws RemoteException {
-        groups = new HashMap<String, InterfaceMember>();
+        groups = new HashMap<String, Member>();
     }
 
     /**
      *
      * @return
      */
-    public synchronized  InterfaceMember[] getGroups() throws RemoteException{
-        ArrayList<InterfaceMember> leaders = new ArrayList<InterfaceMember>();
+    public synchronized  Member[] getGroups() throws RemoteException{
+        ArrayList<Member> leaders = new ArrayList<Member>();
         for(String key:groups.keySet()) {
-            System.out.println("Key: " + key);
             leaders.add(groups.get(key));
         }
 
-        return leaders.toArray(new InterfaceMember[]{});
+        return leaders.toArray(new Member[]{});
     }
 
 
-    public synchronized Status registerGroup(String groupName, InterfaceMember member)
+    public synchronized Status registerGroup(String groupName, Member member)
             throws RemoteException {
 
         if(!groups.containsKey(groupName)) {

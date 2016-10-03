@@ -6,7 +6,7 @@ import gcom.status.Status;
 /**
  * Created by c12ton on 2016-09-30.
  */
-public class NonReliable implements Communication,Subject{
+public class NonReliableCommunication implements Communication,Subject{
     public Status sendMessage(String message) {
         return null;
     }
