@@ -57,8 +57,10 @@ public class NameServiceManagerTest extends TestSuite {
         if(!leaders[0].getName().equals("user1")) {
             Assert.fail();
         }
-
     }
+
+
+    //TETS to get communication type
 
     @Test
     public void testJoinExistingGroup() {

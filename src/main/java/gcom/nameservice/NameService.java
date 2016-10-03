@@ -1,5 +1,7 @@
 package gcom.nameservice;
 
+import gcom.groupmodule.GroupLeader;
+import gcom.groupmodule.Leader;
 import gcom.groupmodule.Member;
 import gcom.status.Status;
 
@@ -14,10 +16,10 @@ import java.util.*;
  * Created by c12ton on 9/29/16.
  */
 public class NameService extends UnicastRemoteObject implements  NameServiceInterFace{
-    private HashMap<String,Member> groups;
+    private HashMap<String,Leader> leaders;
 
     protected NameService() throws RemoteException {
-        groups = new HashMap<String, Member>();
+        leaders = new HashMap<String,Leader>();
     }
 
     /**

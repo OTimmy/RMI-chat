@@ -16,4 +16,8 @@ public class GroupLeader implements Leader {
         // member.sendMessage(Message.type.JOIN,new messageJOIN(Member))
     }
 
+    public Class getCommuncationType() {
+        return null;
+    }
+
 }

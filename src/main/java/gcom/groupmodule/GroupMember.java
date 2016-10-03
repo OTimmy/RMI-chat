@@ -30,6 +30,10 @@ public class GroupMember extends UnicastRemoteObject implements Member {
         return null;
     }
 
+    public Class getCommunicationType() throws RemoteException {
+        return null;
+    }
+
 
     //AskForbeingLeader()
         //algorithm

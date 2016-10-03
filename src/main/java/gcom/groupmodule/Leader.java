@@ -5,4 +5,5 @@ package gcom.groupmodule;
  */
 public interface Leader {
     void joinGroup(Member m);
+    Class getCommuncationType();
 }

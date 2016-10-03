@@ -17,4 +17,11 @@ public interface Member extends Remote {
      */
     String getID() throws RemoteException;
 
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
+    Class getCommunicationType() throws RemoteException;
+
 }

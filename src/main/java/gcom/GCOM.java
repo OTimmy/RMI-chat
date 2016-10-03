@@ -25,7 +25,8 @@ public class GCOM implements Subject{
 
     public void connectToGroup(String groupName,String name) {
         //GroupLeader leader = nameService.getGroupLeader(groupName)
-        //member = new GroupMember(name,leader)
+        // Class b = leader.getCommunicationType()
+        //member = new GroupMember(name,leader,comtype?)
         //leader.join(member)
     }
 
