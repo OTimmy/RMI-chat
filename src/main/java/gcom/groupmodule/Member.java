@@ -1,6 +1,7 @@
 package gcom.groupmodule;
 
 import gcom.communicationmodule.Communication;
+import gcom.status.GCOMException;
 import gcom.status.Status;
 
 import java.rmi.Remote;
@@ -21,10 +22,9 @@ public interface Member extends Remote {
 
 
     /**
-     *
-     * @
+     * @param m member to joing group
      */
-    Status joinGroup(Member m) throws RemoteException;
+    void joinGroup(Member m) throws RemoteException, GCOMException;
 
     /**
      * Sends message to group that there's no member left.
@@ -43,7 +43,5 @@ public interface Member extends Remote {
      * @throws RemoteException
      */
     String getCommunicationType() throws RemoteException;
-
-
 
 }

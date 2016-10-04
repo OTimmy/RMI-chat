@@ -7,4 +7,9 @@ import static org.junit.Assert.*;
  */
 public class MemberTest {
 
+
+    //Test to join group
+    //Test to see member joinging group
+
+
 }

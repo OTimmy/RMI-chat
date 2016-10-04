@@ -3,6 +3,7 @@ package gcom.groupmodule;
 import gcom.communicationmodule.NonReliableCommunication;
 import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceInterFace;
+import gcom.status.GCOMException;
 import gcom.status.Status;
 import junit.framework.TestSuite;
 import static org.junit.Assert.*;
@@ -11,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -24,7 +26,6 @@ public class NameServiceManagerTest extends TestSuite {
     private static boolean setUpIsDone = false;
     private NameServiceInterFace nameService;
     private static Registry registry;
-
 
 
     @Before
@@ -49,6 +50,11 @@ public class NameServiceManagerTest extends TestSuite {
     @After
     public void tearDown() throws Exception {
         registry.unbind(NameService.class.getSimpleName());
+    }
+
+    @Test
+    public void testGetNameService() throws RemoteException, NotBoundException {
+        NameService.getNameService(null);
     }
 
     @Test
@@ -77,7 +83,7 @@ public class NameServiceManagerTest extends TestSuite {
 
 
     @Test
-    public void testJoinGroup() throws RemoteException {
+    public void testJoinGroup() throws RemoteException, GCOMException {
 
         //setting up group
         String groupName = "Group 1";
@@ -98,8 +104,8 @@ public class NameServiceManagerTest extends TestSuite {
         HashMap<String,Member> leaders = nameService.getGroups();
         Member leader = leaders.get(groupName);
 
-        Status status = leader.joinGroup(member2);
-        assertEquals(status.toString(),Status.CONNECTED_TO_GROUP.toString());
+        leader.joinGroup(member2);
+//        assertEquals(status.toString(),Status.CONNECTED_TO_GROUP.toString());
 
         String[] memberNames = member2.getMemberNames();
 

@@ -4,6 +4,7 @@ import gcom.communicationmodule.NonReliableCommunication;
 import gcom.messagemodule.Message;
 import gcom.observer.Observer;
 import gcom.observer.Subject;
+import gcom.status.GCOMException;
 import gcom.status.Status;
 
 import java.rmi.RemoteException;
@@ -21,7 +22,7 @@ public class GroupMember extends UnicastRemoteObject implements Member, Subject 
 
     private final String communicationType;
 
-    protected GroupMember(String name, String groupName, String communicationType) throws RemoteException {
+    public GroupMember(String name, String groupName, String communicationType) throws RemoteException {
         this.name = name;
         this.groupName = groupName;
         this.communicationType = communicationType;
@@ -45,18 +46,19 @@ public class GroupMember extends UnicastRemoteObject implements Member, Subject 
         return communicationType;
     }
 
-    public Status joinGroup(Member m) throws RemoteException {
+    public void joinGroup(Member m) throws RemoteException, GCOMException {
+
+        if(members.containsKey(m.getName())) {
+            throw new GCOMException(Status.NAME_EXISTS);
+        }
+
         if(!members.containsKey(m.getName())) {
             members.put(m.getName(),m);
-
             //Add members to m
             m.setMembers(members);
 
-
-            //Send message to group
-            return Status.CONNECTED_TO_GROUP;
+            //notifyMembers that a join has occured!
         }
-        return Status.NAME_EXISTS;
     }
 
     public void removeGroup() throws RemoteException {
