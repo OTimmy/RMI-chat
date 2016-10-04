@@ -19,12 +19,6 @@ public interface Member extends Remote {
      */
     String getName() throws RemoteException;
 
-    /**
-     *
-     * @return Class type for Communication
-     * @throws RemoteException
-     */
-    Class getCommunicationType() throws RemoteException;
 
     /**
      *
@@ -41,6 +35,14 @@ public interface Member extends Remote {
      * Set members for a member
      */
     void setMembers(HashMap<String,Member> members) throws RemoteException;
+
+
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
+    String getCommunicationType() throws RemoteException;
 
 
 

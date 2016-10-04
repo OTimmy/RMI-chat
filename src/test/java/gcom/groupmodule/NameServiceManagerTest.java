@@ -1,5 +1,6 @@
 package gcom.groupmodule;
 
+import gcom.communicationmodule.NonReliableCommunication;
 import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceInterFace;
 import gcom.status.Status;
@@ -13,7 +14,6 @@ import org.junit.Test;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -56,8 +56,10 @@ public class NameServiceManagerTest extends TestSuite {
 
         String groupName = "Group 1";
         String groupMember = "user1";
+        String communicationType = "nonReliable";
 
-        GroupMember member = new GroupMember(groupMember,groupName);
+        GroupMember member = new GroupMember(groupMember,groupName,
+                                                communicationType);
         member.setLeader(member);
 
         Status status = nameService.registerGroup(groupName, member);
@@ -80,15 +82,19 @@ public class NameServiceManagerTest extends TestSuite {
         //setting up group
         String groupName = "Group 1";
         String groupLeader = "user1";
+        String communicationType = "nonReliable";
 
-        GroupMember member = new GroupMember(groupLeader,groupName);
+        GroupMember member = new GroupMember(groupLeader,groupName,
+                                                communicationType);
+
         member.setLeader(member);
 
         nameService.registerGroup(groupName, member);
 
         //Joining group
         String secondGroupMemberName = "user2";
-        GroupMember member2 = new GroupMember(secondGroupMemberName,groupName);
+        GroupMember member2 = new GroupMember(secondGroupMemberName,groupName,
+                                                            communicationType);
         HashMap<String,Member> leaders = nameService.getGroups();
         Member leader = leaders.get(groupName);
 

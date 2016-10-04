@@ -1,7 +1,9 @@
 package gcom;
 
+import gcom.communicationmodule.Communication;
 import gcom.groupmodule.GroupMember;
 import gcom.messagemodule.Message;
+import gcom.messagemodule.MessageOrdering;
 import gcom.nameservice.NameService;
 import gcom.observer.Observer;
 import gcom.observer.Subject;
@@ -13,6 +15,10 @@ public class GCOM implements Subject{
 
 
     private GroupMember member;
+    private MessageOrdering messageOrdering;
+    private Communication communication;
+
+
     private String nameSeriveAddress;
     private NameService nameService;
     public GCOM(String nameSerivceAddress) {
@@ -21,8 +27,13 @@ public class GCOM implements Subject{
 
     }
 
-    public void sendMessageToGroup(Message m) {
-        //member.send(m)
+    public void sendMessageToGroup(String msg) {
+
+        String[] membersName = member.getMemberNames();
+        String group = member.getGroupName();
+        Message message = messageOrdering.convertToMessage(membersName,msg);
+
+        communication.sendMessage(group,membersName,message);
     }
 
     public void connectToGroup(String groupName,String name) {
@@ -45,6 +56,9 @@ public class GCOM implements Subject{
     }
 
     public void notifyObserver() {
+
+        //notify of members leaving
+        //notify of message received
 
     }
 }

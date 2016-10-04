@@ -7,4 +7,7 @@ import gcom.status.Status;
  */
 public interface MessageOrdering {
     Status sendMessage(String[] memberIDs,Message m);
+
+
+    Message convertToMessage(String[] membersName, String msg);
 }

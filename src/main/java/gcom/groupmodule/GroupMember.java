@@ -1,6 +1,9 @@
 package gcom.groupmodule;
 
+import gcom.communicationmodule.NonReliableCommunication;
 import gcom.messagemodule.Message;
+import gcom.observer.Observer;
+import gcom.observer.Subject;
 import gcom.status.Status;
 
 import java.rmi.RemoteException;
@@ -10,33 +13,21 @@ import java.util.HashMap;
 /**
  * Created by c12ton on 9/29/16.
  */
-public class GroupMember extends UnicastRemoteObject implements Member {
+public class GroupMember extends UnicastRemoteObject implements Member, Subject {
     private String name;
     private String groupName;
     private HashMap<String,Member> members;
-
-
     private Member leader;
 
-    protected GroupMember(String name, String groupName) throws RemoteException {
+    private final String communicationType;
+
+    protected GroupMember(String name, String groupName, String communicationType) throws RemoteException {
         this.name = name;
         this.groupName = groupName;
+        this.communicationType = communicationType;
+
         members = new HashMap<String, Member>();
         members.put(name, this);
-    }
-
-    public Status sendMessage(Message m) {
-        // Check whos alive
-//            for member:members
-
-                // try
-                //nameList.add(groupName + "/" + member.getName())
-                // catch
-
-        // MessageOrdering.send(
-        //
-
-        return null;
     }
 
     public String getName() throws RemoteException {
@@ -44,14 +35,14 @@ public class GroupMember extends UnicastRemoteObject implements Member {
     }
 
     public String[] getMemberNames() {
-
-
+        //if member is dead
+            //notifyObserver
 
         return members.keySet().toArray(new String[members.size()]);
     }
 
-    public Class getCommunicationType() throws RemoteException {
-        return null;
+    public String getCommunicationType() throws RemoteException {
+        return communicationType;
     }
 
     public Status joinGroup(Member m) throws RemoteException {
@@ -84,7 +75,17 @@ public class GroupMember extends UnicastRemoteObject implements Member {
         this.leader = leader;
     }
 
+    public void registerObservers(Observer... obs) {
 
+    }
+
+    public void notifyObserver() {
+
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
 
 
     //AskForbeingLeader()
