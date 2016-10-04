@@ -1,8 +1,11 @@
 package gcom;
 
 import gcom.communicationmodule.Communication;
+import gcom.communicationmodule.CommunicationFactory;
+import gcom.communicationmodule.NonReliableCommunication;
 import gcom.groupmodule.GroupMember;
 import gcom.groupmodule.Member;
+import gcom.messagemodule.CausalMessageOrdering;
 import gcom.messagemodule.Message;
 import gcom.messagemodule.MessageOrdering;
 import gcom.nameservice.NameService;
@@ -55,15 +58,17 @@ public class GCOM implements Subject{
 
          HashMap<String,Member> leaders = nameService.getGroups();
          Member leader = leaders.get(groupName);
-        //String comType = leader.getComType();
-        //create commtyope here
-        //create messagetype here
-        GroupMember member = new GroupMember(username,groupName,"comtype");
+
+        communication = createCommunication(leader.getCommunicationType());
+        messageOrdering = new CausalMessageOrdering();
+
+        member = new GroupMember(username,groupName,leader.getCommunicationType());
         leader.joinGroup(member);
+
         return member.getMemberNames();
     }
 
-    public void createGroup() {
+    public void createGroup(String groupName, String username,String comType) {
         //nameService.createGroup(String groupName, member)
     }
 
@@ -71,14 +76,30 @@ public class GCOM implements Subject{
         //set member to null
     }
 
+
+    //createListener for receive
+    //createListener for sending
+
+    /**
+     * Creates a communcation with repsect to given type.
+     * And add appropiate listeners and observers
+     * @param type of
+     * @return
+     */
+    private Communication createCommunication(String type) {
+        if(type.equals(NonReliableCommunication.class.getName())) {
+            return CommunicationFactory.createNonReliableCommunication();
+        }
+
+        return null;
+    }
+
     public void registerObservers(Observer... obs) {
 
     }
 
     public void notifyObserver() {
-
         //notify of members leaving
         //notify of message received
-
     }
 }

@@ -1,19 +1,29 @@
 package gcom.messagemodule;
 
-import gcom.status.Status;
+
+import java.util.HashMap;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by timmy on 03/10/16.
  */
 public class CausalMessageOrdering implements MessageOrdering{
+    private HashMap<String,Integer> vectorClock;
+    private BlockingQueue inMessageQue;
+
     public CausalMessageOrdering() {
-
-    }
-    public Status sendMessage(String[] memberIDs, Message m) {
-        return null;
+        vectorClock = new HashMap<>();
     }
 
+    @Override
     public Message convertToMessage(String[] membersName, String msg) {
+
         return null;
     }
+
+    @Override
+    public void convertFromMessage(Message m) {
+
+    }
+
 }

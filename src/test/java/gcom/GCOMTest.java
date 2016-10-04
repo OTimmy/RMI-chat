@@ -32,13 +32,12 @@ public class GCOMTest {
     @Before
     public void setUp() throws Exception {
         nameService = new NameService();
+        setUpFakeGroup();
         try {
 
             if(!setUpIsDone) {
                 registry = LocateRegistry.createRegistry(1099);
-                setUpFakeGroup();
             }
-
             registry.rebind(NameService.class.getSimpleName(), nameService);
             setUpIsDone = true;
             System.out.println("Sever is ready!");
@@ -64,6 +63,15 @@ public class GCOMTest {
         String[] membersName =  gcom.connectToGroup(GROUP_NAME,username);
 
         assertArrayEquals(new String[]{GROUP_USER_NAME,username},membersName);
+
+
+        //Test for class typ
     }
+
+    @Test
+    public void testJoinGroupCommunicationType() throws RemoteException, GCOMException{
+
+    }
+
 
 }
