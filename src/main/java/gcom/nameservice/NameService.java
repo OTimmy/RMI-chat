@@ -1,7 +1,5 @@
 package gcom.nameservice;
 
-import gcom.groupmodule.GroupLeader;
-import gcom.groupmodule.Leader;
 import gcom.groupmodule.Member;
 import gcom.status.Status;
 
@@ -11,36 +9,35 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.jar.Attributes;
 
 /**
  * Created by c12ton on 9/29/16.
  */
 public class NameService extends UnicastRemoteObject implements  NameServiceInterFace{
-    private HashMap<String,Leader> leaders;
+    private HashMap<String,Member> leaders;
 
-    protected NameService() throws RemoteException {
-        leaders = new HashMap<String,Leader>();
+//    protected NameService() throws RemoteException {
+//        leaders = new HashMap<String,Member>();
+//    }
+
+    public NameService() throws RemoteException {
+        leaders = new HashMap<String, Member>();
     }
-
     /**
      *
      * @return
      */
-    public synchronized  Member[] getGroups() throws RemoteException{
-        ArrayList<Member> leaders = new ArrayList<Member>();
-        for(String key:groups.keySet()) {
-            leaders.add(groups.get(key));
-        }
-
-        return leaders.toArray(new Member[]{});
+    public synchronized  HashMap getGroups() throws RemoteException{
+        return (HashMap<String, Member>) leaders.clone();
     }
 
 
     public synchronized Status registerGroup(String groupName, Member member)
             throws RemoteException {
 
-        if(!groups.containsKey(groupName)) {
-            groups.put(groupName,member);
+        if(!leaders.containsKey(groupName)) {
+            leaders.put(groupName,member);
             return Status.CREATED_GROUP_SUCCESS;
         }
 

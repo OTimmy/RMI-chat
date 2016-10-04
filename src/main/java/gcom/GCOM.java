@@ -2,6 +2,7 @@ package gcom;
 
 import gcom.groupmodule.GroupMember;
 import gcom.messagemodule.Message;
+import gcom.nameservice.NameService;
 import gcom.observer.Observer;
 import gcom.observer.Subject;
 
@@ -12,9 +13,10 @@ public class GCOM implements Subject{
 
 
     private GroupMember member;
-    public GCOM() {
-
-        //nameService = connectToNameService()
+    private String nameSeriveAddress;
+    private NameService nameService;
+    public GCOM(String nameSerivceAddress) {
+        //nameService = connectToNameService(nameServiceAddress)
         // if failed throw exception
 
     }
@@ -35,7 +37,6 @@ public class GCOM implements Subject{
     }
 
     public void leaveGroup() {
-        //remove member from nameService
         //set member to null
     }
 

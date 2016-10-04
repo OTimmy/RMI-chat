@@ -4,12 +4,17 @@ import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceInterFace;
 import gcom.status.Status;
 import junit.framework.TestSuite;
-import org.junit.*;
+import static org.junit.Assert.*;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by c12ton on 9/29/16.
@@ -17,54 +22,84 @@ import java.rmi.RemoteException;
  */
 public class NameServiceManagerTest extends TestSuite {
     private static boolean setUpIsDone = false;
-    private static NameServiceInterFace nameService;
+    private NameServiceInterFace nameService;
+    private static Registry registry;
+
+
 
     @Before
     public void setUp() throws Exception {
         if(!setUpIsDone) {
-            NameService.main(null);
+//            NameService.main(null);
             try {
-                nameService =  NameService.getNameService(null);
+                registry = LocateRegistry.createRegistry(1099);
+                nameService = new NameService();
+                registry.rebind(NameService.class.getSimpleName(), nameService);
+                System.out.println("Sever is ready!");
+                System.out.println("Set up!");
             } catch (RemoteException e) {
-                e.printStackTrace();
-            } catch (NotBoundException e) {
                 e.printStackTrace();
             }
         }
         setUpIsDone = true;
+        nameService = new NameService();
+        registry.rebind(NameService.class.getSimpleName(), nameService);
     }
 
     @After
     public void tearDown() throws Exception {
+        registry.unbind(NameService.class.getSimpleName());
     }
 
     @Test
     public void testRegisterGroup() throws RemoteException {
 
-        GroupMember member = new GroupMember("user1","Group 1");
+        String groupName = "Group 1";
+        String groupMember = "user1";
 
-        Status status = nameService.registerGroup("Group 1", member);
+        GroupMember member = new GroupMember(groupMember,groupName);
+        member.setLeader(member);
+
+        Status status = nameService.registerGroup(groupName, member);
 
         System.out.println("Status: " + status.toString());
 
         if(status == Status.CANT_CONNECT_TO_NAME_SERVICE) {
-            Assert.fail();
+            fail();
         }
 
-        Member[] leaders;
+        HashMap<String,Member> leaders = nameService.getGroups();
 
-        leaders = nameService.getGroups();
-        if(!leaders[0].getName().equals("user1")) {
-            Assert.fail();
-        }
+        assertTrue(leaders.containsKey(groupName));
     }
 
-
-    //TETS to get communication type
 
     @Test
-    public void testJoinExistingGroup() {
+    public void testJoinGroup() throws RemoteException {
+
+        //setting up group
+        String groupName = "Group 1";
+        String groupLeader = "user1";
+
+        GroupMember member = new GroupMember(groupLeader,groupName);
+        member.setLeader(member);
+
+        nameService.registerGroup(groupName, member);
+
+        //Joining group
+        String secondGroupMemberName = "user2";
+        GroupMember member2 = new GroupMember(secondGroupMemberName,groupName);
+        HashMap<String,Member> leaders = nameService.getGroups();
+        Member leader = leaders.get(groupName);
+
+        Status status = leader.joinGroup(member2);
+        assertEquals(status.toString(),Status.CONNECTED_TO_GROUP.toString());
+
+        String[] memberNames = member2.getMemberNames();
+
+        assertEquals(memberNames[0],groupLeader);
     }
+
 
 //
     @Test

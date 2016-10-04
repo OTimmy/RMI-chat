@@ -1,5 +1,6 @@
 package gcom.communicationmodule;
 
+import gcom.observer.Observer;
 import gcom.observer.Subject;
 import gcom.status.Status;
 
@@ -9,5 +10,13 @@ import gcom.status.Status;
 public class NonReliableCommunication implements Communication,Subject{
     public Status sendMessage(String message) {
         return null;
+    }
+
+    public void registerObservers(Observer... obs) {
+
+    }
+
+    public void notifyObserver() {
+
     }
 }
