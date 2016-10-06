@@ -46,6 +46,12 @@ public class GroupMember extends UnicastRemoteObject implements Member, Subject 
         return communicationType;
     }
 
+    /**
+     *  Adding groups current members to new coming.
+     * @param m member to joing group
+     * @throws RemoteException
+     * @throws GCOMException
+     */
     public void joinGroup(Member m) throws RemoteException, GCOMException {
 
         if(members.containsKey(m.getName())) {
@@ -54,15 +60,14 @@ public class GroupMember extends UnicastRemoteObject implements Member, Subject 
 
         if(!members.containsKey(m.getName())) {
             members.put(m.getName(),m);
-            //Add members to m
+            //Add current know members to m
             m.setMembers(members);
-
             //notifyMembers that a join has occured!
         }
     }
 
     public void removeGroup() throws RemoteException {
-
+        //Contact name service
     }
 
     public void setMembers(HashMap<String, Member> members) throws RemoteException {

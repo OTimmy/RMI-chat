@@ -8,6 +8,7 @@ import gcom.groupmodule.Member;
 import gcom.messagemodule.CausalMessageOrdering;
 import gcom.messagemodule.Message;
 import gcom.messagemodule.MessageOrdering;
+import gcom.messagemodule.UnorderedMessageOrdering;
 import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceInterFace;
 import gcom.observer.Observer;
@@ -29,20 +30,31 @@ public class GCOM implements Subject{
     private MessageOrdering messageOrdering;
     private Communication communication;
     private NameServiceInterFace nameService;
+    private String host;
 
 
     public GCOM(String host) throws RemoteException,NotBoundException {
         nameService = NameService.getNameService(host);
+        this.host = host;
     }
 
-    public Status sendMessageToGroup(String msg) {
+    //TODO add message que for outgoing messages, for thread to handle and wait for
+    public Status sendMessageToGroup(String msg) throws InterruptedException, RemoteException, NotBoundException {
+        //Thread queTask = take.FromBlockingQue()
 
-        String[] membersName = member.getMemberNames();
-        String group = member.getGroupName();
-        Message message = messageOrdering.convertToMessage(membersName,msg);
+        String[] membersNames = member.getMemberNames();
+        Message message = messageOrdering.convertToMessage(membersNames,msg);
 
-        communication.sendMessage(group,membersName,message);
+        communication.sendMessage(membersNames,message);
 
+        return null;
+    }
+
+    public String[] getChatMessages() {
+        return null;
+    }
+
+    public String[] getStatusMessages() {
         return null;
     }
 
@@ -55,12 +67,11 @@ public class GCOM implements Subject{
      * @throws GCOMException in that member already exists
      */
     public String[] connectToGroup(String groupName,String username) throws RemoteException, GCOMException {
+        HashMap<String,Member> leaders = nameService.getGroups();
+        Member leader = leaders.get(groupName);
 
-         HashMap<String,Member> leaders = nameService.getGroups();
-         Member leader = leaders.get(groupName);
-
-        communication = createCommunication(leader.getCommunicationType());
-        messageOrdering = new CausalMessageOrdering();
+        communication = createCommunication(leader.getCommunicationType(),groupName,username);
+        messageOrdering = createMessageOrdering(UnorderedMessageOrdering.class.getName()); //todo
 
         member = new GroupMember(username,groupName,leader.getCommunicationType());
         leader.joinGroup(member);
@@ -86,12 +97,25 @@ public class GCOM implements Subject{
      * @param type of
      * @return
      */
-    private Communication createCommunication(String type) {
+    private Communication createCommunication(String type, String groupName, String userName) throws RemoteException {
         if(type.equals(NonReliableCommunication.class.getName())) {
-            return CommunicationFactory.createNonReliableCommunication();
+            return CommunicationFactory.createNonReliableCommunication(host,groupName,userName);
         }
 
         return null;
+    }
+
+    /**
+     *
+     * @param type
+     * @return
+     */
+    private MessageOrdering createMessageOrdering(String type) {
+        if(type.equals(CausalMessageOrdering.class.getName())) {
+            return new CausalMessageOrdering();
+        }
+
+        return new UnorderedMessageOrdering();
     }
 
     public void registerObservers(Observer... obs) {
@@ -99,7 +123,12 @@ public class GCOM implements Subject{
     }
 
     public void notifyObserver() {
-        //notify of members leaving
-        //notify of message received
+
+        //if chatMessage.isNotEmpy
+            //  obsChatMessage.update()
+
+        // if StatusMesage.isNotEmpty()
+            // obsStatusMessage.update()
+
     }
 }

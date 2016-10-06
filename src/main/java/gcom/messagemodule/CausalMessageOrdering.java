@@ -9,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public class CausalMessageOrdering implements MessageOrdering{
     private HashMap<String,Integer> vectorClock;
-    private BlockingQueue inMessageQue;
+    private BlockingQueue inQue;
 
     public CausalMessageOrdering() {
         vectorClock = new HashMap<>();
@@ -17,6 +17,7 @@ public class CausalMessageOrdering implements MessageOrdering{
 
     @Override
     public Message convertToMessage(String[] membersName, String msg) {
+//        ChatMessage
 
         return null;
     }
