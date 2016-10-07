@@ -1,6 +1,9 @@
 package gcom.messagemodule;
 
 
+import gcom.status.Status;
+
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
@@ -15,10 +18,9 @@ public class CausalMessageOrdering implements MessageOrdering{
         vectorClock = new HashMap<>();
     }
 
-    @Override
-    public Message convertToMessage(String[] membersName, String msg) {
-//        ChatMessage
 
+    @Override
+    public Message convertToMessage(String user, String[] membersName, String msg, Status status) throws RemoteException {
         return null;
     }
 

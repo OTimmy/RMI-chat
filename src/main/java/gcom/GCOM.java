@@ -5,10 +5,7 @@ import gcom.communicationmodule.CommunicationFactory;
 import gcom.communicationmodule.NonReliableCommunication;
 import gcom.groupmodule.GroupMember;
 import gcom.groupmodule.Member;
-import gcom.messagemodule.CausalMessageOrdering;
-import gcom.messagemodule.Message;
-import gcom.messagemodule.MessageOrdering;
-import gcom.messagemodule.UnorderedMessageOrdering;
+import gcom.messagemodule.*;
 import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceInterFace;
 import gcom.observer.Observer;
@@ -19,43 +16,132 @@ import gcom.status.Status;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by c12ton on 9/29/16.
+ * This is class implements all the modules, hand handle the communication
+ * between them. And
  */
 public class GCOM implements Subject{
-
 
     private GroupMember member;
     private MessageOrdering messageOrdering;
     private Communication communication;
     private NameServiceInterFace nameService;
     private String host;
+    private BlockingQueue<String> outgoingChatMessage;
 
+
+    private final Object lockIsProdActive = new Object();
+    private final Object lockIsConActive = new Object();
+
+
+    private Thread threadProducer;
+    private Thread threadConsumer;
+
+    private boolean producerThreadActive;
+    private boolean consumerThreadActive;
+
+    private Observer messageObs;
 
     public GCOM(String host) throws RemoteException,NotBoundException {
-        nameService = NameService.getNameService(host);
-        this.host = host;
+        this.host            = host;
+        nameService          = NameService.getNameService(host);
+        outgoingChatMessage  = new LinkedBlockingQueue<>();
+
+        producerThreadActive = true;
+        consumerThreadActive = true;
+
+
+        threadProducer = createProducerThread();
+        threadConsumer = createConsumerThread();
+
     }
 
+    //TODO catch exceptions here, and return status message!
     //TODO add message que for outgoing messages, for thread to handle and wait for
     public Status sendMessageToGroup(String msg) throws InterruptedException, RemoteException, NotBoundException {
-        //Thread queTask = take.FromBlockingQue()
-
-        String[] membersNames = member.getMemberNames();
-        Message message = messageOrdering.convertToMessage(membersNames,msg);
-
-        communication.sendMessage(membersNames,message);
-
+        outgoingChatMessage.put(msg);
         return null;
     }
 
-    public String[] getChatMessages() {
-        return null;
+
+    /**
+     * Creats a thread for sending messages, by waiting till a message
+     * is in the que.
+     * @return a thread for producer
+     */
+    private Thread createProducerThread() {
+
+        Thread t = new Thread(() -> {
+            while(isProducerThreadActive()) {
+                try {
+                    String msg = outgoingChatMessage.take();
+                    String[] membersNames = member.getMemberNames();
+                    Message  message = messageOrdering.convertToMessage(member.getName(),membersNames,msg,null);
+                    communication.sendMessage(membersNames,message);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (NotBoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return t;
     }
 
-    public String[] getStatusMessages() {
-        return null;
+    /**
+     *Creates a thread for fetching messages
+     * @return a thread for consumer
+     */
+    private Thread createConsumerThread() {
+        Thread t = new Thread(() -> {
+            while(isConsumerThreadActive()) {
+                try {
+                    communication.waitForMessage();
+
+//                    Message m = communication.getMessage();
+
+//                    if(m.getStatusMessage() != null) {
+//                        //member.sendStatus
+//                    }
+                    // if message.getStatus() != null
+                        // update member
+                        // notify inStatusMessage.update()
+                    // if message.getChatMessage != null
+                        //inChatMessage.update()
+                    if(messageObs != null) {
+                        messageObs.update();
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return t;
+    }
+
+    /**
+     *
+     * @return
+     * @throws RemoteException
+     */
+    public Message getMessage() throws RemoteException {
+        Message message = null;
+        try {
+            message = communication.getMessage();
+        } catch (GCOMException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return message;
     }
 
     /**
@@ -76,6 +162,9 @@ public class GCOM implements Subject{
         member = new GroupMember(username,groupName,leader.getCommunicationType());
         leader.joinGroup(member);
 
+        threadConsumer.start();
+        threadProducer.start();
+
         return member.getMemberNames();
     }
 
@@ -84,12 +173,44 @@ public class GCOM implements Subject{
     }
 
     public void leaveGroup() {
-        //set member to null
+        //stop producerThread()
+        //stop consumerThread()
+        //Remove user from registry
+        //Remove communcationQue from registry
     }
 
 
-    //createListener for receive
-    //createListener for sending
+    public void stopProducerThread() {
+        synchronized (lockIsProdActive) {
+            producerThreadActive = false;
+        }
+    }
+
+    public void stopConsumerThread() {
+        synchronized (lockIsConActive) {
+            consumerThreadActive = false;
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isProducerThreadActive() {
+        synchronized (lockIsProdActive) {
+            return producerThreadActive;
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isConsumerThreadActive() {
+        synchronized (lockIsConActive) {
+            return consumerThreadActive;
+        }
+    }
 
     /**
      * Creates a communcation with repsect to given type.
@@ -118,11 +239,27 @@ public class GCOM implements Subject{
         return new UnorderedMessageOrdering();
     }
 
+    /**
+     * Register observers in following order: Receiving,Sending
+     * @param obs
+     */
     public void registerObservers(Observer... obs) {
-
+        messageObs = obs[0];
     }
 
     public void notifyObserver() {
+
+        //for (int i = 0; i <
+        //for observers:
+            //if messageStatus != null
+                //
+
+
+//        Message m = communication.getMessage();
+//        if(m.getStatusMessage() != null) {
+//            //member.update()
+//            //statusObserver.update()
+//        }
 
         //if chatMessage.isNotEmpy
             //  obsChatMessage.update()

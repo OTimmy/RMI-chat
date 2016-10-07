@@ -17,10 +17,6 @@ import java.util.jar.Attributes;
 public class NameService extends UnicastRemoteObject implements  NameServiceInterFace{
     private HashMap<String,Member> leaders;
 
-//    protected NameService() throws RemoteException {
-//        leaders = new HashMap<String,Member>();
-//    }
-
     public NameService() throws RemoteException {
         leaders = new HashMap<String, Member>();
     }

@@ -15,10 +15,15 @@ public interface MessageOrdering {
      * @param msg
      * @return
      */
-    Message convertToMessage(String[] membersName, String msg) throws RemoteException;
+    Message convertToMessage(String user, String[] membersName, String msg, Status status) throws RemoteException;
 
     /**
      *
      */
-    void convertFromMessage(Message m);
+    void convertFromMessage(Message m); //updateMessageData
+
+    //orderingMessage
+
+
+    //void orderIncomingMessage(Message m)
 }
