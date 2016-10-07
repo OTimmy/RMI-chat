@@ -123,10 +123,8 @@ public class GCOMTest {
         gcom.sendMessageToGroup(myMessage);
 
         //Giving the consumer thread a chance to finnish
-        Thread.sleep(220);
+        Thread.sleep(100);
         assertEquals(myMessage,retrivedMessage[0]);
     }
-
-
 
 }

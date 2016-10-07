@@ -33,7 +33,6 @@ public class NonReliableCommunication implements Communication,Subject{
     public Status sendMessage(String[] membersNames, Message message) throws RemoteException, NotBoundException, InterruptedException {
         for(String memberName:membersNames) {
             QueCommunication memRMICom = getMemberQue(memberName);
-            System.out.println("YO!!!!");
             memRMICom.putChatMessage(message);
         }
         return null;

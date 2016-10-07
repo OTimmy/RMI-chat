@@ -103,17 +103,6 @@ public class GCOM implements Subject{
             while(isConsumerThreadActive()) {
                 try {
                     communication.waitForMessage();
-
-//                    Message m = communication.getMessage();
-
-//                    if(m.getStatusMessage() != null) {
-//                        //member.sendStatus
-//                    }
-                    // if message.getStatus() != null
-                        // update member
-                        // notify inStatusMessage.update()
-                    // if message.getChatMessage != null
-                        //inChatMessage.update()
                     if(messageObs != null) {
                         messageObs.update();
                     }
