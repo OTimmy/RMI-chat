@@ -160,6 +160,9 @@ public class GCOM implements Subject{
     public void createGroup(String groupName, String username,String comType) throws RemoteException {
         member = new GroupMember(groupName,username,comType);
         nameService.registerGroup(groupName,member);
+
+        threadConsumer.start();
+        threadProducer.start();
     }
 
     public void leaveGroup() {
