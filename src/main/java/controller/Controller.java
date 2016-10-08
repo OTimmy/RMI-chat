@@ -85,6 +85,7 @@ public class Controller{
 
                 gcomTable.put(data[1], gcom);
 
+
                 try {
                     gcom.connectToGroup(data[1], data[0]);
                 }  catch (GCOMException e1) {
