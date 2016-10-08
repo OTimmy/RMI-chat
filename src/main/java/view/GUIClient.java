@@ -32,7 +32,7 @@ public class GUIClient {
     private JRadioButton treeBasedReliableRadioButton = new JRadioButton("tree-based reliable");
     private JButton createGroupButton = new JButton("Create Group");
 
-    private JTextField usernameTextField = new JTextField(22);
+    private JTextField usernameTextField = new JTextField(20);
     private JButton deleteGroupButton = new JButton("Delete");
     private JTable table1;
     private int MAXIMUM_TABS = 9;
@@ -41,16 +41,14 @@ public class GUIClient {
 
     public GUIClient() {
 
-        String s = JOptionPane.showInputDialog(tabbedPane1, "Enter Host:");
+        String host = JOptionPane.showInputDialog(tabbedPane1, "Enter Host:", "localhost");
 
-        if(s == (null)){
+        if(host == (null)){
             return;
         }
 
-        System.out.println(s);
         //check if connection is available
         //if not then ask again
-        host = s;
 
 
         table1 = new JTable(model){
@@ -151,14 +149,13 @@ public class GUIClient {
                 return null;
             }
 
-
-            tabbedPane1.addTab(groupNameTextField.getText(), chattTab(s));
+            tabbedPane1.addTab(s, chattTab(s));
             model.addRow(new Object[] {s});
 
 
             //getMessage(s);
 
-            return s + "/" ;
+            return s;
         }
         else if(tabbedPane1.getTabCount() >= MAXIMUM_TABS){
             JOptionPane.showMessageDialog(tabbedPane1, "Too many tabs open");

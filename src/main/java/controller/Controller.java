@@ -1,7 +1,10 @@
 package controller;
 
 import gcom.GCOM;
+import gcom.communicationmodule.NonReliableCommunication;
 import gcom.messagemodule.Message;
+import gcom.nameservice.NameService;
+import gcom.status.GCOMException;
 import view.GUIClient;
 
 import javax.swing.*;
@@ -31,18 +34,21 @@ public class Controller{
                 String group = gui.addGroupTab();
                 gui.addActionListenerSend(group, sendListern());
 
-//                if(group != null){
-//                    try {
-//                        GCOM gcom = new GCOM(null);
-//                        gcom.registerObservers(createMessageObserver(group));
-//
-//                        gcomTable.put(group, gcom);
-//                    } catch (RemoteException e1) {
-//                        e1.printStackTrace();
-//                    } catch (NotBoundException e1) {
-//                        e1.printStackTrace();
-//                    }
-//                }
+                if(group != null){
+                    try {
+                        GCOM gcom = new GCOM(null);
+                        gcom.registerObservers(createMessageObserver(group));
+                        gcom.createGroup(group, "test",/*TEMP !*/NonReliableCommunication.class.getName());
+                        gcom.connectToGroup(group, "test");
+                        gcomTable.put(group, gcom);
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    } catch (NotBoundException e1) {
+                        e1.printStackTrace();
+                    } catch (GCOMException e1) {
+                        e1.printStackTrace();
+                    }
+                }
             }
         };
     }
@@ -74,8 +80,16 @@ public class Controller{
                 JButton source = (JButton) e.getSource();
                 String group = source.getName();
                 String message = gui.getMessage(group);
-                System.out.println(message);
-
+                GCOM gcom = gcomTable.get(group);
+                try {
+                    gcom.sendMessageToGroup(message);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                } catch (NotBoundException e1) {
+                    e1.printStackTrace();
+                }
             }
         };
     }
@@ -84,9 +98,6 @@ public class Controller{
         this.gui = gui;
     }
 
-    public void getMessageFromGCOM (String group){
-
-    }
 
     private gcom.observer.Observer createMessageObserver(final String group){
         gcom.observer.Observer obs = new gcom.observer.Observer() {
@@ -94,8 +105,13 @@ public class Controller{
             @Override
             public void update() {
                 GCOM gcom = gcomTable.get(group);
-                //Message msg = gcom.getChatMessages();
-                //gui.appendMessage(group, msg.getChatMessage);
+                Message msg = null;
+                try {
+                    msg = gcom.getMessage();
+                    gui.appendMessage(group, msg.getChatMessage());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         };
         return obs;
