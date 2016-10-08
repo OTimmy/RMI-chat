@@ -26,17 +26,17 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class GCOM implements Subject{
 
+    //The modules
     private GroupMember member;
     private MessageOrdering messageOrdering;
     private Communication communication;
     private NameServiceInterFace nameService;
+
     private String host;
     private BlockingQueue<String> outgoingChatMessage;
 
-
     private final Object lockIsProdActive = new Object();
     private final Object lockIsConActive = new Object();
-
 
     private Thread threadProducer;
     private Thread threadConsumer;
@@ -54,7 +54,6 @@ public class GCOM implements Subject{
         producerThreadActive = true;
         consumerThreadActive = true;
 
-
         threadProducer = createProducerThread();
         threadConsumer = createConsumerThread();
 
@@ -62,11 +61,26 @@ public class GCOM implements Subject{
 
     //TODO catch exceptions here, and return status message!
     //TODO add message que for outgoing messages, for thread to handle and wait for
-    public Status sendMessageToGroup(String msg) throws InterruptedException, RemoteException, NotBoundException {
-        outgoingChatMessage.put(msg);
-        return null;
+    public void sendMessageToGroup(String msg)  {
+        try {
+            outgoingChatMessage.put(msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * @return Current groups at given name service
+     */
+    public String[] getGroups() {
+        try {
+            HashMap<String,Member> groups = nameService.getGroups();
+            return groups.keySet().toArray(new String[]{});
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * Creats a thread for sending messages, by waiting till a message
@@ -141,8 +155,16 @@ public class GCOM implements Subject{
      * @throws RemoteException
      * @throws GCOMException in that member already exists
      */
-    public String[] connectToGroup(String groupName,String username) throws RemoteException, GCOMException {
-        HashMap<String,Member> leaders = nameService.getGroups();
+    public String[] connectToGroup(String groupName,String username) throws GCOMException {
+        try {
+
+        } catch ()
+        HashMap<String,Member> leaders = null;
+        try {
+            leaders = nameService.getGroups();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         Member leader = leaders.get(groupName);
 
         communication = createCommunication(leader.getCommunicationType(),groupName,username);
@@ -157,7 +179,7 @@ public class GCOM implements Subject{
         return member.getMemberNames();
     }
 
-    public void createGroup(String groupName, String username,String comType) throws RemoteException {
+    public void createGroup(String groupName, String username,String comType) throws GCOMException {
         member = new GroupMember(username,groupName,comType);
         nameService.registerGroup(groupName,member);
 

@@ -73,8 +73,44 @@ public class GCOMTest {
         GCOM gcom = new GCOM(null);
         String[] membersName =  gcom.connectToGroup(GROUP_NAME,username);
         assertArrayEquals(new String[]{GROUP_USER_NAME,username},membersName);
-
         //Test for class typ
+    }
+
+    @Test
+    public void testCreateGroupAndSendMessage() throws GCOMException {
+        try {
+            String groupName = "MyGroup!";
+            String username = "MeTheUser";
+
+            GCOM gcom = new GCOM(null);
+
+            Observer observer = new Observer() {
+                @Override
+                public void update() {
+
+                }
+            };
+
+            gcom.createGroup(groupName,username,
+                             NonReliableCommunication.class.getName());
+
+
+            String myMessage = "Hello user!";
+            gcom.sendMessageToGroup(myMessage);
+
+
+//            gcom.createGroup();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void testCreateGrupAndJoinGroupAndSend() {
+
     }
 
 
