@@ -1,3 +1,4 @@
 #Ignore stupid misc files
 .idea/
 .idea
+*.class
