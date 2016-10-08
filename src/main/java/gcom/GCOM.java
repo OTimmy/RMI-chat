@@ -94,7 +94,8 @@ public class GCOM implements Subject{
                 try {
                     String msg = outgoingChatMessage.take();
                     String[] membersNames = member.getMemberNames();
-                    Message  message = messageOrdering.convertToMessage(member.getName(),membersNames,msg,null);
+                    Message  message = messageOrdering.convertToMessage(member.getName(),
+                                                                        membersNames,msg,null);
                     communication.sendMessage(membersNames,message);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -156,22 +157,20 @@ public class GCOM implements Subject{
      * @throws GCOMException in that member already exists
      */
     public String[] connectToGroup(String groupName,String username) throws GCOMException {
-        try {
 
-        } catch ()
-        HashMap<String,Member> leaders = null;
         try {
+            HashMap<String,Member> leaders = null;
             leaders = nameService.getGroups();
+            Member leader = leaders.get(groupName);
+
+            communication = createCommunication(leader.getCommunicationType(),groupName,username);
+            messageOrdering = createMessageOrdering(UnorderedMessageOrdering.class.getName());
+
+            member = new GroupMember(username,groupName,leader.getCommunicationType());
+            leader.joinGroup(member);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        Member leader = leaders.get(groupName);
-
-        communication = createCommunication(leader.getCommunicationType(),groupName,username);
-        messageOrdering = createMessageOrdering(UnorderedMessageOrdering.class.getName()); //todo
-
-        member = new GroupMember(username,groupName,leader.getCommunicationType());
-        leader.joinGroup(member);
 
         threadConsumer.start();
         threadProducer.start();
@@ -180,11 +179,15 @@ public class GCOM implements Subject{
     }
 
     public void createGroup(String groupName, String username,String comType) throws GCOMException {
-        member = new GroupMember(username,groupName,comType);
-        nameService.registerGroup(groupName,member);
+        try {
+            member = new GroupMember(username,groupName,comType);
+            nameService.registerGroup(groupName,member);
+            communication = createCommunication(comType,groupName,username);
+            messageOrdering = createMessageOrdering(UnorderedMessageOrdering.class.getName()); //todo
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
-        communication = createCommunication(comType,groupName,username);
-        messageOrdering = createMessageOrdering(UnorderedMessageOrdering.class.getName()); //todo
 
         threadConsumer.start();
         threadProducer.start();
