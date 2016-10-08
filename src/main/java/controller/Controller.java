@@ -15,18 +15,14 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 
 
-
-
 /**
  * Created by c12ton on 2016-10-06.
  */
-public class Controller{
+public class Controller {
 
     private static GUIClient gui;
     private static Hashtable<String, GCOM> gcomTable = new Hashtable<>();
 
-   
-    
     private ActionListener createGroupTabListern() {
         return new ActionListener() {
             @Override
@@ -34,7 +30,7 @@ public class Controller{
                 String group = gui.addGroupTab();
                 gui.addActionListenerSend(group, sendListern());
 
-                if(group != null){
+                if (group != null) {
                     try {
                         GCOM gcom = new GCOM(gui.getHost());
                         gcom.registerObservers(createMessageObserver(group));
@@ -52,7 +48,7 @@ public class Controller{
         };
     }
 
-    private ActionListener createDeleteListener(){
+    private ActionListener createDeleteListener() {
 
         return new ActionListener() {
             @Override
@@ -62,13 +58,13 @@ public class Controller{
         };
     }
 
-    private ActionListener createJoinListener(){
+    private ActionListener createJoinListener() {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String s = gui.joinGroup();
 
-                if(s == null){
+                if (s == null) {
                     return;
                 }
                 String[] data = s.split("/");
@@ -88,7 +84,7 @@ public class Controller{
 
                 try {
                     gcom.connectToGroup(data[1], data[0]);
-                }  catch (GCOMException e1) {
+                } catch (GCOMException e1) {
                     e1.printStackTrace();
                 }
 
@@ -120,7 +116,7 @@ public class Controller{
     }
 
 
-    private gcom.observer.Observer createMessageObserver(final String group){
+    private gcom.observer.Observer createMessageObserver(final String group) {
         gcom.observer.Observer obs = new gcom.observer.Observer() {
 
             @Override
@@ -129,7 +125,7 @@ public class Controller{
                 Message msg = null;
                 try {
                     msg = gcom.getMessage();
-                    gui.appendMessage(group, msg.getUser() + ": \n" +msg.getChatMessage() + "\n\n");
+                    gui.appendMessage(group, msg.getUser() + ": \n" + msg.getChatMessage() + "\n\n");
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
