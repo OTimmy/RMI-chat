@@ -102,7 +102,7 @@ public class GCOMTest {
     public void receiveMessage() throws RemoteException, NotBoundException, GCOMException, InterruptedException {
         String username = "BigRed";
         String myMessage = "Hej " + GROUP_USER_NAME;
-        GCOM gcom = new GCOM(null);
+        final GCOM gcom = new GCOM(null);
 
         final String[] retrivedMessage = {null};
         Observer obReceiving = new Observer() {

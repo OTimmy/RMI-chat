@@ -25,7 +25,7 @@ public class Controller{
    
     
     private ActionListener createGroupTabListern() {
-        ActionListener a = new ActionListener() {
+        return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String group = gui.addGroupTab();
@@ -45,11 +45,29 @@ public class Controller{
 //                }
             }
         };
-        return a;
+    }
+
+    private ActionListener createDeleteListener(){
+
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gui.deleteGroup();
+            }
+        };
+    }
+
+    private ActionListener createJoinListener(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gui.joinGroup();
+            }
+        };
     }
 
     private ActionListener sendListern() {
-        ActionListener a = new ActionListener() {
+        return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -60,7 +78,6 @@ public class Controller{
 
             }
         };
-        return a;
     }
 
     public Controller(GUIClient gui) throws RemoteException, NotBoundException {
@@ -71,7 +88,7 @@ public class Controller{
 
     }
 
-    private gcom.observer.Observer createMessageObserver(String group){
+    private gcom.observer.Observer createMessageObserver(final String group){
         gcom.observer.Observer obs = new gcom.observer.Observer() {
 
             @Override
@@ -98,6 +115,8 @@ public class Controller{
         }
 
         gui.addActionListenerCreate(controller.createGroupTabListern());
+        gui.addActionListenerDelete(controller.createDeleteListener());
+        gui.addActionListenerJoin(controller.createJoinListener());
 
     }
 

@@ -73,7 +73,7 @@ public class GCOM implements Subject{
      * is in the que.
      * @return a thread for producer
      */
-    private Thread createProducerThread() {
+   private Thread createProducerThread() {
 
         Thread t = new Thread(() -> {
             while(isProducerThreadActive()) {
