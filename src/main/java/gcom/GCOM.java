@@ -161,6 +161,9 @@ public class GCOM implements Subject{
         member = new GroupMember(groupName,username,comType);
         nameService.registerGroup(groupName,member);
 
+        communication = createCommunication(comType,groupName,username);
+        messageOrdering = createMessageOrdering(UnorderedMessageOrdering.class.getName()); //todo
+
         threadConsumer.start();
         threadProducer.start();
     }
