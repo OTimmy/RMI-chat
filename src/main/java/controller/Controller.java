@@ -36,10 +36,9 @@ public class Controller{
 
                 if(group != null){
                     try {
-                        GCOM gcom = new GCOM(null);
+                        GCOM gcom = new GCOM(gui.getHost());
                         gcom.registerObservers(createMessageObserver(group));
                         gcom.createGroup(group, "test",/*TEMP !*/NonReliableCommunication.class.getName());
-                        gcom.connectToGroup(group, "test");
                         gcomTable.put(group, gcom);
                     } catch (RemoteException e1) {
                         e1.printStackTrace();
@@ -67,7 +66,23 @@ public class Controller{
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui.joinGroup();
+                String s = gui.joinGroup();
+
+                if(s == null){
+                    return;
+                }
+                String[] data = s.split("/");
+
+                GCOM gcom = gcomTable.get(data[1]);
+                try {
+                    gcom.connectToGroup(data[1], data[0]);
+                }  catch (GCOMException e1) {
+                    e1.printStackTrace();
+                }
+
+                gui.addJoinTab(data[1]);
+                gui.addActionListenerSend(data[1], sendListern());
+
             }
         };
     }
@@ -81,15 +96,9 @@ public class Controller{
                 String group = source.getName();
                 String message = gui.getMessage(group);
                 GCOM gcom = gcomTable.get(group);
-                try {
-                    gcom.sendMessageToGroup(message);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                } catch (RemoteException e1) {
-                    e1.printStackTrace();
-                } catch (NotBoundException e1) {
-                    e1.printStackTrace();
-                }
+
+                gcom.sendMessageToGroup(message);
+
             }
         };
     }
@@ -108,7 +117,7 @@ public class Controller{
                 Message msg = null;
                 try {
                     msg = gcom.getMessage();
-                    gui.appendMessage(group, msg.getChatMessage());
+                    gui.appendMessage(group, msg.getUser() + ": \n" +msg.getChatMessage() + "\n\n");
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -121,9 +130,9 @@ public class Controller{
     public static void main(String[] args) {
 
         Controller controller = null;
-        
+
         try {
-           controller = new Controller(new GUIClient());
+            controller = new Controller(new GUIClient());
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (NotBoundException e) {
@@ -134,9 +143,17 @@ public class Controller{
         gui.addActionListenerDelete(controller.createDeleteListener());
         gui.addActionListenerJoin(controller.createJoinListener());
 
+        GCOM gcom = null;
+        try {
+            gcom = new GCOM(gui.getHost());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+
+        String[] groups = gcom.getGroups();
+        gui.updateGroups(groups);
+
     }
-
-
-
-
 }

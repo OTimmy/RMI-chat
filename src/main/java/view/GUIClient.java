@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 
 public class GUIClient {
 
-    private String host;
+    private String host = null;
 
     private ButtonGroup radioButtons = new ButtonGroup();
 
@@ -41,7 +41,7 @@ public class GUIClient {
 
     public GUIClient() {
 
-        String host = JOptionPane.showInputDialog(tabbedPane1, "Enter Host:", "localhost");
+        host = JOptionPane.showInputDialog(tabbedPane1, "Enter Host:", "localhost");
 
         if(host == (null)){
             return;
@@ -104,6 +104,10 @@ public class GUIClient {
 
     }
 
+    public String getHost() {
+        return host;
+    }
+
     private JPanel chattTab(String group){
 
         JTextArea membersList = new JTextArea(3, 16);
@@ -164,6 +168,20 @@ public class GUIClient {
             JOptionPane.showMessageDialog(tabbedPane1, "Fill in the groupname!");
         }
         return null;
+    }
+
+    public void addJoinTab(String group){
+        if(!group.equals("") && (tabbedPane1.getTabCount() < MAXIMUM_TABS)) {
+
+            ButtonModel comunication = radioButtons.getSelection();
+
+            if (comunication == null) {
+                JOptionPane.showMessageDialog(tabbedPane1, "you must choose one of the communication types");
+                return;
+            }
+
+            tabbedPane1.addTab(group, chattTab(group));
+        }
     }
 
     public String joinGroup(){
@@ -235,6 +253,17 @@ public class GUIClient {
                 model.removeRow(row);
                 tabbedPane1.removeTabAt(row+1);
             }
+        }
+    }
+
+    public void updateGroups(String[] groups){
+
+        for(int i = table1.getRowCount(); i > 0; i--){
+            model.removeRow(i);
+        }
+
+        for (String group:groups) {
+            model.addRow(new Object[]{group});
         }
     }
 
