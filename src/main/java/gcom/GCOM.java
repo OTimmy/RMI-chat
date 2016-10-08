@@ -157,8 +157,9 @@ public class GCOM implements Subject{
         return member.getMemberNames();
     }
 
-    public void createGroup(String groupName, String username,String comType) {
-        //nameService.createGroup(String groupName, member)
+    public void createGroup(String groupName, String username,String comType) throws RemoteException {
+        member = new GroupMember(groupName,username,comType);
+        nameService.registerGroup(groupName,member);
     }
 
     public void leaveGroup() {

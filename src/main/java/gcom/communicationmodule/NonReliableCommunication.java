@@ -30,12 +30,20 @@ public class NonReliableCommunication implements Communication,Subject{
     }
 
     @Override
-    public Status sendMessage(String[] membersNames, Message message) throws RemoteException, NotBoundException, InterruptedException {
+    public void sendMessage(String[] membersNames, Message message){
         for(String memberName:membersNames) {
-            QueCommunication memRMICom = getMemberQue(memberName);
-            memRMICom.putChatMessage(message);
+            QueCommunication memRMICom = null;
+            try {
+                memRMICom = getMemberQue(memberName);
+                memRMICom.putChatMessage(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            } catch (NotBoundException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
     }
 
     @Override
