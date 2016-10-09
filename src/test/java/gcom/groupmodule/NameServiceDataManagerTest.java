@@ -1,7 +1,6 @@
 package gcom.groupmodule;
 
-import gcom.rmi.nameservice.NameServiceData;
-import gcom.rmi.nameservice.NameService;
+import gcom.nameservice.NameServiceData;
 import gcom.status.GCOMException;
 import gcom.status.Status;
 import junit.framework.TestSuite;

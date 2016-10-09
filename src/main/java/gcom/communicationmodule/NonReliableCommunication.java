@@ -1,81 +1,51 @@
 package gcom.communicationmodule;
 
+import gcom.groupmodule.Member;
 import gcom.messagemodule.Message;
-import gcom.observer.Observer;
-import gcom.observer.Subject;
-import gcom.rmi.RMIServer;
-import gcom.rmi.rmique.RMIService;
 import gcom.status.GCOMException;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Created by c12ton on 2016-09-30.
+ * An unreliable communication implementation,
+ * it does not care for if message has been received or not.
  */
-public class NonReliableCommunication implements Communication,Subject{
+public class NonReliableCommunication implements Communication{
 
+
+    private BlockingDeque<Message> inMessages;
+    private Message currentMessage;
     private String host;
     private String groupName;
-    private Registry registry;
-    private RMIService rmiService;
-    private QueCommunicationRMI quesRMI;
 
-    public NonReliableCommunication(String host, String groupName, String memberName) throws RemoteException, AlreadyBoundException, NotBoundException {
-        this.host = host;
-        this.groupName = groupName;
-
-        quesRMI = new QueCommunicationRMI();
-        rmiService = RMIServer.getRMIService(host);
-        rmiService.rebind(groupName+"/"+memberName,quesRMI);
+    public NonReliableCommunication() throws RemoteException, AlreadyBoundException, NotBoundException {
+        inMessages = new LinkedBlockingDeque<>();
     }
 
     @Override
-    public void sendMessage(String[] membersNames, Message message){
-        for(String memberName:membersNames) {
-            QueCommunication memRMICom = null;
-            try {
-                memRMICom = getMemberQue(memberName);
-                memRMICom.putChatMessage(message);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            } catch (NotBoundException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    public void putMessage(Message m) {
+        inMessages.add(m);
+    }
+
+    @Override
+    public void sendMessage(Member[] members, Message message) throws RemoteException, NotBoundException, InterruptedException {
+        for(Member m:members) {
+            m.sendMessageToMember(message);
         }
     }
 
     @Override
     public void waitForMessage() throws RemoteException, InterruptedException {
-        quesRMI.waitForChatMessage();
+        currentMessage = inMessages.take();
     }
 
     @Override
     public Message getMessage() throws RemoteException, GCOMException, InterruptedException {
-        return quesRMI.getMessage();
+        return currentMessage;
     }
-
-    /**
-     *
-     * @param memberName
-     * @return
-     * @throws RemoteException
-     * @throws NotBoundException
-     */
-    private QueCommunication getMemberQue(String memberName) throws RemoteException, NotBoundException {
-        return (QueCommunication) rmiService.lookup(groupName+"/"+memberName);
-    }
-
-    public void registerObservers(Observer... obs) throws RemoteException{
-
-    }
-
-    public void notifyObserver() throws RemoteException{
-
-    }
-
 }
