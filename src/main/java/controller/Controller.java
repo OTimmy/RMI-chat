@@ -3,7 +3,6 @@ package controller;
 import gcom.GCOM;
 import gcom.communicationmodule.NonReliableCommunication;
 import gcom.messagemodule.Message;
-import gcom.nameservice.NameService;
 import gcom.status.GCOMException;
 import view.GUIClient;
 

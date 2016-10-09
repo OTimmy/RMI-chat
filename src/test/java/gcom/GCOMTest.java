@@ -4,9 +4,11 @@ import gcom.communicationmodule.NonReliableCommunication;
 import gcom.communicationmodule.QueCommunicationRMI;
 import gcom.groupmodule.GroupMember;
 import gcom.messagemodule.Message;
-import gcom.nameservice.NameService;
-import gcom.nameservice.NameServiceInterFace;
+import gcom.rmi.nameservice.NameServiceData;
+import gcom.rmi.nameservice.NameService;
 import gcom.observer.Observer;
+import gcom.rmi.rmique.RMIService;
+import gcom.rmi.rmique.RMIServiceConcrete;
 import gcom.status.GCOMException;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,14 +31,14 @@ public class GCOMTest {
     private final String GROUP_NAME = "Group 1";
     private final String GROUP_USER_NAME = "User 1";
 
-    private NameServiceInterFace nameService;
-
+    private NameService nameService;
+    private RMIService rmiService;
     private QueCommunicationRMI fakeInMessage;
 
     //private userQue
     @Before
     public void setUp() throws Exception {
-        nameService = new NameService();
+        nameService = new NameServiceData();
 
         try {
 
@@ -44,7 +46,9 @@ public class GCOMTest {
                 registry = LocateRegistry.createRegistry(1099);
                 System.out.println("Sever is ready!");
             }
+            rmiService = new RMIServiceConcrete(registry);
             registry.rebind(NameService.class.getSimpleName(), nameService);
+            registry.rebind(RMIService.class.getSimpleName(), rmiService);
             setUpIsDone = true;
         } catch (RemoteException e) {
             e.printStackTrace();

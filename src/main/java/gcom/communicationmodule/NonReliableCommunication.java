@@ -3,12 +3,13 @@ package gcom.communicationmodule;
 import gcom.messagemodule.Message;
 import gcom.observer.Observer;
 import gcom.observer.Subject;
+import gcom.rmi.RMIServer;
+import gcom.rmi.rmique.RMIService;
 import gcom.status.GCOMException;
-import gcom.status.Status;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 /**
@@ -19,14 +20,16 @@ public class NonReliableCommunication implements Communication,Subject{
     private String host;
     private String groupName;
     private Registry registry;
+    private RMIService rmiService;
     private QueCommunicationRMI quesRMI;
 
-    public NonReliableCommunication(String host, String groupName, String memberName) throws RemoteException {
+    public NonReliableCommunication(String host, String groupName, String memberName) throws RemoteException, AlreadyBoundException, NotBoundException {
         this.host = host;
         this.groupName = groupName;
-        registry = LocateRegistry.getRegistry(host);
+
         quesRMI = new QueCommunicationRMI();
-        registry.rebind(groupName+"/"+memberName,quesRMI);
+        rmiService = RMIServer.getRMIService(host);
+        rmiService.rebind(groupName+"/"+memberName,quesRMI);
     }
 
     @Override
@@ -64,9 +67,8 @@ public class NonReliableCommunication implements Communication,Subject{
      * @throws NotBoundException
      */
     private QueCommunication getMemberQue(String memberName) throws RemoteException, NotBoundException {
-        return (QueCommunication) registry.lookup(groupName+"/"+memberName);
+        return (QueCommunication) rmiService.lookup(groupName+"/"+memberName);
     }
-
 
     public void registerObservers(Observer... obs) throws RemoteException{
 
