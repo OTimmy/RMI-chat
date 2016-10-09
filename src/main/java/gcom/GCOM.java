@@ -6,13 +6,14 @@ import gcom.communicationmodule.NonReliableCommunication;
 import gcom.groupmodule.GroupMember;
 import gcom.groupmodule.Member;
 import gcom.messagemodule.*;
-import gcom.nameservice.NameService;
-import gcom.nameservice.NameServiceInterFace;
+import gcom.rmi.RMIServer;
+import gcom.rmi.nameservice.NameServiceData;
+import gcom.rmi.nameservice.NameService;
 import gcom.observer.Observer;
 import gcom.observer.Subject;
 import gcom.status.GCOMException;
-import gcom.status.Status;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class GCOM implements Subject{
     private GroupMember member;
     private MessageOrdering messageOrdering;
     private Communication communication;
-    private NameServiceInterFace nameService;
+    private NameService nameService;
 
     private String host;
     private BlockingQueue<String> outgoingChatMessage;
@@ -48,7 +49,8 @@ public class GCOM implements Subject{
 
     public GCOM(String host) throws RemoteException,NotBoundException {
         this.host            = host;
-        nameService          = NameService.getNameService(host);
+//        nameService          = NameServiceData.getNameService(host);
+        nameService          = RMIServer.getNameService(host);
         outgoingChatMessage  = new LinkedBlockingQueue<>();
 
         producerThreadActive = true;
@@ -241,7 +243,13 @@ public class GCOM implements Subject{
      */
     private Communication createCommunication(String type, String groupName, String userName) throws RemoteException {
         if(type.equals(NonReliableCommunication.class.getName())) {
-            return CommunicationFactory.createNonReliableCommunication(host,groupName,userName);
+            try {
+                return CommunicationFactory.createNonReliableCommunication(host,groupName,userName);
+            } catch (AlreadyBoundException e) {
+                e.printStackTrace();
+            } catch (NotBoundException e) {
+                e.printStackTrace();
+            }
         }
 
         return null;

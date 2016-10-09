@@ -1,8 +1,7 @@
 package gcom.groupmodule;
 
-import gcom.communicationmodule.NonReliableCommunication;
-import gcom.nameservice.NameService;
-import gcom.nameservice.NameServiceInterFace;
+import gcom.rmi.nameservice.NameServiceData;
+import gcom.rmi.nameservice.NameService;
 import gcom.status.GCOMException;
 import gcom.status.Status;
 import junit.framework.TestSuite;
@@ -22,9 +21,9 @@ import java.util.HashMap;
  * Created by c12ton on 9/29/16.
  *  Test name service funcitonality with adding groups and members to them
  */
-public class NameServiceManagerTest extends TestSuite {
+public class NameServiceDataManagerTest extends TestSuite {
     private static boolean setUpIsDone = false;
-    private NameServiceInterFace nameService;
+    private NameService nameService;
     private static Registry registry;
 
 
@@ -34,8 +33,8 @@ public class NameServiceManagerTest extends TestSuite {
 //            NameService.main(null);
             try {
                 registry = LocateRegistry.createRegistry(1099);
-                nameService = new NameService();
-                registry.rebind(NameService.class.getSimpleName(), nameService);
+                nameService = new NameServiceData();
+                registry.rebind(NameServiceData.class.getSimpleName(), nameService);
                 System.out.println("Sever is ready!");
                 System.out.println("Set up!");
             } catch (RemoteException e) {
@@ -43,18 +42,19 @@ public class NameServiceManagerTest extends TestSuite {
             }
         }
         setUpIsDone = true;
-        nameService = new NameService();
-        registry.rebind(NameService.class.getSimpleName(), nameService);
+        nameService = new NameServiceData();
+        registry.rebind(NameServiceData.class.getSimpleName(), nameService);
     }
 
     @After
     public void tearDown() throws Exception {
-        registry.unbind(NameService.class.getSimpleName());
+        registry.unbind(NameServiceData.class.getSimpleName());
     }
 
     @Test
     public void testGetNameService() throws RemoteException, NotBoundException {
-        NameService.getNameService(null);
+//        NameServiceData.getNameService(null);
+
     }
 
     @Test
