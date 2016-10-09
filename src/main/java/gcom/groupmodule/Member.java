@@ -1,6 +1,8 @@
 package gcom.groupmodule;
 
 import gcom.communicationmodule.Communication;
+import gcom.messagemodule.Message;
+import gcom.observer.Observer;
 import gcom.status.GCOMException;
 import gcom.status.Status;
 
@@ -32,10 +34,15 @@ public interface Member extends Remote {
     void removeGroup() throws RemoteException;
 
     /**
+     * Creats a group by given name. And already known
+     * communcation type.
+     */
+    void createGroup(String groupName) throws RemoteException;
+
+    /**
      * Set members for a member
      */
-    void setMembers(HashMap<String,Member> members) throws RemoteException;
-
+    void setMembers(Member[] m) throws RemoteException;
 
     /**
      *
@@ -43,5 +50,7 @@ public interface Member extends Remote {
      * @throws RemoteException
      */
     String getCommunicationType() throws RemoteException;
+
+    void sendMessageToMember(Message m);
 
 }

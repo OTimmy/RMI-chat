@@ -1,5 +1,7 @@
 package gcom.observer;
 
+import gcom.messagemodule.Message;
+
 import java.rmi.RemoteException;
 
 /**
@@ -7,5 +9,5 @@ import java.rmi.RemoteException;
  */
 public interface Subject {
     void registerObservers(Observer ...obs) throws RemoteException;
-    void notifyObserver() throws RemoteException;
+    void notifyObserver(ObserverEvent e, Message m) throws RemoteException;
 }
