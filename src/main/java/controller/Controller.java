@@ -108,6 +108,7 @@ public class Controller {
 
 
                 try {
+                    System.out.println("!!!!!!!!!!!!!!!!!:"+ s);
                     gcom.connectToGroup(data[1], data[0]);
                 } catch (GCOMException e1) {
                     e1.printStackTrace();
