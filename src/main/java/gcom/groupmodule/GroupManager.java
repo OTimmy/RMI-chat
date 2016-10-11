@@ -10,6 +10,7 @@ import gcom.status.GCOMException;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -88,11 +89,6 @@ public class GroupManager implements Manager,Subject{
             e.printStackTrace();
         }
     }
-
-    //memberLeftMessage(T t,Event)
-        //event == chatMessage
-        //event == leftMessage
-            //LeftMessage m = (LeftMessage) t
 
     @Override
     public boolean memberExist(Member m) throws RemoteException, GCOMException {

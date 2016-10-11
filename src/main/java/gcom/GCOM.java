@@ -120,6 +120,7 @@ public class GCOM implements Subject{
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
                 if(e == ObserverEvent.CHAT_MESSAGE) {
+                    System.out.println("I RECEIVED A MESSAGE!");
                     Message m = (Message) t;
                     communication.putMessage(m);
                 }
@@ -191,7 +192,6 @@ public class GCOM implements Subject{
         return t;
     }
 
-
     /**
      *Creates a thread for fetching messages
      * @return a thread for consumer
@@ -200,7 +200,9 @@ public class GCOM implements Subject{
         Thread t = new Thread(() -> {
             while(isConsumerThreadActive()) {
                 try {
+
                     Message m = communication.getMessage();
+                    System.out.println("I have certainly recieved message!");
                     notifyObserver(ObserverEvent.RECEIVED_MESSAGE,m);
                 } catch (RemoteException e) {
                     e.printStackTrace();

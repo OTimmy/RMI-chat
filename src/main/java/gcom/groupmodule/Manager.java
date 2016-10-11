@@ -3,12 +3,13 @@ package gcom.groupmodule;
 import gcom.messagemodule.Message;
 import gcom.status.GCOMException;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
  * Created by c12ton on 10/10/16.
  */
-public interface Manager {
+public interface Manager extends Remote{
 
     String[] getGroups() throws RemoteException;
 
