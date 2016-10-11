@@ -88,6 +88,8 @@ public class GUIClient {
 
         groupTable.setBorder(BorderFactory.createLineBorder(Color.black));
         groupTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane gsp = new JScrollPane(groupTable);
+        gsp.setAutoscrolls(true);
         tableModel.addColumn("Groups");
 
         inputButtonsPane.add(new JLabel("Username *"));
@@ -97,7 +99,7 @@ public class GUIClient {
         inputButtonsPane.add(createGroupButton);
 
         groupInfoPane.setLayout(new BorderLayout());
-        groupInfoPane.add(new JScrollPane(groupTable), BorderLayout.CENTER);
+        groupInfoPane.add(gsp, BorderLayout.CENTER);
         groupInfoPane.add(inputButtonsPane, BorderLayout.NORTH);
 
         groupNameInput.setMaximumSize(new Dimension(350, 20));
@@ -406,6 +408,9 @@ public class GUIClient {
             JPanel panelg = new JPanel(new GridLayout(0, 1));
 
             panelg.add(new JLabel("Select commuication"));
+
+            /*temp*/ basicNonReliableRadioButton.setSelected(true);
+
             panelg.add(basicNonReliableRadioButton);
             panelg.add(basicReliableRadioButton);
             panelg.add(treeBasedReliableRadioButton);

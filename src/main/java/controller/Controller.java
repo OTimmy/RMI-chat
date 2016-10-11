@@ -58,8 +58,6 @@ public class Controller {
                         e1.printStackTrace();
                     }
 
-//                    String comunication = gui.getCom();
-
                     try {
                         gcom.createGroup(p, gui.getName());
                     } catch (GCOMException e1) {
@@ -103,7 +101,7 @@ public class Controller {
                 } catch (NotBoundException e1) {
                     e1.printStackTrace();
                 }
-
+                gcom.registerObservers(createMessageObserver(data[1]));
                 gcomTable.put(data[1], gcom);
 
 
@@ -147,6 +145,7 @@ public class Controller {
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
                 Message msg = (Message) t;
+                System.out.println(msg.getChatMessage());
                 gui.appendMessage(group, msg.getUser() + ": \n" + msg.getChatMessage() + "\n\n");
             }
         };
@@ -171,7 +170,7 @@ public class Controller {
         gui.addActionListenerDelete(controller.createDeleteListener());
         gui.addActionListenerJoin(controller.createJoinListener());
 
-        GCOM gcom = null;
+        GCOM gcom;
         while(true){
             try {
                 gcom = new GCOM(gui.getHost());
