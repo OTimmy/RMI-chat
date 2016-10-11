@@ -3,14 +3,9 @@ package gcom;
 import gcom.communicationmodule.Communication;
 import gcom.communicationmodule.CommunicationFactory;
 import gcom.communicationmodule.NonReliableCommunication;
-import gcom.groupmodule.GroupMember;
-import gcom.groupmodule.Member;
+import gcom.groupmodule.*;
 import gcom.messagemodule.*;
-import gcom.nameservice.NameServiceConcrete;
 import gcom.observer.ObserverEvent;
-import gcom.rmi.RMIServer;
-import gcom.nameservice.NameServiceData;
-import gcom.nameservice.NameService;
 import gcom.observer.Observer;
 import gcom.observer.Subject;
 import gcom.status.GCOMException;
@@ -18,7 +13,7 @@ import gcom.status.GCOMException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -30,11 +25,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class GCOM implements Subject{
 
     //The modules
-    private GroupMember member;
+    private GroupManager groupManager;
     private MessageOrdering messageOrdering;
     private Communication communication;
 
-    private String host;
+    private ArrayList<Observer> observers;
+
     private BlockingQueue<String> outgoingChatMessage;
 
     private final Object lockIsProdActive = new Object();
@@ -46,15 +42,11 @@ public class GCOM implements Subject{
     private boolean producerThreadActive;
     private boolean consumerThreadActive;
 
-    private Observer messageObs;
 
     public GCOM(String host) throws RemoteException,NotBoundException {
-        this.host            = host;
-//        nameService          = NameServiceConcrete.
         outgoingChatMessage  = new LinkedBlockingQueue<>();
-
-
-        //GroupModule gM = new GroupModule(nameService)
+        observers            = new ArrayList<>();
+        groupManager         = new GroupManager(host);
 
 
         producerThreadActive = true;
@@ -62,11 +54,108 @@ public class GCOM implements Subject{
 
         threadProducer = createProducerThread();
         threadConsumer = createConsumerThread();
-
     }
 
-    //TODO catch exceptions here, and return status message!
-    //TODO add message que for outgoing messages, for thread to handle and wait for
+    /**
+     * @return a array of group names, currently at nameservice
+     */
+    public String[] getGroups() {
+        try {
+            return groupManager.getGroups();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * Try to join group trough leader of a group by given group name
+     * @param groupName the group to join
+     * @param name the users username for that group
+     * @return a list of member names
+     * @throws RemoteException
+     * @throws GCOMException in that member already exists
+     */
+    public String[] connectToGroup(String groupName,String name) throws GCOMException {
+
+        ArrayList<String>membersNames = new ArrayList<>();
+
+        try {
+            //setup
+            Properties properties = groupManager.getGroupProperties(groupName);
+            messageOrdering = createMessageOrdering(properties.getMessagetype(),name);
+            communication   = createCommunication(properties.getComtype());
+
+            groupManager.registerObservers(createCommunicationObs());
+
+            //connect to group
+            Member[] members = groupManager.joinGroup(groupName,name);
+
+            for(Member m:members) {
+                membersNames.add(m.getName());
+            }
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new GCOMException(e.toString());
+        } catch (AlreadyBoundException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+
+        threadConsumer.start();
+        threadProducer.start();
+
+        return membersNames.toArray(new String[]{});
+    }
+
+
+    /**
+     * @return An observer for communication.
+     */
+    private Observer createCommunicationObs() {
+        Observer ob = new Observer() {
+            @Override
+            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+                if(e == ObserverEvent.CHAT_MESSAGE) {
+                    Message m = (Message) t;
+                    communication.putMessage(m);
+                }
+            }
+        };
+        return ob;
+    }
+
+    /**
+     * Creats a group as given user as it's leader, then
+     * starts the thread for conumser and producer design.
+     * @param p is the properties for the group, name and types.
+     * @param name the user name for the client
+     * @throws GCOMException
+     */
+    public void createGroup(Properties p, String name) throws GCOMException {
+        try {
+
+            groupManager.createGroup(p,name);
+            communication   = createCommunication(p.getComtype());
+            messageOrdering = createMessageOrdering(p.getMessagetype(),name);
+
+            groupManager.registerObservers(createCommunicationObs());
+
+        } catch (Exception e) {
+            throw new GCOMException(e.toString());
+        }
+
+        threadConsumer.start();
+        threadProducer.start();
+    }
+
+
+    /**
+     * @param msg to be sent to the current group
+     */
     public void sendMessageToGroup(String msg)  {
         try {
             outgoingChatMessage.put(msg);
@@ -75,21 +164,7 @@ public class GCOM implements Subject{
         }
     }
 
-    /**
-     * @return Current groups at given name service
-     */
-    public String[] getGroups() {
-        try {
-            HashMap<String,Member> groups = nameService.getGroups();
-            return groups.keySet().toArray(new String[]{});
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
-
-    //TODO register communication as an observer for member!.
     /**
      * Creats a thread for sending messages, by waiting till a message
      * is in the que.
@@ -101,13 +176,9 @@ public class GCOM implements Subject{
             while(isProducerThreadActive()) {
                 try {
                     String msg = outgoingChatMessage.take();
-//                    messageOrdering.convertToMessage
-                    //member.sendMessage(
-                    String[] membersNames = member.getMemberNames();
-//                    Observer[] messageObs = member.getGroupMessageObs();
-                    Message  message = messageOrdering.convertToMessage(member.getName(),
-                                                                        membersNames,msg,null);
-//                    communication.sendMessage(Member[] members, message);
+                    Member[] members = groupManager.getMembers();
+                    Message  message = messageOrdering.convertToMessage(members,msg);
+                    communication.sendMessage(members, message);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (RemoteException e) {
@@ -129,11 +200,8 @@ public class GCOM implements Subject{
         Thread t = new Thread(() -> {
             while(isConsumerThreadActive()) {
                 try {
-                    communication.waitForMessage();
-                    if(messageObs != null) {
-                        Message m = communication.getMessage();
-                        messageObs.update(ObserverEvent.RECEIVED_MESSAGE,m);
-                    }
+                    Message m = communication.getMessage();
+                    notifyObserver(ObserverEvent.RECEIVED_MESSAGE,m);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -144,86 +212,6 @@ public class GCOM implements Subject{
             }
         });
         return t;
-    }
-
-    /**
-     *
-     * @return
-     * @throws RemoteException
-     */
-    public Message getMessage() throws RemoteException {
-        Message message = null;
-        try {
-            message = communication.getMessage();
-        } catch (GCOMException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return message;
-    }
-
-    /**
-     * Try to join group trough leader of a group by given group name
-     * @param groupName the group to join
-     * @param username the users username for that group
-     * @return a list of member names
-     * @throws RemoteException
-     * @throws GCOMException in that member already exists
-     */
-    public String[] connectToGroup(String groupName,String username) throws GCOMException {
-
-        try {
-
-
-            HashMap<String,Member> leaders = null;
-            leaders = nameService.getGroups();
-            Member leader = leaders.get(groupName);
-
-            communication = createCommunication(leader.getCommunicationType(),groupName,username);
-            messageOrdering = createMessageOrdering(UnorderedMessageOrdering.class.getName());
-
-            member = new GroupMember(username,groupName,leader.getCommunicationType());
-            member.
-            //member.setMessageObs(createMessageObs)
-            leader.joinGroup(member);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-        threadConsumer.start();
-        threadProducer.start();
-
-        return member.getMemberNames();
-    }
-
-    /**
-     * Observers current member for incoming messages
-     * @return an observer used to send messages to communication
-     */
-    private Observer createMemberCommunicationMessageOb() {
-        Observer ob = new Observer() {
-            @Override
-            public void update(Message m) {
-                communication.putMessage(m);
-            }
-        };
-        return ob;
-    }
-
-    public void createGroup(String groupName, String username,String comType) throws GCOMException {
-        try {
-            member = new GroupMember(username,groupName,comType);
-            nameService.registerGroup(groupName,member);
-            communication = createCommunication(comType,groupName,username);
-            messageOrdering = createMessageOrdering(UnorderedMessageOrdering.class.getName()); //todo
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-
-        threadConsumer.start();
-        threadProducer.start();
     }
 
     public void leaveGroup() {
@@ -269,34 +257,28 @@ public class GCOM implements Subject{
     /**
      * Creates a communcation with repsect to given type.
      * And add appropiate listeners and observers
-     * @param type of
+     * @param type of communication
      * @return
      */
-    private Communication createCommunication(String type, String groupName, String userName) throws RemoteException {
-        if(type.equals(NonReliableCommunication.class.getName())) {
-            try {
-                return CommunicationFactory.createNonReliableCommunication(host,groupName,userName);
-            } catch (AlreadyBoundException e) {
-                e.printStackTrace();
-            } catch (NotBoundException e) {
-                e.printStackTrace();
-            }
+    private Communication createCommunication(Class type) throws RemoteException, AlreadyBoundException, NotBoundException {
+        if(NonReliableCommunication.class.getClass() == type) {
+            return CommunicationFactory.createNonReliableCommunication();
         }
 
         return null;
     }
 
     /**
-     *
+     * @param name the name of the sender. That's the current user.
      * @param type
      * @return
      */
-    private MessageOrdering createMessageOrdering(String type) {
-        if(type.equals(CausalMessageOrdering.class.getName())) {
-            return new CausalMessageOrdering();
+    private MessageOrdering createMessageOrdering(Class type, String name) {
+        if(CausalMessageOrdering.class.getClass() == type) {
+            return new CausalMessageOrdering(name);
         }
 
-        return new UnorderedMessageOrdering();
+        return new UnorderedMessageOrdering(name);
     }
 
     /**
@@ -304,33 +286,15 @@ public class GCOM implements Subject{
      * @param obs
      */
     public void registerObservers(Observer... obs) {
-        messageObs = obs[0];
+        for(Observer ob:obs) {
+            observers.add(ob);
+        }
     }
 
     @Override
-    public void notifyObserver(ObserverEvent e, Message m) throws RemoteException {
-
-    }
-
-    public void notifyObserver() {
-
-        //for (int i = 0; i <
-        //for observers:
-            //if messageStatus != null
-                //
-
-
-//        Message m = communication.getMessage();
-//        if(m.getStatusMessage() != null) {
-//            //member.update()
-//            //statusObserver.update()
-//        }
-
-        //if chatMessage.isNotEmpy
-            //  obsChatMessage.update()
-
-        // if StatusMesage.isNotEmpty()
-            // obsStatusMessage.update()
-
+    public <T> void notifyObserver(ObserverEvent e, T t) throws RemoteException, GCOMException {
+        for(Observer ob:observers) {
+            ob.update(e,t);
+        }
     }
 }

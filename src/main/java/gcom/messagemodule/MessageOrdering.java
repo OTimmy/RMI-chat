@@ -1,5 +1,6 @@
 package gcom.messagemodule;
 
+import gcom.groupmodule.Member;
 import gcom.status.Status;
 
 import java.rmi.RemoteException;
@@ -10,12 +11,12 @@ import java.rmi.RemoteException;
 public interface MessageOrdering {
 
     /**
-     *
-     * @param membersName
+     * @param
      * @param msg
      * @return
      */
-    Message convertToMessage(String user, String[] membersName, String msg, Status status) throws RemoteException;
+    Message convertToMessage(Member[] members, String msg) throws RemoteException;
+
 
     /**
      *

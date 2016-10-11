@@ -8,20 +8,20 @@ import java.rmi.server.UnicastRemoteObject;
 /**
  * Created by c12ton on 2016-10-06.
  */
-public class ClientMessage extends UnicastRemoteObject implements Message{
+public class ChatMessage extends UnicastRemoteObject implements Message{
     private String message;
     private Status status;
     private String user;
     /**
      * @param user the username of the sender
      * @param message the chat message, null if non is needed
-     * @param status the status of the  message, null if non is needed.
+//     * @param status the status of the  message, null if non is needed.
      * @throws RemoteException
      */
-    public ClientMessage(String user,String message,Status status) throws RemoteException {
+    public ChatMessage(String user, String message) throws RemoteException {
         super();
         this.message = message;
-        this.status = status;
+//        this.status = status;
         this.user = user;
     }
 

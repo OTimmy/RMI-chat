@@ -23,10 +23,11 @@ public class NameServiceConcrete extends UnicastRemoteObject implements NameServ
      * @return current groups
      */
     public synchronized ConcurrentHashMap<String, Member> getGroups() throws RemoteException{
-        return (ConcurrentHashMap<String, Member>) leaders;
+        return  leaders;
     }
 
-    public synchronized Status registerGroup(String groupName, Member member)
+    @Override
+    public  Status registerGroup(String groupName, Member member)
             throws RemoteException {
 
         if(!leaders.containsKey(groupName)) {
@@ -37,21 +38,28 @@ public class NameServiceConcrete extends UnicastRemoteObject implements NameServ
         return Status.GROUP_ALREADY_EXISTS;
     }
 
+    @Override
     public void removeGroup(String groupName) throws RemoteException{
         leaders.remove(groupName);
 
+    }
+
+    @Override
+    public Member getGroupLeader(String groupName) {
+        return leaders.get(groupName);
     }
 
     /**
      *
      * @return
      */
-    private static NameService getNameService(String host)
+    public static NameService getNameService(String host)
             throws RemoteException, NotBoundException {
 
         Registry registry = LocateRegistry.getRegistry(host);
         return (NameService) registry.lookup(NameService.class.getSimpleName());
     }
+
 
     /**
      *
@@ -69,5 +77,25 @@ public class NameServiceConcrete extends UnicastRemoteObject implements NameServ
             e.printStackTrace();
         }
     }
+
+
+    public static void main(String[] args) {
+        startService();
+    }
+
+    private static void startService() {
+
+        try {
+            Registry registry = LocateRegistry.createRegistry(1099);
+            //Initiate an empty hashet of groups
+            NameService nameService = new NameServiceConcrete();
+            registry.rebind(NameService.class.getSimpleName(), nameService);
+            System.out.println("Sever is ready!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

@@ -5,6 +5,11 @@ package gcom.status;
  */
 public class GCOMException extends Exception{
     private Status status;
+
+    public GCOMException(String s) {
+        super(s);
+    }
+
     public GCOMException(Status status) {
         super(status.toString());
     }

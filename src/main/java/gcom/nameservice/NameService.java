@@ -11,7 +11,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by c12ton on 2016-09-30.
  */
 public interface NameService extends Remote {
+
+
     ConcurrentHashMap<String, Member> getGroups() throws RemoteException;
-    void registerGroup(String groupName, Member member) throws RemoteException;
+
+
+    Member getGroupLeader(String groupName) throws RemoteException;
+
+
+    Status registerGroup(String groupName, Member member) throws RemoteException;
+
+
     void removeGroup(String groupName) throws RemoteException;
 }

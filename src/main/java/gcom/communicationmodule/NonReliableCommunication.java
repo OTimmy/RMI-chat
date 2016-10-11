@@ -3,8 +3,6 @@ package gcom.communicationmodule;
 import gcom.groupmodule.Member;
 import gcom.messagemodule.Message;
 import gcom.status.GCOMException;
-
-import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.concurrent.BlockingDeque;
@@ -17,13 +15,9 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class NonReliableCommunication implements Communication{
 
-
     private BlockingDeque<Message> inMessages;
-    private Message currentMessage;
-    private String host;
-    private String groupName;
 
-    public NonReliableCommunication() throws RemoteException, AlreadyBoundException, NotBoundException {
+    public NonReliableCommunication()  {
         inMessages = new LinkedBlockingDeque<>();
     }
 
@@ -32,20 +26,28 @@ public class NonReliableCommunication implements Communication{
         inMessages.add(m);
     }
 
+    /**
+     * Non reliable multi cast.
+     * @param members
+     * @param message
+     * @throws RemoteException
+     * @throws NotBoundException
+     * @throws InterruptedException
+     */
     @Override
-    public void sendMessage(Member[] members, Message message) throws RemoteException, NotBoundException, InterruptedException {
+    public void sendMessage(Member[] members, Message message)  {
         for(Member m:members) {
-            m.sendMessageToMember(message);
+            try {
+                m.sendMessage(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
-    public void waitForMessage() throws RemoteException, InterruptedException {
-        currentMessage = inMessages.take();
+    public Message getMessage() throws RemoteException, GCOMException, InterruptedException {
+        return inMessages.take();
     }
 
-    @Override
-    public Message getMessage() throws RemoteException, GCOMException, InterruptedException {
-        return currentMessage;
-    }
 }

@@ -1,8 +1,5 @@
 package gcom.communicationmodule;
 
-import gcom.GCOM;
-import gcom.status.GCOMException;
-
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
