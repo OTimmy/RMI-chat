@@ -238,13 +238,6 @@ public class GUIClient {
     public void addJoinTab(String group){
         if(!group.equals("") && (tabbedPane.getTabCount() < MAXIMUM_TABS)) {
 
-            ButtonModel comunication = radioButtonsGroup.getSelection();
-
-            if (comunication == null) {
-                JOptionPane.showMessageDialog(tabbedPane, "you must choose one of the communication types");
-                return;
-            }
-
             tabbedPane.addTab(group, chattTab(group));
         }
     }

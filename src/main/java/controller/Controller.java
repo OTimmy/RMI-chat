@@ -35,10 +35,6 @@ public class Controller {
 
                 String group = gui.showGroupCreation();
 
-
-
-
-
                 GCOM gcom = null;
 
                 if (group != null) {
