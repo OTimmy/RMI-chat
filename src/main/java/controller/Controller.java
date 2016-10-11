@@ -2,7 +2,11 @@ package controller;
 
 import gcom.GCOM;
 import gcom.communicationmodule.NonReliableCommunication;
+import gcom.groupmodule.GroupProperties;
 import gcom.messagemodule.Message;
+import gcom.messagemodule.UnorderedMessageOrdering;
+import gcom.observer.Observer;
+import gcom.observer.ObserverEvent;
 import gcom.status.GCOMException;
 import view.GUIClient;
 
@@ -31,9 +35,9 @@ public class Controller {
 
                 String group = gui.showGroupCreation();
 
-                String comunication = gui.getCom();
 
-                gui.addActionListenerSend(group, sendListern());
+
+
 
                 GCOM gcom = null;
 
@@ -50,15 +54,23 @@ public class Controller {
                     }
 
                     gcom.registerObservers(createMessageObserver(group));
+                    GroupProperties p = null;
+
+                    try {
+                        p = new GroupProperties(gui.getCom(), UnorderedMessageOrdering.class.getClass(),group);
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    }
 
 //                    String comunication = gui.getCom();
 
                     try {
-                        gcom.createGroup(group, "test",comunication /*TEMP !NonReliableCommunication.class.getName()*/);
+                        gcom.createGroup(p, gui.getName());
                     } catch (GCOMException e1) {
                         e1.printStackTrace();
                     }
                     gui.addGroupTab();
+                    gui.addActionListenerSend(group, sendListern());
                     gcomTable.put(group, gcom);
                 }
             }
@@ -134,21 +146,15 @@ public class Controller {
 
 
     private gcom.observer.Observer createMessageObserver(final String group) {
-        gcom.observer.Observer obs = new gcom.observer.Observer() {
-
+        Observer ob = new Observer() {
             @Override
-            public void update() {
-                GCOM gcom = gcomTable.get(group);
-                Message msg;
-                try {
-                    msg = gcom.getMessage();
-                    gui.appendMessage(group, msg.getUser() + ": \n" + msg.getChatMessage() + "\n\n");
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+                Message msg = (Message) t;
+                gui.appendMessage(group, msg.getUser() + ": \n" + msg.getChatMessage() + "\n\n");
             }
         };
-        return obs;
+
+        return ob;
     }
 
 

@@ -359,12 +359,12 @@ public class GUIClient {
         }
     }
 
-    public String getCom() {
+    public Class getCom() {
 
         System.out.println(groupNameInput.getText());
 
         if(basicNonReliableRadioButton.isSelected()){
-            return NonReliableCommunication.class.getName();
+            return NonReliableCommunication.class.getClass();
         }
         return null;
     }
@@ -400,6 +400,10 @@ public class GUIClient {
     public String showGroupCreation() {
         new JGroupCreation();
         return groupNameInput.getText();
+    }
+
+    public String getName() {
+        return usernameTextField.getText();
     }
 
     public class JGroupCreation extends JDialog {
