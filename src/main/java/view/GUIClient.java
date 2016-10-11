@@ -48,7 +48,7 @@ public class GUIClient {
     private JTextField usernameTextField = new JTextField(20);
     private JButton deleteGroupButton = new JButton("Delete");
     private JTable groupTable;
-    private int MAXIMUM_TABS = 9;
+    private int MAXIMUM_TABS = 10;
     private DefaultTableModel tableModel = new DefaultTableModel();
 
 
@@ -87,16 +87,17 @@ public class GUIClient {
         });
 
         groupTable.setBorder(BorderFactory.createLineBorder(Color.black));
+        groupTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tableModel.addColumn("Groups");
 
-        inputButtonsPane.add(new JLabel("Username"));
+        inputButtonsPane.add(new JLabel("Username *"));
         inputButtonsPane.add(usernameTextField);
         inputButtonsPane.add(joinGroupButton);
         inputButtonsPane.add(deleteGroupButton);
         inputButtonsPane.add(createGroupButton);
 
         groupInfoPane.setLayout(new BorderLayout());
-        groupInfoPane.add(groupTable, BorderLayout.CENTER);
+        groupInfoPane.add(new JScrollPane(groupTable), BorderLayout.CENTER);
         groupInfoPane.add(inputButtonsPane, BorderLayout.NORTH);
 
         groupNameInput.setMaximumSize(new Dimension(350, 20));
@@ -371,6 +372,12 @@ public class GUIClient {
     public void setLeaderOf(String group){
             leaderOf.add(group);
     }
+
+    public void removeLeaderOf(String group){
+        leaderOf.remove(group);
+    }
+
+
 
     public void setMembers(String group, String[] members){
 
