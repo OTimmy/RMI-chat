@@ -1,13 +1,15 @@
 package gcom;
 
 import gcom.communicationmodule.NonReliableCommunication;
-import gcom.communicationmodule.QueCommunicationRMI;
-import gcom.groupmodule.GroupMember;
+import gcom.groupmodule.GroupManager;
+import gcom.groupmodule.GroupProperties;
+import gcom.groupmodule.Properties;
 import gcom.messagemodule.Message;
-import gcom.nameservice.NameServiceData;
+import gcom.messagemodule.UnorderedMessageOrdering;
+import gcom.nameservice.NameService;
+import gcom.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
-import gcom.rmi.rmique.RMIService;
-import gcom.rmi.rmique.RMIServiceConcrete;
+import gcom.observer.ObserverEvent;
 import gcom.status.GCOMException;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,143 +29,79 @@ public class GCOMTest {
     private static Registry registry;
     private static boolean setUpIsDone = false;
 
-    private final String GROUP_NAME = "Group 1";
-    private final String GROUP_USER_NAME = "User 1";
+    private final String FAKE_LEADER_NAME = "fake_leader";
+    private final String FAKE_GROUP_NAME  = "fake_group";
+
 
     private NameService nameService;
-    private RMIService rmiService;
-    private QueCommunicationRMI fakeInMessage;
 
     //private userQue
     @Before
     public void setUp() throws Exception {
-        nameService = new NameServiceData();
-
-        try {
-
-            if(!setUpIsDone) {
-                registry = LocateRegistry.createRegistry(1099);
-                System.out.println("Sever is ready!");
-            }
-            rmiService = new RMIServiceConcrete(registry);
-            registry.rebind(NameService.class.getSimpleName(), nameService);
-            registry.rebind(RMIService.class.getSimpleName(), rmiService);
-            setUpIsDone = true;
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if(!setUpIsDone) {
+            registry = LocateRegistry.createRegistry(1099);
+            System.out.println("Sever is ready!");
         }
-        setUpFakeGroup();
+        setUpIsDone = true;
+        nameService = new NameServiceConcrete();
+        registry.rebind(NameService.class.getSimpleName(),nameService);
     }
 
     /**
      * Setup a fake group with non-reliable communication!
      * @throws RemoteException
      */
-    private void setUpFakeGroup() throws RemoteException {
-        GroupMember member = new GroupMember(GROUP_USER_NAME,GROUP_NAME,
-                              NonReliableCommunication.class.getName());
-        nameService.registerGroup(GROUP_NAME,member);
-        fakeInMessage = new QueCommunicationRMI();
+    private void setUpFakeGroup() throws RemoteException, NotBoundException {
+        String name      = FAKE_LEADER_NAME;
+        String groupName = FAKE_GROUP_NAME;
 
-        //Registering users message que on rmi
-        registry.rebind(GROUP_NAME+"/"+GROUP_USER_NAME, fakeInMessage);
+        GroupManager manager = new GroupManager(null);
+        Class comtype        = NonReliableCommunication.class.getClass();
+        Class msgtype        = UnorderedMessageOrdering.class.getClass();
+        Properties p = new GroupProperties(comtype,msgtype,groupName);
+        manager.createGroup(p,name);
     }
 
     @Test
     public void testJoinGroup() throws RemoteException, NotBoundException, GCOMException {
+        setUpFakeGroup();
 
         String username = "BigRed";
         GCOM gcom = new GCOM(null);
-        String[] membersName =  gcom.connectToGroup(GROUP_NAME,username);
-        assertArrayEquals(new String[]{GROUP_USER_NAME,username},membersName);
-        //Test for class typ
+        String[] membersName =  gcom.connectToGroup(FAKE_GROUP_NAME,username);
+        assertArrayEquals(new String[]{FAKE_LEADER_NAME,username},membersName);
     }
 
     @Test
-    public void testCreateGroupAndSendMessage() throws GCOMException {
-        try {
-            String groupName = "MyGroup!";
-            String username = "MeTheUser";
-
-            GCOM gcom = new GCOM(null);
-
-            Observer observer = new Observer() {
-                @Override
-                public void update() {
-
-                }
-            };
-
-            gcom.createGroup(groupName,username,
-                             NonReliableCommunication.class.getName());
-
-
-            String myMessage = "Hello user!";
-            gcom.sendMessageToGroup(myMessage);
-
-
-//            gcom.createGroup();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    @Test
-    public void testCreateGrupAndJoinGroupAndSend() {
-
-    }
-
-
-    @Test(timeout=1000)
     public void testSendMessage() throws RemoteException, NotBoundException, GCOMException, InterruptedException {
-        String username = "BigRed";
+        setUpFakeGroup();
+
+        String name = "BigRed";
         GCOM gcom = new GCOM(null);
 
-        gcom.connectToGroup(GROUP_NAME,username);
-        String myMessage = "Hej user";
-        String mySecondMessage ="Hej User2";
-        gcom.sendMessageToGroup(myMessage);
-        gcom.sendMessageToGroup(mySecondMessage);
-
-        fakeInMessage.waitForChatMessage();
-        Message mFake = fakeInMessage.getMessage();
-
-        assertEquals(mFake.getChatMessage(),myMessage);
-        fakeInMessage.waitForChatMessage();
-        mFake = fakeInMessage.getMessage();
-        assertEquals(mFake.getChatMessage(),mySecondMessage);
-    }
-
-    @Test
-    public void receiveMessage() throws RemoteException, NotBoundException, GCOMException, InterruptedException {
-        String username = "BigRed";
-        String myMessage = "Hej " + GROUP_USER_NAME;
-        final GCOM gcom = new GCOM(null);
-
-        final String[] retrivedMessage = {null};
-        Observer obReceiving = new Observer() {
+        final String[] retrivedMessage = new String[1];
+        Observer ob = new Observer() {
             @Override
-            public void update() {
-                try {
-                    retrivedMessage[0] = gcom.getMessage().getChatMessage();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+                if(e == ObserverEvent.RECEIVED_MESSAGE) {
+                    Message m = (Message) t;
+                    System.out.println("message: " + m.getChatMessage());
+                    retrivedMessage[0] = m.getChatMessage();
                 }
             }
         };
 
-        gcom.registerObservers(obReceiving);
-        gcom.connectToGroup(GROUP_NAME,username);
-        //add observer
+        gcom.registerObservers(ob);
+        gcom.connectToGroup(FAKE_GROUP_NAME,name);
+        String myMessage = "Hej!";
 
         gcom.sendMessageToGroup(myMessage);
 
-        //Giving the consumer thread a chance to finnish
-        Thread.sleep(100);
-        assertEquals(myMessage,retrivedMessage[0]);
+        //wait for message
+        Thread.sleep(200);
+        assertEquals(retrivedMessage[0],myMessage);
+
     }
+
 
 }
