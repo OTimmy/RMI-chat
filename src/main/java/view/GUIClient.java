@@ -1,10 +1,21 @@
 package view;
 
+import gcom.communicationmodule.NonReliableCommunication;
+
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.util.HashSet;
+
+/**
+ * Causal ordering builds upon FIFO ordering.
+ * If message B is broadcast from node P1 after message A has been delivered,
+ * then message B must be delivered after message A is delivered, at all other nodes.
+ */
+
 
 /**
  * Created by c12ton on 9/29/16.
@@ -12,21 +23,23 @@ import java.awt.event.ActionListener;
 
 public class GUIClient {
 
+    private HashSet<String> leaderOf = new HashSet<>();
+
     private String host = null;
 
-    private ButtonGroup radioButtons = new ButtonGroup();
+    private ButtonGroup radioButtonsGroup = new ButtonGroup();
 
     private JFrame frame = new JFrame("GUIClient");
-    private JPanel tablePane = new JPanel();
-    private JPanel userJoinDeletePane = new JPanel();
+    private JPanel groupInfoPane = new JPanel();
+    private JPanel inputButtonsPane = new JPanel();
 
-    private JPanel groupsPanel = new JPanel();
+    private JPanel groupTab = new JPanel();
 
-    private JTabbedPane tabbedPane1 = new JTabbedPane();
+    private JTabbedPane tabbedPane = new JTabbedPane();
     private JButton joinGroupButton = new JButton("Join");
-    private JTextField groupNameTextField = new JTextField();
+    private JTextField groupNameInput = new JTextField();
 
-    private JLabel label = new JLabel("Create group");
+    private JLabel createLabel = new JLabel("Create group");
     private JRadioButton basicNonReliableRadioButton = new JRadioButton("Basic non-reliable");
     private JRadioButton basicReliableRadioButton = new JRadioButton("Basic reliable");
     private JRadioButton treeBasedReliableRadioButton = new JRadioButton("tree-based reliable");
@@ -34,74 +47,103 @@ public class GUIClient {
 
     private JTextField usernameTextField = new JTextField(20);
     private JButton deleteGroupButton = new JButton("Delete");
-    private JTable table1;
-    private int MAXIMUM_TABS = 9;
-    private DefaultTableModel model = new DefaultTableModel();
+    private JTable groupTable;
+    private int MAXIMUM_TABS = 10;
+    private DefaultTableModel tableModel = new DefaultTableModel();
 
 
     public GUIClient() {
 
-        host = JOptionPane.showInputDialog(tabbedPane1, "Enter Host:", "localhost");
+        host = inputHostMessage();
 
         if(host == (null)){
-            return;
+            System.exit(0);
         }
 
         //check if connection is available
         //if not then ask again
 
 
-        table1 = new JTable(model){
+        groupTable = new JTable(tableModel){
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
 
-        table1.setBorder(BorderFactory.createLineBorder(Color.black));
-        model.addColumn("Groups");
+        groupTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int index = groupTable.getSelectedRow();
 
-        userJoinDeletePane.add(usernameTextField);
-        userJoinDeletePane.add(joinGroupButton);
-        userJoinDeletePane.add(deleteGroupButton);
+                if(leaderOf.contains(groupTable.getValueAt(index, 0))){
+                    joinGroupButton.setEnabled(false);
+                    deleteGroupButton.setEnabled(true);
+                }else {
+                    joinGroupButton.setEnabled(true);
+                    deleteGroupButton.setEnabled(false);
+                }
+            }
+        });
 
-        tablePane.setLayout(new BorderLayout());
-        tablePane.add(table1, BorderLayout.CENTER);
-        tablePane.add(userJoinDeletePane, BorderLayout.SOUTH);
+        groupTable.setBorder(BorderFactory.createLineBorder(Color.black));
+        groupTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableModel.addColumn("Groups");
 
-        groupNameTextField.setMaximumSize(new Dimension(350, 20));
+        inputButtonsPane.add(new JLabel("Username *"));
+        inputButtonsPane.add(usernameTextField);
+        inputButtonsPane.add(joinGroupButton);
+        inputButtonsPane.add(deleteGroupButton);
+        inputButtonsPane.add(createGroupButton);
 
-        radioButtons.add(basicNonReliableRadioButton);
-        radioButtons.add(basicReliableRadioButton);
-        radioButtons.add(treeBasedReliableRadioButton);
+        groupInfoPane.setLayout(new BorderLayout());
+        groupInfoPane.add(new JScrollPane(groupTable), BorderLayout.CENTER);
+        groupInfoPane.add(inputButtonsPane, BorderLayout.NORTH);
+
+        groupNameInput.setMaximumSize(new Dimension(350, 20));
+
+        radioButtonsGroup.add(basicNonReliableRadioButton);
+        radioButtonsGroup.add(basicReliableRadioButton);
+        radioButtonsGroup.add(treeBasedReliableRadioButton);
 
         basicReliableRadioButton.setEnabled(false);
         treeBasedReliableRadioButton.setEnabled(false);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(label);
-        panel.add(basicNonReliableRadioButton);
-        panel.add(basicReliableRadioButton);
-        panel.add(treeBasedReliableRadioButton);
-        panel.add(groupNameTextField);
-        panel.add(createGroupButton);
+//        groupNameInput.setPreferredSize(new Dimension(1,1));
+
+//        JPanel panel = new JPanel();
+//        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+//        panel.setBorder(BorderFactory.createLineBorder(Color.black));
+//        panel.setMaximumSize(new Dimension(20,20));
+//        panel.add(createLabel);
+//        panel.add(Box.createVerticalStrut(20));
+//        panel.add(basicNonReliableRadioButton);
+//        panel.add(basicReliableRadioButton);
+//        panel.add(treeBasedReliableRadioButton);
+//        panel.add(Box.createVerticalStrut(10));
+//        panel.add(new JLabel("\nGroupname:"));
+//        panel.add(groupNameInput);
+//        panel.add(createGroupButton);
 
 
-        groupsPanel.setLayout(new BorderLayout(2,2));
-        groupsPanel.add(tablePane, BorderLayout.CENTER);
-        groupsPanel.add(panel, BorderLayout.EAST);
+        groupTab.setLayout(new BorderLayout(2,2));
+        groupTab.add(groupInfoPane, BorderLayout.CENTER);
+//        groupTab.add(panel, BorderLayout.EAST);
 
 
-        tabbedPane1.addTab("Groups", groupsPanel);
+        tabbedPane.addTab("Groups", groupTab);
 
-        frame.add(tabbedPane1);
+        frame.add(tabbedPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(600,400));
         //frame.setResizable(false);
         frame.pack();
         frame.setVisible(true);
 
+    }
+
+    public String inputHostMessage(){
+        return JOptionPane.showInputDialog(tabbedPane, "Enter Host:", "localhost");
     }
 
     public String getHost() {
@@ -120,9 +162,31 @@ public class GUIClient {
         JScrollPane spc = new JScrollPane(chattArea);
 
         JTextArea messageArea = new JTextArea( 4, 45);
+
         JButton sendButton = new JButton("Send");
         sendButton.setName(group);
         sendButton.setPreferredSize(new Dimension(80,62));
+
+        messageArea.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    e.consume();
+                    sendButton.doClick();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
         JScrollPane textPane= new JScrollPane(messageArea);
         JPanel messagePane = new JPanel();
         messagePane.add(textPane);
@@ -142,45 +206,46 @@ public class GUIClient {
 
     public String addGroupTab(){
 
-        String s = groupNameTextField.getText();
+        String s = groupNameInput.getText();
 
-        if(!s.equals("") && (tabbedPane1.getTabCount() < MAXIMUM_TABS)){
+        if(!s.equals("") && (tabbedPane.getTabCount() < MAXIMUM_TABS)){
 
-            ButtonModel comunication = radioButtons.getSelection();
+            ButtonModel comunication = radioButtonsGroup.getSelection();
 
             if(comunication == null){
-                JOptionPane.showMessageDialog(tabbedPane1, "you must choose one of the communication types");
+                JOptionPane.showMessageDialog(tabbedPane, "Choose one of the communication types");
+                return null;
+            }else if(usernameTextField.getText().equals("")){
+                JOptionPane.showMessageDialog(tabbedPane, "Enter username");
                 return null;
             }
 
-            tabbedPane1.addTab(s, chattTab(s));
-            model.addRow(new Object[] {s});
+            tabbedPane.addTab(s, chattTab(s));
+            tableModel.addRow(new Object[] {s});
 
-
-            //getMessage(s);
-
+            leaderOf.add(s);
             return s;
         }
-        else if(tabbedPane1.getTabCount() >= MAXIMUM_TABS){
-            JOptionPane.showMessageDialog(tabbedPane1, "Too many tabs open");
+        else if(tabbedPane.getTabCount() >= MAXIMUM_TABS){
+            JOptionPane.showMessageDialog(tabbedPane, "Too many tabs open");
         }
         else{
-            JOptionPane.showMessageDialog(tabbedPane1, "Fill in the groupname!");
+            JOptionPane.showMessageDialog(tabbedPane, "Fill in the groupname!");
         }
         return null;
     }
 
     public void addJoinTab(String group){
-        if(!group.equals("") && (tabbedPane1.getTabCount() < MAXIMUM_TABS)) {
+        if(!group.equals("") && (tabbedPane.getTabCount() < MAXIMUM_TABS)) {
 
-            ButtonModel comunication = radioButtons.getSelection();
+            ButtonModel comunication = radioButtonsGroup.getSelection();
 
             if (comunication == null) {
-                JOptionPane.showMessageDialog(tabbedPane1, "you must choose one of the communication types");
+                JOptionPane.showMessageDialog(tabbedPane, "you must choose one of the communication types");
                 return;
             }
 
-            tabbedPane1.addTab(group, chattTab(group));
+            tabbedPane.addTab(group, chattTab(group));
         }
     }
 
@@ -188,13 +253,13 @@ public class GUIClient {
 
         String username = usernameTextField.getText();
         if(username.equals("")){
-            JOptionPane.showMessageDialog(tabbedPane1, "Enter Username");
+            JOptionPane.showMessageDialog(tabbedPane, "Enter Username");
         }
 
 
-        int row = table1.getSelectedRow();
+        int row = groupTable.getSelectedRow();
         if(row > -1){
-            String group = (String) table1.getValueAt(table1.getSelectedRow(), 0);
+            String group = (String) groupTable.getValueAt(groupTable.getSelectedRow(), 0);
 
             return username + "/" + group;
         }
@@ -204,11 +269,11 @@ public class GUIClient {
 
     public void appendMessage(String group, String message){
 
-        for(int i = tabbedPane1.getTabCount()-1; i >= 1; i--){
+        for(int i = tabbedPane.getTabCount()-1; i >= 1; i--){
 
-            JComponent tp = (JComponent) tabbedPane1.getComponentAt(i);
+            JComponent tp = (JComponent) tabbedPane.getComponentAt(i);
 
-            if(tabbedPane1.getTitleAt(i).equals(group)){
+            if(tabbedPane.getTitleAt(i).equals(group)){
                 JScrollPane sp = (JScrollPane) tp.getComponent(1);
 
                 JViewport viewport = sp.getViewport();
@@ -221,11 +286,11 @@ public class GUIClient {
     }
 
     public String getMessage(String group) {
-        for(int i = tabbedPane1.getTabCount()-1; i >= 1; i--){
+        for(int i = tabbedPane.getTabCount()-1; i >= 1; i--){
 
-            JComponent tp = (JComponent) tabbedPane1.getComponentAt(i);
+            JComponent tp = (JComponent) tabbedPane.getComponentAt(i);
 
-            if(tabbedPane1.getTitleAt(i).equals(group)){
+            if(tabbedPane.getTitleAt(i).equals(group)){
                 JPanel sp = (JPanel) tp.getComponent(2);
 
                 JScrollPane spTextFiled = (JScrollPane) sp.getComponent(0);
@@ -234,6 +299,8 @@ public class GUIClient {
                 JTextArea ta = (JTextArea) viewport.getView();
 
                 String msg = ta.getText();
+
+                System.out.println("IM HERE");
 
                 ta.setText("");
                 return msg;
@@ -244,26 +311,24 @@ public class GUIClient {
 
     public void deleteGroup() {
 
-        if (table1.getRowCount() > 0){
-            int row = table1.getSelectedRow();
+        if (groupTable.getRowCount() > 0){
+            int row = groupTable.getSelectedRow();
             if(row != -1){
-                String group = (String) table1.getValueAt(row,0);
-                //System.out.println(group);
 
-                model.removeRow(row);
-                tabbedPane1.removeTabAt(row+1);
+                tableModel.removeRow(row);
+                tabbedPane.removeTabAt(row+1);
             }
         }
     }
 
     public void updateGroups(String[] groups){
 
-        for(int i = table1.getRowCount(); i > 0; i--){
-            model.removeRow(i);
+        for(int i = groupTable.getRowCount(); i > 0; i--){
+            tableModel.removeRow(i);
         }
 
         for (String group:groups) {
-            model.addRow(new Object[]{group});
+            tableModel.addRow(new Object[]{group});
         }
     }
 
@@ -281,16 +346,87 @@ public class GUIClient {
 
     public void addActionListenerSend(String group, ActionListener a){
 
-        for(int i = tabbedPane1.getTabCount()-1; i >= 1; i--){
+        for(int i = tabbedPane.getTabCount()-1; i >= 1; i--){
 
-            JComponent tp = (JComponent) tabbedPane1.getComponentAt(i);
+            JComponent tp = (JComponent) tabbedPane.getComponentAt(i);
 
-            if(tabbedPane1.getTitleAt(i).equals(group)){
+            if(tabbedPane.getTitleAt(i).equals(group)){
                 JPanel sp = (JPanel) tp.getComponent(2);
 
                 JButton send = (JButton) sp.getComponent(1);
                 send.addActionListener(a);
             }
+        }
+    }
+
+    public String getCom() {
+
+        System.out.println(groupNameInput.getText());
+
+        if(basicNonReliableRadioButton.isSelected()){
+            return NonReliableCommunication.class.getName();
+        }
+        return null;
+    }
+
+    public void setLeaderOf(String group){
+            leaderOf.add(group);
+    }
+
+    public void removeLeaderOf(String group){
+        leaderOf.remove(group);
+    }
+
+
+
+    public void setMembers(String group, String[] members){
+
+        for(int i = tabbedPane.getTabCount()-1; i >= 1; i--){
+
+            JComponent tp = (JComponent) tabbedPane.getComponentAt(i);
+
+            if(tabbedPane.getTitleAt(i).equals(group)){
+                JScrollPane sp = (JScrollPane) tp.getComponent(1);
+
+                JViewport viewport = sp.getViewport();
+                JTextArea ta = (JTextArea) viewport.getView();
+                for(String m: members){
+                    ta.append(m + "\n");
+                }
+            }
+        }
+    }
+
+    public String showGroupCreation() {
+        new JGroupCreation();
+        return groupNameInput.getText();
+    }
+
+    public class JGroupCreation extends JDialog {
+
+        public JGroupCreation() {
+
+            JPanel panelg = new JPanel(new GridLayout(0, 1));
+
+            panelg.add(new JLabel("Select commuication"));
+            panelg.add(basicNonReliableRadioButton);
+            panelg.add(basicReliableRadioButton);
+            panelg.add(treeBasedReliableRadioButton);
+
+            panelg.add(Box.createVerticalStrut(10));
+
+            panelg.add(new JLabel("Groupname:"));
+            panelg.add(groupNameInput);
+
+            int result = JOptionPane.showConfirmDialog(frame, panelg, "Create Group",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                System.out.println("info");
+            } else {
+                System.out.println("Cancelled");
+            }
+
+            setLocation(tabbedPane.getLocation());
         }
     }
 }
