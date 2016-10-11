@@ -14,7 +14,7 @@ import java.rmi.RemoteException;
  */
 public interface Communication {
     void sendMessage(Member[] members, Message message) throws RemoteException, NotBoundException, InterruptedException;
-    void waitForMessage() throws RemoteException, InterruptedException;
+//    void waitForMessage() throws RemoteException, InterruptedException;
     Message getMessage() throws RemoteException, GCOMException, InterruptedException;
     void putMessage(Message m);
 }

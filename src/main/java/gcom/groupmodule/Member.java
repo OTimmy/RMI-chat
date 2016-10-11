@@ -8,6 +8,7 @@ import gcom.status.Status;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 import java.util.HashMap;
 
 /**
@@ -22,35 +23,26 @@ public interface Member extends Remote {
      */
     String getName() throws RemoteException;
 
-
     /**
      * @param m member to joing group
      */
-    void joinGroup(Member m) throws RemoteException, GCOMException;
-
-    /**
-     * Sends message to group that there's no member left.
-     */
-    void removeGroup() throws RemoteException;
-
-    /**
-     * Creats a group by given name. And already known
-     * communcation type.
-     */
-    void createGroup(String groupName) throws RemoteException;
+    void requestToJoin(Member m) throws RemoteException, GCOMException;
 
     /**
      * Set members for a member
      */
-    void setMembers(Member[] m) throws RemoteException;
+    void setMember(Member ...m) throws RemoteException;
 
     /**
-     *
-     * @return
+     * @return the properties of the group
      * @throws RemoteException
      */
-    String getCommunicationType() throws RemoteException;
+    Properties getProperties() throws RemoteException;
 
-    void sendMessageToMember(Message m);
+    /**
+     * @param m
+     * @throws RemoteException
+     */
+    void sendMessage(Message m) throws RemoteException;
 
 }
