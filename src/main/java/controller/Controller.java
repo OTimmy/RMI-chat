@@ -24,25 +24,43 @@ public class Controller {
     private static Hashtable<String, GCOM> gcomTable = new Hashtable<>();
 
     private ActionListener createGroupTabListern() {
+
+
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String group = gui.addGroupTab();
+
+                String group = gui.showGroupCreation();
+
+                String comunication = gui.getCom();
+
                 gui.addActionListenerSend(group, sendListern());
 
+                GCOM gcom = null;
+
                 if (group != null) {
+                    while(true) {
+                        try {
+                            gcom = new GCOM(gui.getHost());
+                            break;
+                        } catch (RemoteException e1) {
+                            e1.printStackTrace();
+                        } catch (NotBoundException e1) {
+                            gui.inputHostMessage();
+                        }
+                    }
+
+                    gcom.registerObservers(createMessageObserver(group));
+
+//                    String comunication = gui.getCom();
+
                     try {
-                        GCOM gcom = new GCOM(gui.getHost());
-                        gcom.registerObservers(createMessageObserver(group));
-                        gcom.createGroup(group, "test",/*TEMP !*/NonReliableCommunication.class.getName());
-                        gcomTable.put(group, gcom);
-                    } catch (RemoteException e1) {
-                        e1.printStackTrace();
-                    } catch (NotBoundException e1) {
-                        e1.printStackTrace();
+                        gcom.createGroup(group, "test",comunication /*TEMP !NonReliableCommunication.class.getName()*/);
                     } catch (GCOMException e1) {
                         e1.printStackTrace();
                     }
+                    gui.addGroupTab();
+                    gcomTable.put(group, gcom);
                 }
             }
         };
@@ -122,7 +140,7 @@ public class Controller {
             @Override
             public void update() {
                 GCOM gcom = gcomTable.get(group);
-                Message msg = null;
+                Message msg;
                 try {
                     msg = gcom.getMessage();
                     gui.appendMessage(group, msg.getUser() + ": \n" + msg.getChatMessage() + "\n\n");
@@ -152,12 +170,15 @@ public class Controller {
         gui.addActionListenerJoin(controller.createJoinListener());
 
         GCOM gcom = null;
-        try {
-            gcom = new GCOM(gui.getHost());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
+        while(true){
+            try {
+                gcom = new GCOM(gui.getHost());
+                break;
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            } catch (NotBoundException e) {
+                gui.inputHostMessage();
+            }
         }
 
         String[] groups = gcom.getGroups();
