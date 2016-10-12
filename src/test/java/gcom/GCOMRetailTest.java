@@ -4,7 +4,9 @@ import gcom.communicationmodule.NonReliableCommunication;
 import gcom.groupmodule.GroupManager;
 import gcom.groupmodule.GroupProperties;
 import gcom.groupmodule.Properties;
+import gcom.messagemodule.MemberMessage;
 import gcom.messagemodule.Message;
+import gcom.messagemodule.MessageType;
 import gcom.messagemodule.UnorderedMessageOrdering;
 import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceConcrete;
@@ -96,7 +98,8 @@ public class GCOMRetailTest {
         gcom.connectToGroup(FAKE_GROUP_NAME,name);
         String myMessage = "Hej!";
 
-        gcom.sendMessageToGroup(myMessage);
+        Message message = new MemberMessage(name,myMessage, MessageType.CHAT_MESSAGE);
+        gcom.sendMessageToGroup(message);
 
         //wait for message
         Thread.sleep(200);
