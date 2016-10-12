@@ -37,19 +37,22 @@ public class Controller {
 
                 String group = gui.showGroupCreation();
 
+                if(group == null){
+                    return;
+                }
+
                 GCOM gcom = null;
 
                 if (group != null) {
-                    while(true) {
+
                         try {
                             gcom = new GCOM(gui.getHost());
-                            break;
                         } catch (RemoteException e1) {
                             e1.printStackTrace();
                         } catch (NotBoundException e1) {
                             gui.inputHostMessage();
                         }
-                    }
+
 
                     gcom.registerObservers(createMessageObserver(group));
                     GroupProperties p = null;
@@ -60,12 +63,15 @@ public class Controller {
                         e1.printStackTrace();
                     }
 
+                    String username = gui.getName();
+
                     try {
-                        gcom.createGroup(p, gui.getName());
+                        gcom.createGroup(p, username);
                     } catch (GCOMException e1) {
                         e1.printStackTrace();
                     }
                     gui.addGroupTab();
+                    gui.setMembers(group, new String[]{username});
                     gui.addActionListenerSend(group, sendListern());
                     gcomTable.put(group, gcom);
                 }
@@ -137,6 +143,15 @@ public class Controller {
         };
     }
 
+    private ActionListener refreshListener(){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gui.updateGroups(gcom.getGroups());
+            }
+        };
+    }
+
     private KeyListener updateTable(){
         return new KeyListener() {
             @Override
@@ -195,18 +210,15 @@ public class Controller {
         gui.addActionListenerDelete(controller.createDeleteListener());
         gui.addActionListenerJoin(controller.createJoinListener());
         gui.addKeyListenerGroupTable(controller.updateTable());
+        gui.addActionListererRefresh(controller.refreshListener());
 
-
-        while(true){
             try {
                 gcom = new GCOM(gui.getHost());
-                break;
             } catch (RemoteException e) {
                 e.printStackTrace();
             } catch (NotBoundException e) {
                 gui.inputHostMessage();
             }
-        }
 
         String[] groups = gcom.getGroups();
         gui.updateGroups(groups);
