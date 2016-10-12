@@ -28,7 +28,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * This class implements all the modules, hand handle the communication
  * between them. And
  */
-public class GCOMRetail extends AbstractGCOM implements Subject{
+public class GCOMRetail extends AbstractGCOM{
 
     //The modules
     private GroupManager groupManager;
