@@ -1,4 +1,4 @@
-package gcomretail.controller;
+package client.controller;
 
 import gcomretail.GCOM;
 import gcom.groupmodule.GroupProperties;
@@ -7,13 +7,11 @@ import gcom.messagemodule.UnorderedMessageOrdering;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.status.GCOMException;
-import gcomretail.view.GUIClient;
+import client.view.GUIClient;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Hashtable;

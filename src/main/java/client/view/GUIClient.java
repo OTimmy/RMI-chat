@@ -1,4 +1,4 @@
-package gcomretail.view;
+package client.view;
 
 import gcom.communicationmodule.NonReliableCommunication;
 
