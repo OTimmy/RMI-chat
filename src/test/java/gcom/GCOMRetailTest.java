@@ -85,7 +85,7 @@ public class GCOMRetailTest {
         final String[] retrivedMessage = new String[1];
         Observer ob = new Observer() {
             @Override
-            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+            public  void update(ObserverEvent e, Message t) throws RemoteException, GCOMException {
                 if(e == ObserverEvent.RECEIVED_MESSAGE) {
                     Message m = (Message) t;
                     System.out.println("message: " + m.getChatMessage());

@@ -11,5 +11,5 @@ import java.rmi.RemoteException;
  */
 public interface Subject {
     void registerObservers(Observer ...obs) throws RemoteException;
-    <T>void notifyObserver(ObserverEvent e, T t) throws RemoteException, GCOMException;
+    void notifyObserver(ObserverEvent e,Message message) throws RemoteException, GCOMException;
 }

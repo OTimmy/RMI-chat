@@ -99,7 +99,7 @@ public class GroupManagerTest {
         final Message[] received = new Message[1];
         Observer ob = new Observer() {
             @Override
-            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+            public  void update(ObserverEvent e, Message t) throws RemoteException, GCOMException {
                 if(e == ObserverEvent.CHAT_MESSAGE) {
                     received[0] = (Message) t;
                 }

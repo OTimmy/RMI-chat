@@ -1,6 +1,8 @@
 package gcom.groupmodule;
 
+import gcom.messagemodule.MemberMessage;
 import gcom.messagemodule.Message;
+import gcom.messagemodule.MessageType;
 import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
@@ -18,6 +20,10 @@ import java.util.LinkedHashMap;
  * Created by c12ton on 10/10/16.
  */
 public class GroupManager implements Manager,Subject{
+
+
+    private Observer observerMemberLeave; //If member is detected here to have died
+    private Observer observerMessages;
 
     private ArrayList<Observer> observers;
     private Properties properties;
@@ -76,8 +82,28 @@ public class GroupManager implements Manager,Subject{
     }
 
     @Override
-    public Member[] getMembers() {
-        return members.values().toArray(new Member[]{});
+    public void removeMember(String name) throws RemoteException {
+        members.remove(name);
+    }
+
+    @Override
+    public Member[] getMembers() throws RemoteException {
+
+        String[] names = members.keySet().toArray(new String[]{});
+        ArrayList<Member> membs = new ArrayList<>();
+
+        for(String name:names) {
+            try {
+                Member m = members.get(name);
+                m.getName();
+                membs.add(m);
+            } catch (RemoteException e) {
+                Message m = new MemberMessage(name,null, MessageType.LEAVE_MESSAGE);
+                notifyObserver(ObserverEvent.MEMBER_HAS_LEFT,m);
+            }
+        }
+
+        return membs.toArray(new Member[]{});
     }
 
     //Make receivedMessage to Generic, then convert it depending on what type
@@ -103,10 +129,10 @@ public class GroupManager implements Manager,Subject{
     }
 
     @Override
-    public <T> void notifyObserver(ObserverEvent e, T t) throws RemoteException {
+    public  void notifyObserver(ObserverEvent e, Message m) throws RemoteException {
         for(Observer ob:observers) {
             try {
-                ob.update(e,t);
+                ob.update(e,m);
             } catch (GCOMException e1) {
                 e1.printStackTrace();
             }

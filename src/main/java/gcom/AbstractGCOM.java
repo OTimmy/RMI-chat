@@ -53,6 +53,9 @@ public abstract class AbstractGCOM implements Subject{
 
         threadProducer = createProducerThread();
         threadConsumer = createConsumerThread();
+
+
+        groupManager.registerObservers(createObserverMemberLeave());
     }
 
     /**
@@ -117,9 +120,8 @@ public abstract class AbstractGCOM implements Subject{
     private Observer createCommunicationObs() {
         Observer ob = new Observer() {
             @Override
-            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
-                if(e == ObserverEvent.CHAT_MESSAGE) {
-                    Message m = (Message) t;
+            public void update(ObserverEvent e,Message m) throws RemoteException, GCOMException {
+                if(e == ObserverEvent.MEMBER_LEFT) {
                     communication.putMessage(m);
                 }
             }
@@ -144,6 +146,7 @@ public abstract class AbstractGCOM implements Subject{
 
             groupManager.registerObservers(createCommunicationObs());
 
+
         } catch (Exception e) {
             throw new GCOMException(e.toString());
         }
@@ -163,6 +166,23 @@ public abstract class AbstractGCOM implements Subject{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Is used by the
+     * @return
+     */
+    private Observer createObserverMemberLeave() {
+        Observer ob = new Observer() {
+            @Override
+            public void update(ObserverEvent e,Message m) throws RemoteException, GCOMException {
+                if(e == ObserverEvent.MEMBER_LEFT) {
+                    sendMessageToGroup(m);
+                }
+            }
+        };
+
+        return ob;
     }
 
 
@@ -202,10 +222,14 @@ public abstract class AbstractGCOM implements Subject{
         Thread t = new Thread(() -> {
             while(isConsumerThreadActive()) {
                 try {
-                    Message m = communication.getMessage();
-                    //go trough message ordering
-                    //
-                    notifyObserver(ObserverEvent.RECEIVED_MESSAGE,m);
+                    Message message = communication.getMessage();
+                    messageOrdering.orderMessage(message);
+
+                    if(message.getMessageType() == MessageType.LEAVE_MESSAGE) {
+                        groupManager.removeMember(message.getUser());
+                    }
+
+                    notifyObserver(ObserverEvent.CHAT_MESSAGE,message);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -300,9 +324,9 @@ public abstract class AbstractGCOM implements Subject{
     }
 
     @Override
-    public <T> void notifyObserver(ObserverEvent e, T t) throws RemoteException, GCOMException {
+    public  void notifyObserver(ObserverEvent e,Message message) throws RemoteException, GCOMException {
         for(Observer ob:observers) {
-            ob.update(e,t);
+            ob.update(e,message);
         }
     }
 }

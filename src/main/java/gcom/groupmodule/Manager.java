@@ -29,9 +29,11 @@ public interface Manager extends Remote{
 
     void addMember(Member m) throws RemoteException;
 
+    void removeMember(String name) throws RemoteException;
+
     boolean memberExist(Member m) throws RemoteException,GCOMException;
 
-    Member[] getMembers();
+    Member[] getMembers() throws RemoteException;
 
     void receivedMessage(Message m);
 
