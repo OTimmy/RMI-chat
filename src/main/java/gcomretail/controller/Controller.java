@@ -112,15 +112,16 @@ public class Controller {
                 gcom.registerObservers(createMessageObserver(data[1]));
                 gcomTable.put(data[1], gcom);
 
-
+                String[] members = null;
                 try {
                     System.out.println("!!!!!!!!!!!!!!!!!:"+ s);
-                    gcom.connectToGroup(data[1], data[0]);
+                    members = gcom.connectToGroup(data[1], data[0]);
                 } catch (GCOMException e1) {
                     e1.printStackTrace();
                 }
 
                 gui.addJoinTab(data[1]);
+                gui.setMembers(data[1], members);
                 gui.addActionListenerSend(data[1], sendListern());
 
             }
@@ -152,28 +153,6 @@ public class Controller {
         };
     }
 
-    private KeyListener updateTable(){
-        return new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_F5){
-                    e.consume();
-                    System.out.println("update");
-                    gui.updateGroups(gcom.getGroups());
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        };
-    }
 
     public Controller(GUIClient gui) throws RemoteException, NotBoundException {
         this.gui = gui;
@@ -209,7 +188,6 @@ public class Controller {
         gui.addActionListenerCreate(controller.createGroupTabListern());
         gui.addActionListenerDelete(controller.createDeleteListener());
         gui.addActionListenerJoin(controller.createJoinListener());
-        gui.addKeyListenerGroupTable(controller.updateTable());
         gui.addActionListererRefresh(controller.refreshListener());
 
             try {

@@ -83,15 +83,17 @@ public class GUIClient {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int index = groupTable.getSelectedRow();
+                if(index != -1) {
 
-
-                if(leaderOf.contains(groupTable.getValueAt(index, 0))){
-                    joinGroupButton.setEnabled(false);
-                    deleteGroupButton.setEnabled(true);
-                }else {
-                    joinGroupButton.setEnabled(true);
-                    deleteGroupButton.setEnabled(false);
+                    if (leaderOf.contains(groupTable.getValueAt(index, 0))) {
+                        joinGroupButton.setEnabled(false);
+                        deleteGroupButton.setEnabled(true);
+                    } else {
+                        joinGroupButton.setEnabled(true);
+                        deleteGroupButton.setEnabled(false);
+                    }
                 }
+
             }
         });
 
@@ -321,6 +323,7 @@ public class GUIClient {
     }
 
     public void updateGroups(String[] groups){
+        groupTable.clearSelection();
 
         for(int i = groupTable.getRowCount()-1; i >= 0; i--){
             tableModel.removeRow(i);
@@ -412,9 +415,6 @@ public class GUIClient {
         return usernameTextField.getText();
     }
 
-    public void addKeyListenerGroupTable(KeyListener keyListener) {
-        tabbedPane.addKeyListener(keyListener);
-    }
 
     public class JGroupCreation extends JDialog {
 
