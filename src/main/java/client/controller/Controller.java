@@ -173,10 +173,10 @@ public class Controller {
     private gcom.observer.Observer createMessageObserver(final String group) {
         Observer ob = new Observer() {
             @Override
-            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
-                Message msg = (Message) t;
+            public void update(ObserverEvent e, Message t) throws RemoteException, GCOMException {
+                Message msg = t;
                 System.out.println(msg.getChatMessage());
-                gui.appendMessage(group, msg.getUser() + ": \n" + msg.getChatMessage() + "\n\n");
+                gui.appendMessage(group, msg.getUser() + ": " + msg.getChatMessage() + "\n\n");
             }
         };
 
