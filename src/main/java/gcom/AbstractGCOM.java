@@ -90,7 +90,6 @@ public abstract class AbstractGCOM implements Subject{
             messageOrdering = createMessageOrdering(properties.getMessagetype(),name);
             communication   = createCommunication(properties.getComtype());
 
-            groupManager.registerObservers(createCommunicationObs());
 
             //connect to group
             Member[] members = groupManager.joinGroup(groupName,name);
@@ -122,7 +121,9 @@ public abstract class AbstractGCOM implements Subject{
         Observer ob = new Observer() {
             @Override
             public void update(ObserverEvent e,Message m) throws RemoteException, GCOMException {
-                communication.putMessage(m);
+                if(e == ObserverEvent.RECEIVED_MESSAGE) {
+                    communication.putMessage(m);
+                }
             }
         };
         return ob;
@@ -158,8 +159,12 @@ public abstract class AbstractGCOM implements Subject{
      */
     public void sendMessageToGroup(Message m)  {
         try {
+            System.out.println("Adding to message!" + m.getChatMessage());
+
             outgoingChatMessage.put(m);
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
@@ -322,7 +327,6 @@ public abstract class AbstractGCOM implements Subject{
     @Override
     public  void notifyObserver(ObserverEvent e,Message message) throws RemoteException, GCOMException {
         for(Observer ob:observers) {
-            System.out.println("sending to observer: " + message.getChatMessage());
             ob.update(e,message);
         }
     }

@@ -98,6 +98,7 @@ public class GroupManager implements Manager,Subject{
                 m.getName();
                 membs.add(m);
             } catch (Exception e) {
+                removeMember(name);
                 Message m = new MemberMessage(name,null, MessageType.LEAVE_MESSAGE);
                 notifyObserver(ObserverEvent.MEMBER_LEFT,m);
             }
@@ -110,8 +111,7 @@ public class GroupManager implements Manager,Subject{
     @Override
     public void receivedMessage(Message m) {
         try {
-//            System.out.println("HEEEEELO!"  + m.getChatMessage() +"<--");
-            notifyObserver(ObserverEvent.CHAT_MESSAGE,m);
+            notifyObserver(ObserverEvent.RECEIVED_MESSAGE,m);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -133,7 +133,6 @@ public class GroupManager implements Manager,Subject{
     public  void notifyObserver(ObserverEvent e, Message m) throws RemoteException {
         for(Observer ob:observers) {
             try {
-//                System.out.println("HEEEEELO!"  + m.getChatMessage() +"<--!!!");
                 ob.update(e,m);
             } catch (GCOMException e1) {
                 e1.printStackTrace();
