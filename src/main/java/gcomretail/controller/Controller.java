@@ -12,6 +12,8 @@ import gcomretail.view.GUIClient;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
@@ -23,6 +25,7 @@ import java.util.Hashtable;
 public class Controller {
 
     private static GUIClient gui;
+    private static GCOM gcom;
     private static Hashtable<String, GCOM> gcomTable = new Hashtable<>();
 
     private ActionListener createGroupTabListern() {
@@ -134,6 +137,29 @@ public class Controller {
         };
     }
 
+    private KeyListener updateTable(){
+        return new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_F5){
+                    e.consume();
+                    System.out.println("update");
+                    gui.updateGroups(gcom.getGroups());
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        };
+    }
+
     public Controller(GUIClient gui) throws RemoteException, NotBoundException {
         this.gui = gui;
     }
@@ -168,8 +194,9 @@ public class Controller {
         gui.addActionListenerCreate(controller.createGroupTabListern());
         gui.addActionListenerDelete(controller.createDeleteListener());
         gui.addActionListenerJoin(controller.createJoinListener());
+        gui.addKeyListenerGroupTable(controller.updateTable());
 
-        GCOM gcom;
+
         while(true){
             try {
                 gcom = new GCOM(gui.getHost());

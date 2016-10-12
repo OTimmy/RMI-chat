@@ -76,6 +76,7 @@ public class GUIClient {
             public void valueChanged(ListSelectionEvent e) {
                 int index = groupTable.getSelectedRow();
 
+
                 if(leaderOf.contains(groupTable.getValueAt(index, 0))){
                     joinGroupButton.setEnabled(false);
                     deleteGroupButton.setEnabled(true);
@@ -88,6 +89,7 @@ public class GUIClient {
 
         groupTable.setBorder(BorderFactory.createLineBorder(Color.black));
         groupTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         JScrollPane gsp = new JScrollPane(groupTable);
         gsp.setAutoscrolls(true);
         tableModel.addColumn("Groups");
@@ -318,7 +320,7 @@ public class GUIClient {
 
     public void updateGroups(String[] groups){
 
-        for(int i = groupTable.getRowCount(); i > 0; i--){
+        for(int i = groupTable.getRowCount()-1; i >= 0; i--){
             tableModel.removeRow(i);
         }
 
@@ -399,6 +401,10 @@ public class GUIClient {
 
     public String getName() {
         return usernameTextField.getText();
+    }
+
+    public void addKeyListenerGroupTable(KeyListener keyListener) {
+        tabbedPane.addKeyListener(keyListener);
     }
 
     public class JGroupCreation extends JDialog {
