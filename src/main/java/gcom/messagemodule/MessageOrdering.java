@@ -1,7 +1,6 @@
 package gcom.messagemodule;
 
 import gcom.groupmodule.Member;
-import gcom.status.Status;
 
 import java.rmi.RemoteException;
 
@@ -11,20 +10,16 @@ import java.rmi.RemoteException;
 public interface MessageOrdering {
 
     /**
-     * @param
-     * @param msg
-     * @return
+     * Will update current vector clock and include it in the message
+     * @param message the message that should be sent.
      */
-    Message convertToMessage(Member[] members, String msg) throws RemoteException;
+    void setMessageStamp(Message message);  //To be replaced with something alone the lines, setMessageStamp
 
 
     /**
-     *
+     * Order incoming messages, and places inconsisten ones in a pending que
+     * @param m
      */
-    void convertFromMessage(Message m); //updateMessageData
+    void orderMessage(Message m);
 
-    //orderingMessage
-
-
-    //void orderIncomingMessage(Message m)
 }

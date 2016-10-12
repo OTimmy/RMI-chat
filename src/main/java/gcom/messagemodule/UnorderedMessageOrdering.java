@@ -1,7 +1,6 @@
 package gcom.messagemodule;
 
 import gcom.groupmodule.Member;
-import gcom.status.Status;
 
 import java.rmi.RemoteException;
 
@@ -15,14 +14,13 @@ public class UnorderedMessageOrdering implements MessageOrdering{
         this.name = name;
     }
 
-
     @Override
-    public Message convertToMessage(Member[] members, String msg) throws RemoteException {
-        return  new ChatMessage(name,msg);
+    public void setMessageStamp(Message message) {
+
     }
 
     @Override
-    public void convertFromMessage(Message m) {
+    public void orderMessage(Message m) {
 
     }
 }

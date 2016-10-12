@@ -31,7 +31,7 @@ public abstract class AbstractGCOM implements Subject{
 
     private ArrayList<Observer> observers;
 
-    private BlockingQueue<String> outgoingChatMessage;
+    private BlockingQueue<Message> outgoingChatMessage;
 
     private final Object lockIsProdActive = new Object();
     private final Object lockIsConActive  = new Object();
@@ -153,16 +153,15 @@ public abstract class AbstractGCOM implements Subject{
 
 
     /**
-     * @param msg to be sent to the current group
+     * @param m the message to be sent to the current group
      */
-    public void sendMessageToGroup(String msg)  {
+    public void sendMessageToGroup(Message m)  {
         try {
-            outgoingChatMessage.put(msg);
+            outgoingChatMessage.put(m);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Creats a thread for sending messages, by waiting till a message
@@ -174,9 +173,10 @@ public abstract class AbstractGCOM implements Subject{
         Thread t = new Thread(() -> {
             while(isProducerThreadActive()) {
                 try {
-                    String msg = outgoingChatMessage.take();
+                    Message message  = outgoingChatMessage.take();
                     Member[] members = groupManager.getMembers();
-                    Message  message = messageOrdering.convertToMessage(members,msg);
+
+                    messageOrdering.setMessageStamp(message);
                     communication.sendMessage(members, message);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -199,6 +199,8 @@ public abstract class AbstractGCOM implements Subject{
             while(isConsumerThreadActive()) {
                 try {
                     Message m = communication.getMessage();
+                    //go trough message ordering
+                    //
                     notifyObserver(ObserverEvent.RECEIVED_MESSAGE,m);
                 } catch (RemoteException e) {
                     e.printStackTrace();

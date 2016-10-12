@@ -1,28 +1,27 @@
 package gcom.messagemodule;
 
-import gcom.status.Status;
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 /**
  * Created by c12ton on 2016-10-06.
  */
-public class ChatMessage extends UnicastRemoteObject implements Message{
+public class MemberMessage extends UnicastRemoteObject implements Message{
     private String message;
-    private Status status;
     private String user;
+    private MessageType type;
+
     /**
      * @param user the username of the sender
      * @param message the chat message, null if non is needed
-//     * @param status the status of the  message, null if non is needed.
+     * @param type specifies the type of message.
      * @throws RemoteException
      */
-    public ChatMessage(String user, String message) throws RemoteException {
+    public MemberMessage(String user, String message, MessageType type) throws RemoteException {
         super();
         this.message = message;
-//        this.status = status;
         this.user = user;
+        this.type = type;
     }
 
     @Override
@@ -31,8 +30,8 @@ public class ChatMessage extends UnicastRemoteObject implements Message{
     }
 
     @Override
-    public Status getStatusMessage() throws RemoteException {
-        return status;
+    public MessageType getMessageType() throws RemoteException {
+        return type;
     }
 
     @Override

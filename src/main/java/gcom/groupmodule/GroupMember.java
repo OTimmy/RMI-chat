@@ -2,7 +2,7 @@ package gcom.groupmodule;
 
 import gcom.messagemodule.Message;
 import gcom.status.GCOMException;
-import gcom.status.Status;
+import gcom.status.GCOMError;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -41,7 +41,7 @@ public class GroupMember extends UnicastRemoteObject implements Member{
                 m.setMember(gM);
             }
         } else {
-            throw new GCOMException(Status.NAME_EXISTS);
+            throw new GCOMException(GCOMError.NAME_EXISTS);
         }
     }
 

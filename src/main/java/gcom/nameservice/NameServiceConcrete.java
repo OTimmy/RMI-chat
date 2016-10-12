@@ -1,7 +1,7 @@
 package gcom.nameservice;
 
 import gcom.groupmodule.Member;
-import gcom.status.Status;
+import gcom.status.GCOMError;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -27,15 +27,15 @@ public class NameServiceConcrete extends UnicastRemoteObject implements NameServ
     }
 
     @Override
-    public  Status registerGroup(String groupName, Member member)
+    public GCOMError registerGroup(String groupName, Member member)
             throws RemoteException {
 
         if(!leaders.containsKey(groupName)) {
             leaders.put(groupName,member);
-            return Status.CREATED_GROUP_SUCCESS;
+            return GCOMError.CREATED_GROUP_SUCCESS;
         }
 
-        return Status.GROUP_ALREADY_EXISTS;
+        return GCOMError.GROUP_ALREADY_EXISTS;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package gcom.nameservice;
 
 import gcom.groupmodule.Member;
-import gcom.status.Status;
+import gcom.status.GCOMError;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -19,7 +19,7 @@ public interface NameService extends Remote {
     Member getGroupLeader(String groupName) throws RemoteException;
 
 
-    Status registerGroup(String groupName, Member member) throws RemoteException;
+    GCOMError registerGroup(String groupName, Member member) throws RemoteException;
 
 
     void removeGroup(String groupName) throws RemoteException;

@@ -1,7 +1,7 @@
 package gcom.groupmodule;
 
 import gcom.communicationmodule.NonReliableCommunication;
-import gcom.messagemodule.ChatMessage;
+import gcom.messagemodule.MemberMessage;
 import gcom.messagemodule.Message;
 import gcom.messagemodule.UnorderedMessageOrdering;
 import gcom.nameservice.NameService;
@@ -107,7 +107,7 @@ public class GroupManagerTest {
         manager.registerObservers(ob);
 
         Member[] members = manager.joinGroup(FAKE_GROUP_NAME,name);
-        ChatMessage mymsg = new ChatMessage(name,mymessage);
+        MemberMessage mymsg = new MemberMessage(name,mymessage);
 
         for(Member m:members) {
             m.sendMessage(mymsg);

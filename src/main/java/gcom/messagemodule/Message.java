@@ -1,6 +1,6 @@
 package gcom.messagemodule;
 
-import gcom.status.Status;
+import gcom.status.GCOMError;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -10,6 +10,6 @@ import java.rmi.RemoteException;
  */
 public interface Message extends Remote{
     String getUser() throws RemoteException;
-    Status getStatusMessage() throws RemoteException;
+    MessageType getMessageType() throws RemoteException;
     String getChatMessage() throws RemoteException;
 }
