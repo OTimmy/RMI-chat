@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
@@ -103,39 +104,6 @@ public class GUIClient {
         groupTable.setBorder(BorderFactory.createLineBorder(Color.black));
         groupTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        JPopupMenu popupMenu = new JPopupMenu();
-        popupMenu.add(new JMenuItem("PopupItem 1"));
-        popupMenu.add(new JMenuItem("PopupItem 2"));
-        popupMenu.add(new JPopupMenu.Separator());
-        popupMenu.add(new JMenuItem("PopupItem 3"));
-
-        groupTable.getTableHeader().addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-//                if (SwingUtilities.isRightMouseButton(e))
-//                    popupMenu.show(header, e.getX(), e.getY());
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        });
 
         JScrollPane gsp = new JScrollPane(groupTable);
         gsp.setAutoscrolls(true);
@@ -162,10 +130,14 @@ public class GUIClient {
 
         basicReliableRadioButton.setEnabled(false);
         treeBasedReliableRadioButton.setEnabled(false);
+        refreshGroupButton.setPreferredSize(new Dimension(90, 30));
+
+        JPanel refresh = new JPanel();
+        refresh.add(refreshGroupButton);
 
         groupTab.setLayout(new BorderLayout(2, 2));
         groupTab.add(groupInfoPane, BorderLayout.CENTER);
-        groupTab.add(refreshGroupButton, BorderLayout.SOUTH);
+        groupTab.add(refresh, BorderLayout.SOUTH);
 
         tabbedPane.addTab("Groups", groupTab);
 
