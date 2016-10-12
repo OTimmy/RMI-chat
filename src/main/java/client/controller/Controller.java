@@ -1,6 +1,8 @@
 package client.controller;
 
 import gcom.AbstractGCOM;
+import gcom.messagemodule.MemberMessage;
+import gcom.messagemodule.MessageType;
 import gcomretail.GCOMRetail;
 import gcom.groupmodule.GroupProperties;
 import gcom.messagemodule.Message;
@@ -36,7 +38,7 @@ public class Controller {
 
                 String group = gui.showGroupCreation();
 
-                if(group == null){
+                if (group == null) {
                     return;
                 }
 
@@ -44,20 +46,20 @@ public class Controller {
 
                 if (group != null) {
 
-                        try {
-                            gcom = new GCOMRetail(gui.getHost());
-                        } catch (RemoteException e1) {
-                            e1.printStackTrace();
-                        } catch (NotBoundException e1) {
-                            gui.inputHostMessage();
-                        }
+                    try {
+                        gcom = new GCOMRetail(gui.getHost());
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    } catch (NotBoundException e1) {
+                        gui.inputHostMessage();
+                    }
 
 
                     gcom.registerObservers(createMessageObserver(group));
                     GroupProperties p = null;
 
                     try {
-                        p = new GroupProperties(gui.getCom(), UnorderedMessageOrdering.class.getClass(),group);
+                        p = new GroupProperties(gui.getCom(), UnorderedMessageOrdering.class.getClass(), group);
                     } catch (RemoteException e1) {
                         e1.printStackTrace();
                     }
@@ -115,7 +117,9 @@ public class Controller {
                 try {
                     members = gcom.connectToGroup(data[1], data[0]);
                 } catch (GCOMException e1) {
-                    e1.printStackTrace();
+                    gui.showErrorMess("connection refused");
+                    return;
+                    //e1.printStackTrace();
                 }
 
 
@@ -134,16 +138,25 @@ public class Controller {
 
                 JButton source = (JButton) e.getSource();
                 String group = source.getName();
-                String message = gui.getMessage(group);
-                AbstractGCOM gcom = gcomTable.get(group);
 
-                gcom.sendMessageToGroup(message);
+                String[] data = group.split("/");
+
+                String message = gui.getMessage(data[0]);
+                AbstractGCOM gcom = gcomTable.get(data[0]);
+
+                Message msg = null;
+                try {
+                    msg = new MemberMessage(data[1], message, MessageType.CHAT_MESSAGE);
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                }
+                gcom.sendMessageToGroup(msg);
 
             }
         };
     }
 
-    private ActionListener refreshListener(){
+    private ActionListener refreshListener() {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -151,7 +164,6 @@ public class Controller {
             }
         };
     }
-
 
     public Controller(GUIClient gui) throws RemoteException, NotBoundException {
         this.gui = gui;
@@ -171,7 +183,6 @@ public class Controller {
         return ob;
     }
 
-
     public static void main(String[] args) {
 
         Controller controller = null;
@@ -189,7 +200,7 @@ public class Controller {
         gui.addActionListenerJoin(controller.createJoinListener());
         gui.addActionListererRefresh(controller.refreshListener());
 
-        while(true) {
+        while (true) {
             try {
                 gcom = new GCOMRetail(gui.getHost());
                 break;
