@@ -140,6 +140,10 @@ public class GUIClient {
 
     }
 
+    public void showErrorMess(String s){
+        JOptionPane.showMessageDialog(tabbedPane,s);
+    }
+
     public void setHost(){
         host = inputHostMessage();
     }
@@ -170,7 +174,7 @@ public class GUIClient {
         JTextArea messageArea = new JTextArea( 4, 45);
 
         JButton sendButton = new JButton("Send");
-        sendButton.setName(group);
+        sendButton.setName(group + "/" + getName());
         sendButton.setPreferredSize(new Dimension(80,62));
 
         messageArea.addKeyListener(new KeyListener() {
