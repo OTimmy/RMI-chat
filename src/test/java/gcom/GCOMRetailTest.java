@@ -11,7 +11,7 @@ import gcom.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.status.GCOMException;
-import gcomretail.GCOM;
+import gcomretail.GCOMRetail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 /**
  * Created by c12ton on 2016-10-04.
  */
-public class GCOMTest {
+public class GCOMRetailTest {
 
     private static Registry registry;
     private static boolean setUpIsDone = false;
@@ -68,7 +68,7 @@ public class GCOMTest {
         setUpFakeGroup();
 
         String username = "BigRed";
-        GCOM gcom = new GCOM(null);
+        GCOMRetail gcom = new GCOMRetail(null);
         String[] membersName =  gcom.connectToGroup(FAKE_GROUP_NAME,username);
         assertArrayEquals(new String[]{FAKE_LEADER_NAME,username},membersName);
     }
@@ -78,7 +78,7 @@ public class GCOMTest {
         setUpFakeGroup();
 
         String name = "BigRed";
-        GCOM gcom = new GCOM(null);
+        GCOMRetail gcom = new GCOMRetail(null);
 
         final String[] retrivedMessage = new String[1];
         Observer ob = new Observer() {

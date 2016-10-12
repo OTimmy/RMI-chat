@@ -1,6 +1,6 @@
 package client.controller;
 
-import gcomretail.GCOM;
+import gcomretail.GCOMRetail;
 import gcom.groupmodule.GroupProperties;
 import gcom.messagemodule.Message;
 import gcom.messagemodule.UnorderedMessageOrdering;
@@ -23,8 +23,8 @@ import java.util.Hashtable;
 public class Controller {
 
     private static GUIClient gui;
-    private static GCOM gcom;
-    private static Hashtable<String, GCOM> gcomTable = new Hashtable<>();
+    private static GCOMRetail gcom;
+    private static Hashtable<String, GCOMRetail> gcomTable = new Hashtable<>();
 
     private ActionListener createGroupTabListern() {
 
@@ -39,12 +39,12 @@ public class Controller {
                     return;
                 }
 
-                GCOM gcom = null;
+                GCOMRetail gcom = null;
 
                 if (group != null) {
 
                         try {
-                            gcom = new GCOM(gui.getHost());
+                            gcom = new GCOMRetail(gui.getHost());
                         } catch (RemoteException e1) {
                             e1.printStackTrace();
                         } catch (NotBoundException e1) {
@@ -98,10 +98,10 @@ public class Controller {
                 }
                 String[] data = s.split("/");
 
-                GCOM gcom = null;
+                GCOMRetail gcom = null;
 
                 try {
-                    gcom = new GCOM(gui.getHost());
+                    gcom = new GCOMRetail(gui.getHost());
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 } catch (NotBoundException e1) {
@@ -134,7 +134,7 @@ public class Controller {
                 JButton source = (JButton) e.getSource();
                 String group = source.getName();
                 String message = gui.getMessage(group);
-                GCOM gcom = gcomTable.get(group);
+                GCOMRetail gcom = gcomTable.get(group);
 
                 gcom.sendMessageToGroup(message);
 
@@ -189,7 +189,7 @@ public class Controller {
         gui.addActionListererRefresh(controller.refreshListener());
 
             try {
-                gcom = new GCOM(gui.getHost());
+                gcom = new GCOMRetail(gui.getHost());
             } catch (RemoteException e) {
                 e.printStackTrace();
             } catch (NotBoundException e) {
