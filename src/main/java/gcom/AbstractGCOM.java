@@ -56,6 +56,7 @@ public abstract class AbstractGCOM implements Subject{
 
 
         groupManager.registerObservers(createObserverMemberLeave());
+        groupManager.registerObservers(createCommunicationObs());
     }
 
     /**
@@ -121,9 +122,7 @@ public abstract class AbstractGCOM implements Subject{
         Observer ob = new Observer() {
             @Override
             public void update(ObserverEvent e,Message m) throws RemoteException, GCOMException {
-                if(e == ObserverEvent.MEMBER_LEFT) {
-                    communication.putMessage(m);
-                }
+                communication.putMessage(m);
             }
         };
         return ob;
@@ -140,12 +139,9 @@ public abstract class AbstractGCOM implements Subject{
     public void createGroup(Properties p, String name) throws GCOMException {
         try {
 
-            groupManager.createGroup(p,name);
             communication   = createCommunication(p.getComtype());
             messageOrdering = createMessageOrdering(p.getMessagetype(),name);
-
-            groupManager.registerObservers(createCommunicationObs());
-
+            groupManager.createGroup(p,name);
 
         } catch (Exception e) {
             throw new GCOMException(e.toString());
@@ -222,9 +218,9 @@ public abstract class AbstractGCOM implements Subject{
         Thread t = new Thread(() -> {
             while(isConsumerThreadActive()) {
                 try {
+
                     Message message = communication.getMessage();
                     messageOrdering.orderMessage(message);
-
                     if(message.getMessageType() == MessageType.LEAVE_MESSAGE) {
                         groupManager.removeMember(message.getUser());
                     }
@@ -326,6 +322,7 @@ public abstract class AbstractGCOM implements Subject{
     @Override
     public  void notifyObserver(ObserverEvent e,Message message) throws RemoteException, GCOMException {
         for(Observer ob:observers) {
+            System.out.println("sending to observer: " + message.getChatMessage());
             ob.update(e,message);
         }
     }

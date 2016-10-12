@@ -86,11 +86,11 @@ public class GCOMRetailTest {
         Observer ob = new Observer() {
             @Override
             public  void update(ObserverEvent e, Message t) throws RemoteException, GCOMException {
-                if(e == ObserverEvent.RECEIVED_MESSAGE) {
+//                if(e == ObserverEvent.RECEIVED_MESSAGE) {
                     Message m = (Message) t;
-                    System.out.println("message: " + m.getChatMessage());
+                    System.out.println("message from observer!: " + m.getChatMessage());
                     retrivedMessage[0] = m.getChatMessage();
-                }
+//                }
             }
         };
 
@@ -102,7 +102,7 @@ public class GCOMRetailTest {
         gcom.sendMessageToGroup(message);
 
         //wait for message
-        Thread.sleep(200);
+        Thread.sleep(300);
         assertEquals(retrivedMessage[0],myMessage);
 
     }
