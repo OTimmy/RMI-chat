@@ -1,14 +1,13 @@
-package controller;
+package gcomretail.controller;
 
-import gcom.GCOM;
-import gcom.communicationmodule.NonReliableCommunication;
+import gcomretail.GCOM;
 import gcom.groupmodule.GroupProperties;
 import gcom.messagemodule.Message;
 import gcom.messagemodule.UnorderedMessageOrdering;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.status.GCOMException;
-import view.GUIClient;
+import gcomretail.view.GUIClient;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

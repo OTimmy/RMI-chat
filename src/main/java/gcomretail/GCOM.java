@@ -1,4 +1,4 @@
-package gcom;
+package gcomretail;
 
 import gcom.communicationmodule.Communication;
 import gcom.communicationmodule.CommunicationFactory;
@@ -47,7 +47,6 @@ public class GCOM implements Subject{
         outgoingChatMessage  = new LinkedBlockingQueue<>();
         observers            = new ArrayList<>();
         groupManager         = new GroupManager(host);
-
 
         producerThreadActive = true;
         consumerThreadActive = true;
@@ -215,6 +214,10 @@ public class GCOM implements Subject{
         });
         return t;
     }
+
+
+    //abstract interceptor.....
+
 
     public void leaveGroup() {
         //stop producerThread()

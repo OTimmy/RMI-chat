@@ -11,6 +11,7 @@ import gcom.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.status.GCOMException;
+import gcomretail.GCOM;
 import org.junit.Before;
 import org.junit.Test;
 
