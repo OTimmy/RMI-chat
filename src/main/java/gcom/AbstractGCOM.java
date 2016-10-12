@@ -127,6 +127,7 @@ public abstract class AbstractGCOM implements Subject{
         return ob;
     }
 
+
     /**
      * Creats a group as given user as it's leader, then
      * starts the thread for conumser and producer design.
@@ -153,7 +154,8 @@ public abstract class AbstractGCOM implements Subject{
 
 
     /**
-     * @param m the message to be sent to the current group
+     * @param m the message to be sent to the current group, will be
+     *          placed in a pending que.
      */
     public void sendMessageToGroup(Message m)  {
         try {
@@ -162,6 +164,8 @@ public abstract class AbstractGCOM implements Subject{
             e.printStackTrace();
         }
     }
+
+
 
     /**
      * Creats a thread for sending messages, by waiting till a message
