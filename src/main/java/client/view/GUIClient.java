@@ -62,8 +62,7 @@ public class GUIClient {
 
     public GUIClient() {
 
-        host = inputHostMessage();
-
+        setHost();
         if(host == (null)){
             System.exit(0);
         }
@@ -139,6 +138,10 @@ public class GUIClient {
         frame.pack();
         frame.setVisible(true);
 
+    }
+
+    public void setHost(){
+        host = inputHostMessage();
     }
 
     public String inputHostMessage(){
@@ -250,6 +253,7 @@ public class GUIClient {
         String username = usernameTextField.getText();
         if(username.equals("")){
             JOptionPane.showMessageDialog(tabbedPane, "Enter Username");
+            return null;
         }
 
 

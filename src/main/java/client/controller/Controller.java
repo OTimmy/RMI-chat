@@ -1,5 +1,6 @@
 package client.controller;
 
+import gcom.AbstractGCOM;
 import gcomretail.GCOMRetail;
 import gcom.groupmodule.GroupProperties;
 import gcom.messagemodule.Message;
@@ -23,8 +24,8 @@ import java.util.Hashtable;
 public class Controller {
 
     private static GUIClient gui;
-    private static GCOMRetail gcom;
-    private static Hashtable<String, GCOMRetail> gcomTable = new Hashtable<>();
+    private static AbstractGCOM gcom;
+    private static Hashtable<String, AbstractGCOM> gcomTable = new Hashtable<>();
 
     private ActionListener createGroupTabListern() {
 
@@ -39,7 +40,7 @@ public class Controller {
                     return;
                 }
 
-                GCOMRetail gcom = null;
+                AbstractGCOM gcom = null;
 
                 if (group != null) {
 
@@ -112,11 +113,11 @@ public class Controller {
 
                 String[] members = null;
                 try {
-                    System.out.println("!!!!!!!!!!!!!!!!!:"+ s);
                     members = gcom.connectToGroup(data[1], data[0]);
                 } catch (GCOMException e1) {
                     e1.printStackTrace();
                 }
+
 
                 gui.addJoinTab(data[1]);
                 gui.setMembers(data[1], members);
@@ -134,7 +135,7 @@ public class Controller {
                 JButton source = (JButton) e.getSource();
                 String group = source.getName();
                 String message = gui.getMessage(group);
-                GCOMRetail gcom = gcomTable.get(group);
+                AbstractGCOM gcom = gcomTable.get(group);
 
                 gcom.sendMessageToGroup(message);
 
@@ -188,13 +189,17 @@ public class Controller {
         gui.addActionListenerJoin(controller.createJoinListener());
         gui.addActionListererRefresh(controller.refreshListener());
 
+        while(true) {
             try {
                 gcom = new GCOMRetail(gui.getHost());
+                break;
             } catch (RemoteException e) {
-                e.printStackTrace();
+                gui.setHost();
+                continue;
             } catch (NotBoundException e) {
-                gui.inputHostMessage();
+                e.printStackTrace();
             }
+        }
 
         String[] groups = gcom.getGroups();
         gui.updateGroups(groups);
