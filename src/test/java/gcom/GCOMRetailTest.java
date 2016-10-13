@@ -4,10 +4,7 @@ import gcom.communicationmodule.NonReliableCommunication;
 import gcom.groupmodule.GroupManager;
 import gcom.groupmodule.GroupProperties;
 import gcom.groupmodule.Properties;
-import gcom.messagemodule.MemberMessage;
-import gcom.messagemodule.Message;
-import gcom.messagemodule.MessageType;
-import gcom.messagemodule.UnorderedMessageOrdering;
+import gcom.messagemodule.*;
 import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
@@ -86,10 +83,9 @@ public class GCOMRetailTest {
         Observer ob = new Observer() {
             @Override
             public  void update(ObserverEvent e, Message t) throws RemoteException, GCOMException {
-//                if(e == ObserverEvent.RECEIVED_MESSAGE) {
-                    Message m = (Message) t;
-                    System.out.println("message from observer!: " + m.getChatMessage());
-                    retrivedMessage[0] = m.getChatMessage();
+                    Chat m = (Chat) t;
+                    System.out.println("message from observer!: " + m.getMessage());
+                    retrivedMessage[0] = m.getMessage();
 //                }
             }
         };
@@ -98,7 +94,7 @@ public class GCOMRetailTest {
         gcom.connectToGroup(FAKE_GROUP_NAME,name);
         String myMessage = "Hej!";
 
-        Message message = new MemberMessage(name,myMessage, MessageType.CHAT_MESSAGE);
+        Message message = new ChatMessage(name,myMessage);
         gcom.sendMessageToGroup(message);
 
         //wait for message

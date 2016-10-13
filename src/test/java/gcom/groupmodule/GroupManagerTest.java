@@ -1,10 +1,7 @@
 package gcom.groupmodule;
 
 import gcom.communicationmodule.NonReliableCommunication;
-import gcom.messagemodule.MemberMessage;
-import gcom.messagemodule.Message;
-import gcom.messagemodule.MessageType;
-import gcom.messagemodule.UnorderedMessageOrdering;
+import gcom.messagemodule.*;
 import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
@@ -96,26 +93,28 @@ public class GroupManagerTest {
         String host = null;
 
         GroupManager manager = new GroupManager(host);
-        final Message[] received = new Message[1];
+        final Chat[] received = new ChatMessage[2];
         Observer ob = new Observer() {
             @Override
             public  void update(ObserverEvent e, Message t) throws RemoteException, GCOMException {
-                if(e == ObserverEvent.CHAT_MESSAGE) {
-                    received[0] = (Message) t;
-                }
+                System.out.println("HELLO!");
+                Chat chat = (Chat) t;
+                System.out.println("Message: " + chat.getMessage());
+                    received[0] = chat;
+
             }
         };
         manager.registerObservers(ob);
 
         Member[] members = manager.joinGroup(FAKE_GROUP_NAME,name);
-        MemberMessage mymsg = new MemberMessage(name,mymessage, MessageType.CHAT_MESSAGE);
+        ChatMessage mymsg = new ChatMessage(name,mymessage);
 
         for(Member m:members) {
             m.sendMessage(mymsg);
         }
 
         Thread.sleep(200);
-        assertEquals(received[0].getChatMessage(),mymessage);
+        assertEquals(received[0].getMessage(),mymessage);
     }
 
 }

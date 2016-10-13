@@ -17,6 +17,14 @@ public interface Manager extends Remote{
 
     Properties getGroupProperties(String groupName) throws RemoteException;
 
+    /**
+     * Join a group in gcom
+     * @param group the name of the group
+     * @param name the of name the user
+     * @return A list of current active members
+     * @throws GCOMException in case the name already exists
+     * @throws RemoteException
+     */
     Member[] joinGroup(String group, String name) throws GCOMException, RemoteException;
 
     /**

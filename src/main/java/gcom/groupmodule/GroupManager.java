@@ -1,6 +1,7 @@
 package gcom.groupmodule;
 
-import gcom.messagemodule.MemberMessage;
+import gcom.messagemodule.ChatMessage;
+import gcom.messagemodule.LeaveMessage;
 import gcom.messagemodule.Message;
 import gcom.messagemodule.MessageType;
 import gcom.nameservice.NameService;
@@ -12,7 +13,6 @@ import gcom.status.GCOMException;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -20,10 +20,6 @@ import java.util.LinkedHashMap;
  * Created by c12ton on 10/10/16.
  */
 public class GroupManager implements Manager,Subject{
-
-
-    private Observer observerMemberLeave; //If member is detected here to have died
-    private Observer observerMessages;
 
     private ArrayList<Observer> observers;
     private Properties properties;
@@ -99,7 +95,7 @@ public class GroupManager implements Manager,Subject{
                 membs.add(m);
             } catch (Exception e) {
                 removeMember(name);
-                Message m = new MemberMessage(name,null, MessageType.LEAVE_MESSAGE);
+                Message m = new LeaveMessage(name);
                 notifyObserver(ObserverEvent.MEMBER_LEFT,m);
             }
         }
@@ -107,7 +103,6 @@ public class GroupManager implements Manager,Subject{
         return membs.toArray(new Member[]{});
     }
 
-    //Make receivedMessage to Generic, then convert it depending on what type
     @Override
     public void receivedMessage(Message m) {
         try {

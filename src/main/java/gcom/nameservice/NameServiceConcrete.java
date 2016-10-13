@@ -60,24 +60,6 @@ public class NameServiceConcrete extends UnicastRemoteObject implements NameServ
         return (NameService) registry.lookup(NameService.class.getSimpleName());
     }
 
-//
-//    /**
-//     *
-//     * @param host
-//     * @param groupName
-//     * @param member
-//     */
-//    public static void registerGroup(String host, String groupName,Member member) {
-//        try {
-//            NameService nameService = getNameService(host);
-//            nameService.registerGroup(groupName,member);
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        } catch (NotBoundException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
 
     public static void main(String[] args) {
         startService();

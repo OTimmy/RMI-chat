@@ -159,12 +159,8 @@ public abstract class AbstractGCOM implements Subject{
      */
     public void sendMessageToGroup(Message m)  {
         try {
-            System.out.println("Adding to message!" + m.getChatMessage());
-
             outgoingChatMessage.put(m);
         } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
@@ -227,7 +223,9 @@ public abstract class AbstractGCOM implements Subject{
                     Message message = communication.getMessage();
                     messageOrdering.orderMessage(message);
                     if(message.getMessageType() == MessageType.LEAVE_MESSAGE) {
-                        groupManager.removeMember(message.getUser());
+                        Leave leave = (Leave) message;
+                        System.out.println("Removed member:" + leave.getName());
+                        groupManager.removeMember(leave.getName());                                 //<----------- FIX THIS!!!!!!!!!! ITS JUST TEMP
                     }
 
                     notifyObserver(ObserverEvent.CHAT_MESSAGE,message);

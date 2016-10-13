@@ -1,12 +1,9 @@
 package client.controller;
 
 import gcom.AbstractGCOM;
-import gcom.messagemodule.MemberMessage;
-import gcom.messagemodule.MessageType;
+import gcom.messagemodule.*;
 import gcomretail.GCOMRetail;
 import gcom.groupmodule.GroupProperties;
-import gcom.messagemodule.Message;
-import gcom.messagemodule.UnorderedMessageOrdering;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.status.GCOMException;
@@ -146,7 +143,7 @@ public class Controller {
 
                 Message msg = null;
                 try {
-                    msg = new MemberMessage(data[1], message, MessageType.CHAT_MESSAGE);
+                    msg = new ChatMessage(data[1], message);
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 }
@@ -173,10 +170,12 @@ public class Controller {
     private gcom.observer.Observer createMessageObserver(final String group) {
         Observer ob = new Observer() {
             @Override
-            public void update(ObserverEvent e, Message t) throws RemoteException, GCOMException {
-                Message msg = t;
-                System.out.println(msg.getChatMessage());
-                gui.appendMessage(group, msg.getUser() + ": " + msg.getChatMessage() + "\n\n");
+            public void update(ObserverEvent e, Message msg) throws RemoteException, GCOMException {
+                if(msg.getMessageType() == MessageType.CHAT_MESSAGE) {
+                    Chat chat = (Chat) msg;
+                    System.out.println(chat.getMessage());
+                    gui.appendMessage(group, chat.getUser() + ": " + chat.getMessage() + "\n\n");
+                }
             }
         };
 
