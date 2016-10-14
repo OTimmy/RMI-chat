@@ -4,6 +4,8 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import gcom.communicationmodule.NonReliableCommunication;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -118,6 +120,36 @@ public class GUIClient {
 
         joinGroupButton.setEnabled(false);
         deleteGroupButton.setEnabled(false);
+        createGroupButton.setEnabled(false);
+
+        usernameTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                if(usernameTextField.getText() == ""){
+                    createGroupButton.setEnabled(false);
+                    return;
+                }
+                createGroupButton.setEnabled(true);
+
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+
+                if(usernameTextField.getText().equals("")){
+                    createGroupButton.setEnabled(false);
+                    return;
+                }
+                createGroupButton.setEnabled(true);
+
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+            }
+        });
+
 
         inputButtonsPane.add(new JLabel("Username *"));
         inputButtonsPane.add(usernameTextField);
@@ -334,6 +366,9 @@ public class GUIClient {
             tableModel.addRow(new Object[]{s});
 
             leaderOf.add(s);
+
+            shiftFocusToTab();
+
             return s;
         } else if (tabbedPane.getTabCount() >= MAXIMUM_TABS) {
             JOptionPane.showMessageDialog(tabbedPane, "Too many tabs open");
@@ -540,6 +575,10 @@ public class GUIClient {
         return usernameTextField.getText();
     }
 
+    public void shiftFocusToTab() {
+        tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
+    }
+
 
     public class JGroupCreation extends JDialog {
 
@@ -584,13 +623,14 @@ public class GUIClient {
                 }
 
 
-                if (result == JOptionPane.OK_OPTION) {
+                if (result == JOptionPane.OK_OPTION && usernameTextField.getText() != null) {
                     ok = true;
                 } else {
                     ok = false;
                     return;
                 }
             }
+
         }
     }
 

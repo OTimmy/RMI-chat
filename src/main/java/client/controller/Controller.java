@@ -114,9 +114,8 @@ public class Controller {
                 try {
                     members = gcom.connectToGroup(data[1], data[0]);
                 } catch (GCOMException e1) {
-                    gui.showErrorMess("connection refused");
+                    gui.showErrorMess("Connection refused: " + e1.getMessage());
                     return;
-                    //e1.printStackTrace();
                 }
 
 
@@ -124,6 +123,7 @@ public class Controller {
                 gui.setMembers(data[1], members);
                 gui.addActionListenerSend(data[1], sendListern());
 
+                gui.shiftFocusToTab();
             }
         };
     }
