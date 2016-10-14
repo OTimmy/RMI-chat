@@ -30,7 +30,7 @@ import static javax.swing.BoxLayout.Y_AXIS;
 public class GUIClient {
 
     private HashSet<String> leaderOf = new HashSet<>();
-    private Hashtable<String, String> usernameInGroup= new Hashtable();
+    private Hashtable<String, String> usernameInGroup = new Hashtable();
 
     private String host = null;
 
@@ -155,21 +155,21 @@ public class GUIClient {
         frame.pack();
         frame.setVisible(true);
 
-        if(debug) {
+        if (debug) {
             debugClient();
         }
 
     }
 
-    public void debugClient(){
+    public void debugClient() {
 
         DefaultTableModel groupsModel = new DefaultTableModel();
-        DefaultTableModel messModel   = new DefaultTableModel();
+        DefaultTableModel messModel = new DefaultTableModel();
         DefaultTableModel vectorModel = new DefaultTableModel();
 
         JPanel debugPane = new JPanel(new BorderLayout());
 
-        JTable debugGroups = new JTable(groupsModel){
+        JTable debugGroups = new JTable(groupsModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -194,7 +194,7 @@ public class GUIClient {
         JPanel button = new JPanel();
         button.add(hold);
 
-        JTable messTable = new JTable(messModel){
+        JTable messTable = new JTable(messModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -204,7 +204,7 @@ public class GUIClient {
         messModel.addColumn("Message");
         JScrollPane scrollMessPane = new JScrollPane(messTable);
 
-        JTable vectorTable = new JTable(vectorModel){
+        JTable vectorTable = new JTable(vectorModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -248,8 +248,8 @@ public class GUIClient {
         return host;
     }
 
-    public Boolean myNameInGroup(String group, String userName){
-        if(usernameInGroup.get(group).equals(userName)){
+    public Boolean myNameInGroup(String group, String userName) {
+        if (usernameInGroup.get(group).equals(userName)) {
             return true;
         }
         return false;
@@ -371,20 +371,9 @@ public class GUIClient {
 
     public void appendMessage(String group, String message) {
 
-        for (int i = tabbedPane.getTabCount() - 1; i >= 1; i--) {
-
-            JComponent tp = (JComponent) tabbedPane.getComponentAt(i);
-
-            if (tabbedPane.getTitleAt(i).equals(group)) {
-                JScrollPane sp = (JScrollPane) tp.getComponent(1);
-
-                JViewport viewport = sp.getViewport();
-                JTextArea ta = (JTextArea) viewport.getView();
+                JTextArea ta = getTextArea(group, 1);
 
                 ta.append(message);
-            }
-        }
-
     }
 
     public String getMessage(String group) {
@@ -485,61 +474,58 @@ public class GUIClient {
         leaderOf.remove(group);
     }
 
+    private JTextArea getTextArea(String group, int index) {
+
+        JTextArea ta = null;
+        for (int i = tabbedPane.getTabCount() - 1; i >= 1; i--) {
+
+            JComponent tp = (JComponent) tabbedPane.getComponentAt(i);
+
+            if (tabbedPane.getTitleAt(i).equals(group)) {
+                JScrollPane sp = (JScrollPane) tp.getComponent(index);
+
+                JViewport viewport = sp.getViewport();
+                ta = (JTextArea) viewport.getView();
+            }
+        }
+
+        return ta;
+
+    }
+
 
     public void setMembers(String group, String[] members) {
 
-        for (int i = tabbedPane.getTabCount() - 1; i >= 1; i--) {
+        JTextArea ta = getTextArea(group, 0);
+        for (String m : members) {
 
-            JComponent tp = (JComponent) tabbedPane.getComponentAt(i);
-
-            if (tabbedPane.getTitleAt(i).equals(group)) {
-                JScrollPane sp = (JScrollPane) tp.getComponent(0);
-
-                JViewport viewport = sp.getViewport();
-                JTextArea ta = (JTextArea) viewport.getView();
-                for (String m : members) {
-                    ta.append(m + "\n");
-                }
+            if(myNameInGroup(group, m)){
+                m = "--> " + m;
             }
+
+            ta.append(m + "\n");
         }
+
     }
 
     public void removeMember(String group, String name) {
-        for (int i = tabbedPane.getTabCount() - 1; i >= 1; i--) {
 
-            JComponent tp = (JComponent) tabbedPane.getComponentAt(i);
+        JTextArea ta = getTextArea(group, 0);
+        String[] data = ta.getText().split("\n");
 
-            if (tabbedPane.getTitleAt(i).equals(group)) {
-                JScrollPane sp = (JScrollPane) tp.getComponent(0);
-
-                JViewport viewport = sp.getViewport();
-                JTextArea ta = (JTextArea) viewport.getView();
-                String[] data = ta.getText().split("\n");
-
-                ta.setText("");
-                for(int j = 0; j < data.length; j++){
-                    if(!data[j].equals(name)){
-                        ta.append(data[j]);
-                    }
-                }
+        ta.setText("");
+        for (int j = 0; j < data.length; j++) {
+            if (!data[j].equals("--> " + name)) {
+                ta.append(data[j]);
             }
         }
     }
 
+
     public void addMember(String group, String name) {
-        for (int i = tabbedPane.getTabCount() - 1; i >= 1; i--) {
+                JTextArea ta = getTextArea(group, 0);
 
-            JComponent tp = (JComponent) tabbedPane.getComponentAt(i);
-
-            if (tabbedPane.getTitleAt(i).equals(group)) {
-                JScrollPane sp = (JScrollPane) tp.getComponent(0);
-
-                JViewport viewport = sp.getViewport();
-                JTextArea ta = (JTextArea) viewport.getView();
-
-                ta.append("\n"+name);
-            }
-        }
+                ta.append(name + "\n");
     }
 
     public String showGroupCreation() {
@@ -611,8 +597,8 @@ public class GUIClient {
     public class TestDialog {
 
         public TestDialog() {
-            Object[] options1 = { "Client", "Debug",
-                    "Cancel" };
+            Object[] options1 = {"Client", "Debug",
+                    "Cancel"};
 
             JPanel panel = new JPanel();
             panel.add(new JLabel("Enter host:"));
@@ -623,13 +609,13 @@ public class GUIClient {
             int result = JOptionPane.showOptionDialog(tabbedPane, panel, "Enter Host",
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
                     null, options1, null);
-            if (result == JOptionPane.YES_OPTION){
+            if (result == JOptionPane.YES_OPTION) {
                 debug = false;
                 //Client
-            }else if (result == JOptionPane.NO_OPTION){
+            } else if (result == JOptionPane.NO_OPTION) {
                 debug = true;
                 //Debug
-            }else if (result == JOptionPane.CANCEL_OPTION){
+            } else if (result == JOptionPane.CANCEL_OPTION) {
                 System.exit(0);
             }
         }
