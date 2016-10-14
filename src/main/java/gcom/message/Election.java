@@ -1,4 +1,4 @@
-package gcom.messagemodule;
+package gcom.message;
 
 import gcom.groupmodule.Member;
 

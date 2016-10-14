@@ -4,9 +4,12 @@ import gcom.communicationmodule.NonReliableCommunication;
 import gcom.groupmodule.GroupManager;
 import gcom.groupmodule.GroupProperties;
 import gcom.groupmodule.Properties;
+import gcom.message.Chat;
+import gcom.message.ChatMessage;
+import gcom.message.Message;
 import gcom.messagemodule.*;
-import gcom.nameservice.NameService;
-import gcom.nameservice.NameServiceConcrete;
+import rmi.nameservice.NameService;
+import rmi.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.status.GCOMException;
@@ -57,7 +60,7 @@ public class GCOMRetailTest {
 
         GroupManager manager = new GroupManager(null);
         Class comtype        = NonReliableCommunication.class.getClass();
-        Class msgtype        = UnorderedMessageOrdering.class.getClass();
+        Class msgtype        = UnorderedOrdering.class.getClass();
         Properties p = new GroupProperties(comtype,msgtype,groupName);
         manager.createGroup(p,name);
     }

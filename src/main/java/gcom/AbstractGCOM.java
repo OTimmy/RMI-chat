@@ -4,6 +4,7 @@ import gcom.communicationmodule.Communication;
 import gcom.communicationmodule.CommunicationFactory;
 import gcom.communicationmodule.NonReliableCommunication;
 import gcom.groupmodule.*;
+import gcom.message.*;
 import gcom.messagemodule.*;
 import gcom.observer.ObserverEvent;
 import gcom.observer.Observer;
@@ -25,9 +26,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class AbstractGCOM implements Subject{
 
     //The modules
-    private GroupManager groupManager;
-    private MessageOrdering messageOrdering;
-    private Communication communication;
+    protected GroupManager groupManager;
+    protected Ordering messageOrdering;
+    protected Communication communication;
 
     private ArrayList<Observer> observers;
 
@@ -119,20 +120,25 @@ public abstract class AbstractGCOM implements Subject{
     }
 
 
+//    /**
+//     * @return An observer for communication.
+//     */
+//    private Observer createCommunicationObs() {
+//        Observer ob = new Observer() {
+//            @Override
+//            public void update(ObserverEvent e,Message m) throws RemoteException, GCOMException {
+//                if(e == ObserverEvent.RECEIVED_MESSAGE) {
+//                    communication.putMessage(m);
+//                }
+//            }
+//        };
+//        return ob;
+//    }
+
     /**
      * @return An observer for communication.
      */
-    private Observer createCommunicationObs() {
-        Observer ob = new Observer() {
-            @Override
-            public void update(ObserverEvent e,Message m) throws RemoteException, GCOMException {
-                if(e == ObserverEvent.RECEIVED_MESSAGE) {
-                    communication.putMessage(m);
-                }
-            }
-        };
-        return ob;
-    }
+    protected abstract Observer createCommunicationObs();
 
 
     /**
@@ -199,7 +205,7 @@ public abstract class AbstractGCOM implements Subject{
         Thread t = new Thread(() -> {
             while(isProducerThreadActive()) {
                 try {
-                    System.out.println("Sendig message!");
+
                     Message message  = outgoingChatMessage.take();
                     Member[] members = groupManager.getMembers();
 
@@ -312,12 +318,12 @@ public abstract class AbstractGCOM implements Subject{
      * @param type
      * @return
      */
-    private MessageOrdering createMessageOrdering(Class type, String name) {
-        if(CausalMessageOrdering.class.getClass() == type) {
-            return new CausalMessageOrdering(name);
+    private Ordering createMessageOrdering(Class type, String name) {
+        if(CausalOrdering.class.getClass() == type) {
+            return new CausalOrdering(name);
         }
 
-        return new UnorderedMessageOrdering(name);
+        return new UnorderedOrdering(name);
     }
 
     /**

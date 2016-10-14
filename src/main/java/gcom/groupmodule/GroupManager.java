@@ -1,9 +1,11 @@
 package gcom.groupmodule;
 
-import com.sun.org.apache.regexp.internal.RE;
-import gcom.messagemodule.*;
-import gcom.nameservice.NameService;
-import gcom.nameservice.NameServiceConcrete;
+import gcom.message.ElectionMessage;
+import gcom.message.JoinMessage;
+import gcom.message.LeaveMessage;
+import gcom.message.Message;
+import rmi.nameservice.NameService;
+import rmi.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.observer.Subject;
@@ -13,7 +15,6 @@ import gcom.status.GCOMException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 /**
@@ -23,7 +24,7 @@ public class GroupManager implements Manager,Subject{
 
     private ArrayList<Observer> observers;
     private Properties properties;
-    private LinkedHashMap<String,Member> members; //first item is leader always
+    private LinkedHashMap<String,Member> members;
     private Member member;
     private Member leader;
     private NameService nameService;

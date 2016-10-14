@@ -1,7 +1,7 @@
 package gcom.communicationmodule;
 
 import gcom.groupmodule.Member;
-import gcom.messagemodule.Message;
+import gcom.message.Message;
 import gcom.status.GCOMException;
 
 import java.rmi.NotBoundException;

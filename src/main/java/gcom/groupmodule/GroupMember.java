@@ -1,8 +1,7 @@
 package gcom.groupmodule;
 
-import gcom.messagemodule.Message;
+import gcom.message.Message;
 import gcom.status.GCOMException;
-import gcom.status.GCOMError;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

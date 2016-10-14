@@ -2,11 +2,8 @@ package gcom.groupmodule;
 
 import gcom.communicationmodule.NonReliableCommunication;
 import gcom.messagemodule.*;
-import gcom.nameservice.NameService;
-import gcom.nameservice.NameServiceConcrete;
-import gcom.observer.Observer;
-import gcom.observer.ObserverEvent;
-import gcom.status.GCOMException;
+import rmi.nameservice.NameService;
+import rmi.nameservice.NameServiceConcrete;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,7 +46,7 @@ public class GroupManagerTest {
 
         GroupManager manager = new GroupManager(null);
         Class comtype        = NonReliableCommunication.class.getClass();
-        Class msgtype        = UnorderedMessageOrdering.class.getClass();
+        Class msgtype        = UnorderedOrdering.class.getClass();
         Properties p = new GroupProperties(comtype,msgtype,groupName);
         manager.createGroup(p,name);
     }
@@ -60,7 +57,7 @@ public class GroupManagerTest {
         String groupName = "testGroup";
 
         Class comtype        = NonReliableCommunication.class.getClass();
-        Class msgtype        = UnorderedMessageOrdering.class.getClass();
+        Class msgtype        = UnorderedOrdering.class.getClass();
         Properties p = new GroupProperties(comtype,msgtype,groupName);
 
         GroupManager manager = new GroupManager(null);

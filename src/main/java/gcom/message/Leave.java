@@ -1,4 +1,4 @@
-package gcom.messagemodule;
+package gcom.message;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

@@ -1,4 +1,4 @@
-package gcom.messagemodule;
+package gcom.message;
 
 /**
  * Created by c12ton on 10/12/16.

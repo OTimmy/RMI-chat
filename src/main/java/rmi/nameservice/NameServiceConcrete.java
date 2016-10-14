@@ -1,4 +1,4 @@
-package gcom.nameservice;
+package rmi.nameservice;
 
 import gcom.groupmodule.Member;
 import gcom.status.GCOMError;
