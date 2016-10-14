@@ -91,6 +91,7 @@ public class GroupManager implements Manager,Subject{
         try {
             leader.getName();
         }catch (Exception e) {
+            System.out.println("Group name: " + properties.getGroupName());
             boolean isLeader = electLeader(properties.getGroupName(),member);
             if(isLeader) {
                 Message m = new ElectionMessage(member);

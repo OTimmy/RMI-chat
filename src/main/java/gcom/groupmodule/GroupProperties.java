@@ -31,4 +31,5 @@ public class GroupProperties extends UnicastRemoteObject implements Properties{
         return comtype;
     }
 
+
 }

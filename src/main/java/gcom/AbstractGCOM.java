@@ -86,7 +86,12 @@ public abstract class AbstractGCOM implements Subject{
 
         try {
             //setup
-            Properties properties = groupManager.getGroupProperties(groupName);
+            //copy stuff just in case.
+            Properties p = groupManager.getGroupProperties(groupName);
+            Properties properties = new GroupProperties(p.getComtype(),
+                                                        p.getMessagetype(),
+                                                        p.getGroupName());
+
             messageOrdering = createMessageOrdering(properties.getMessagetype(),name);
             communication   = createCommunication(properties.getComtype());
 
