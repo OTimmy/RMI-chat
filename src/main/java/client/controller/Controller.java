@@ -173,8 +173,19 @@ public class Controller {
             public void update(ObserverEvent e, Message msg) throws RemoteException, GCOMException {
                 if(msg.getMessageType() == MessageType.CHAT_MESSAGE) {
                     Chat chat = (Chat) msg;
-                    System.out.println(chat.getMessage());
                     gui.appendMessage(group, chat.getUser() + ": " + chat.getMessage() + "\n\n");
+                }else if (msg.getMessageType() == MessageType.LEAVE_MESSAGE){
+                    Leave leave = (Leave) msg;
+                    gui.removeMember(group, leave.getName());
+                    gui.appendMessage(group, leave.getName() + " has left the chat.\n");
+                } else if (msg.getMessageType() == MessageType.ELECTION_MESSAGE) {
+                    Election election = (Election) msg;
+
+                    if(gui.myNameInGroup(group,election.getLeader().getName())){
+                        gui.setLeaderOf(group);
+                    }
+
+                    gui.appendMessage(group, election.getLeader().getName()+ " Is now leader.\n");
                 }
             }
         };
