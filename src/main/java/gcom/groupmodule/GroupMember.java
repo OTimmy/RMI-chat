@@ -33,16 +33,7 @@ public class GroupMember extends UnicastRemoteObject implements Member{
 
     @Override
     public void requestToJoin(Member m) throws RemoteException, GCOMException {
-        if(!manager.memberExist(m)) {
-            manager.addMember(m);
-            Member[] members = manager.getMembers();
-
-            for(Member gM:members) {
-                m.setMember(gM);
-            }
-        } else {
-            throw new GCOMException(GCOMError.NAME_EXISTS);
-        }
+        manager.leaderMemberJoin(m);
     }
 
     @Override

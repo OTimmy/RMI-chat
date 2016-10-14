@@ -199,6 +199,7 @@ public abstract class AbstractGCOM implements Subject{
         Thread t = new Thread(() -> {
             while(isProducerThreadActive()) {
                 try {
+                    System.out.println("Sendig message!");
                     Message message  = outgoingChatMessage.take();
                     Member[] members = groupManager.getMembers();
 
@@ -318,7 +319,7 @@ public abstract class AbstractGCOM implements Subject{
     }
 
     /**
-     * Register observers in following order: Receiving,Sending
+     * Register observers
      * @param obs
      */
     public void registerObservers(Observer... obs) {

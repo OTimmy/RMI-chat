@@ -47,8 +47,6 @@ public interface Manager extends Remote{
 
     void removeMember(String name) throws RemoteException;
 
-    boolean memberExist(Member m) throws RemoteException,GCOMException;
-
     /**
      * Loop trough all members, and only return list of working members
      * @return a list of current active members in group
@@ -64,6 +62,14 @@ public interface Manager extends Remote{
     boolean electLeader(String groupName,Member m) throws RemoteException;
 
     void setLeader(Member m);
+
+
+    /**
+     * Is called when member want's to join current group.
+     * @param m
+     * @throws RemoteException
+     */
+    void leaderMemberJoin(Member m) throws RemoteException, GCOMException;
 
 
 

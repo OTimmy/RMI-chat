@@ -1,11 +1,13 @@
 package gcom.groupmodule;
 
+import com.sun.org.apache.regexp.internal.RE;
 import gcom.messagemodule.*;
 import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.observer.Subject;
+import gcom.status.GCOMError;
 import gcom.status.GCOMException;
 
 import java.rmi.NotBoundException;
@@ -70,8 +72,10 @@ public class GroupManager implements Manager,Subject{
         member = new GroupMember(name,this);
         leader = nameService.getGroupLeader(properties.getGroupName());
         leader.requestToJoin(member);
+        members.put(name,member);
         return getMembers();
     }
+
 
     @Override
     public void addMember(Member m) throws RemoteException {
@@ -91,10 +95,10 @@ public class GroupManager implements Manager,Subject{
         try {
             leader.getName();
         }catch (Exception e) {
-            System.out.println("Group name: " + properties.getGroupName());
             boolean isLeader = electLeader(properties.getGroupName(),member);
             if(isLeader) {
                 Message m = new ElectionMessage(member);
+                leader = member;
                 notifyObserver(ObserverEvent.MESSAGE_TO_GROUP,m);
             } else {
                 //In case of missing the message of a new leader
@@ -121,6 +125,29 @@ public class GroupManager implements Manager,Subject{
     }
 
     @Override
+    public boolean electLeader(String groupName, Member m) throws RemoteException {
+        return nameService.replaceLeader(groupName,m);
+    }
+
+    @Override
+    public void leaderMemberJoin(Member m) throws RemoteException, GCOMException {
+        if(members.containsKey(m.getName())) {
+            throw new GCOMException(GCOMError.NAME_EXISTS);
+        }
+        //add members to newly joined member
+        Member[] members = getMembers();
+        m.setMember(members);
+
+        Message message = new JoinMessage(m);
+        notifyObserver(ObserverEvent.MESSAGE_TO_GROUP,message);
+    }
+
+    @Override
+    public void setLeader(Member leader) {
+        this.leader = leader;
+    }
+
+    @Override
     public void receivedMessage(Message m) {
         try {
             notifyObserver(ObserverEvent.RECEIVED_MESSAGE,m);
@@ -129,21 +156,6 @@ public class GroupManager implements Manager,Subject{
         }
     }
 
-    @Override
-    public boolean electLeader(String groupName, Member m) throws RemoteException {
-        return nameService.replaceLeader(groupName,m);
-    }
-
-    @Override
-    public void setLeader(Member leader) {
-        this.leader = leader;
-    }
-
-
-    @Override
-    public boolean memberExist(Member m) throws RemoteException, GCOMException {
-        return false;
-    }
 
     @Override
     public void registerObservers(Observer... obs) throws RemoteException {
