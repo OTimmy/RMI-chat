@@ -23,4 +23,6 @@ public interface NameService extends Remote {
 
 
     void removeGroup(String groupName) throws RemoteException;
+
+    boolean replaceLeader(String groupName, Member m) throws RemoteException;
 }

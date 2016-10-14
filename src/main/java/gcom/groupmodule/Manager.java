@@ -13,8 +13,16 @@ public interface Manager extends Remote{
 
     String[] getGroups() throws RemoteException;
 
+    /**
+     * @return the properties for the group
+     */
     Properties getProperties();
 
+    /**
+     * @param groupName the name of the group
+     * @return the properties of the group by the given name
+     * @throws RemoteException
+     */
     Properties getGroupProperties(String groupName) throws RemoteException;
 
     /**
@@ -25,7 +33,7 @@ public interface Manager extends Remote{
      * @throws GCOMException in case the name already exists
      * @throws RemoteException
      */
-    Member[] joinGroup(String group, String name) throws GCOMException, RemoteException;
+    Member[] joinGroup(Properties properties, String name) throws GCOMException, RemoteException;
 
     /**
      * @param groupProp the properties of the group
@@ -41,8 +49,22 @@ public interface Manager extends Remote{
 
     boolean memberExist(Member m) throws RemoteException,GCOMException;
 
+    /**
+     * Loop trough all members, and only return list of working members
+     * @return a list of current active members in group
+     * @throws RemoteException
+     */
     Member[] getMembers() throws RemoteException;
 
+    /**
+     * @param m message to be received from a member in the group
+     */
     void receivedMessage(Message m);
+
+    boolean electLeader(String groupName,Member m) throws RemoteException;
+
+    void setLeader(Member m);
+
+
 
 }

@@ -45,6 +45,19 @@ public class NameServiceConcrete extends UnicastRemoteObject implements NameServ
     }
 
     @Override
+    public synchronized boolean replaceLeader(String groupName, Member m) throws RemoteException {
+        try{
+            leaders.get(groupName).getName();
+            System.out.println("LEADER NOT REPLACED");
+        } catch (Exception e) {
+            System.out.println("Leader replaced!");
+            leaders.put(groupName,m);
+            return  true;
+        }
+        return false;
+    }
+
+    @Override
     public Member getGroupLeader(String groupName) {
         return leaders.get(groupName);
     }

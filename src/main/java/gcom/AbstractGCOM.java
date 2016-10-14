@@ -92,7 +92,7 @@ public abstract class AbstractGCOM implements Subject{
 
 
             //connect to group
-            Member[] members = groupManager.joinGroup(groupName,name);
+            Member[] members = groupManager.joinGroup(properties,name);
 
             for(Member m:members) {
                 membersNames.add(m.getName());
@@ -173,7 +173,7 @@ public abstract class AbstractGCOM implements Subject{
         Observer ob = new Observer() {
             @Override
             public void update(ObserverEvent e,Message m) throws RemoteException, GCOMException {
-                if(e == ObserverEvent.MEMBER_LEFT) {
+                if(e == ObserverEvent.MESSAGE_TO_GROUP) {
                     sendMessageToGroup(m);
                 }
             }
@@ -222,10 +222,14 @@ public abstract class AbstractGCOM implements Subject{
 
                     Message message = communication.getMessage();
                     messageOrdering.orderMessage(message);
+
                     if(message.getMessageType() == MessageType.LEAVE_MESSAGE) {
                         Leave leave = (Leave) message;
-                        System.out.println("Removed member:" + leave.getName());
-                        groupManager.removeMember(leave.getName());                                 //<----------- FIX THIS!!!!!!!!!! ITS JUST TEMP
+                        groupManager.removeMember(leave.getName());
+                    }else if(message.getMessageType() == MessageType.ELECTION_MESSAGE) {
+                        Election e = (Election) message;
+                        groupManager.setLeader(e.getLeader());
+                        System.out.println("Neeew leader!!!!");
                     }
 
                     notifyObserver(ObserverEvent.CHAT_MESSAGE,message);
@@ -240,10 +244,6 @@ public abstract class AbstractGCOM implements Subject{
         });
         return t;
     }
-
-
-    //abstract interceptor.....
-
 
     public void leaveGroup() {
         //stop producerThread()

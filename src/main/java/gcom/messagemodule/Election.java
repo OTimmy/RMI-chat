@@ -3,6 +3,7 @@ package gcom.messagemodule;
 import gcom.groupmodule.Member;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * Created by c12ton on 10/13/16.
@@ -13,6 +14,6 @@ public interface Election extends Remote{
     /**
      * @return The new leader for the group
      */
-    Member getLeader();
+    Member getLeader() throws RemoteException;
 
 }

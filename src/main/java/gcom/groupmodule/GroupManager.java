@@ -1,9 +1,6 @@
 package gcom.groupmodule;
 
-import gcom.messagemodule.ChatMessage;
-import gcom.messagemodule.LeaveMessage;
-import gcom.messagemodule.Message;
-import gcom.messagemodule.MessageType;
+import gcom.messagemodule.*;
 import gcom.nameservice.NameService;
 import gcom.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
@@ -14,6 +11,7 @@ import gcom.status.GCOMException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 /**
@@ -23,8 +21,9 @@ public class GroupManager implements Manager,Subject{
 
     private ArrayList<Observer> observers;
     private Properties properties;
-    private LinkedHashMap<String,Member> members;
+    private LinkedHashMap<String,Member> members; //first item is leader always
     private Member member;
+    private Member leader;
     private NameService nameService;
 
     public GroupManager(String host) throws RemoteException, NotBoundException {
@@ -57,17 +56,19 @@ public class GroupManager implements Manager,Subject{
     @Override
     public void createGroup(Properties properties,String name) throws RemoteException {
         this.properties = properties;
-
         member = new GroupMember(name,this);
+
+        leader = member;
         nameService.registerGroup(properties.getGroupName(),member);
         members.put(properties.getGroupName(),member);
     }
 
 
     @Override
-    public Member[] joinGroup(String groupName, String name) throws GCOMException, RemoteException {
+    public Member[] joinGroup(Properties properties, String name) throws GCOMException, RemoteException {
+        this.properties = properties;
         member = new GroupMember(name,this);
-        Member leader = nameService.getGroupLeader(groupName);
+        leader = nameService.getGroupLeader(properties.getGroupName());
         leader.requestToJoin(member);
         return getMembers();
     }
@@ -85,18 +86,33 @@ public class GroupManager implements Manager,Subject{
     @Override
     public Member[] getMembers() throws RemoteException {
 
+
+        //Checking if leader is still alive
+        try {
+            leader.getName();
+        }catch (Exception e) {
+            boolean isLeader = electLeader(properties.getGroupName(),member);
+            if(isLeader) {
+                Message m = new ElectionMessage(member);
+                notifyObserver(ObserverEvent.MESSAGE_TO_GROUP,m);
+            } else {
+                //In case of missing the message of a new leader
+                setLeader(nameService.getGroupLeader(properties.getGroupName()));
+            }
+        }
+
         String[] names = members.keySet().toArray(new String[]{});
         ArrayList<Member> membs = new ArrayList<>();
-
         for(String name:names) {
             try {
                 Member m = members.get(name);
+                //Check if member is alive
                 m.getName();
                 membs.add(m);
             } catch (Exception e) {
                 removeMember(name);
                 Message m = new LeaveMessage(name);
-                notifyObserver(ObserverEvent.MEMBER_LEFT,m);
+                notifyObserver(ObserverEvent.MESSAGE_TO_GROUP,m);
             }
         }
 
@@ -111,6 +127,17 @@ public class GroupManager implements Manager,Subject{
             e.printStackTrace();
         }
     }
+
+    @Override
+    public boolean electLeader(String groupName, Member m) throws RemoteException {
+        return nameService.replaceLeader(groupName,m);
+    }
+
+    @Override
+    public void setLeader(Member leader) {
+        this.leader = leader;
+    }
+
 
     @Override
     public boolean memberExist(Member m) throws RemoteException, GCOMException {
