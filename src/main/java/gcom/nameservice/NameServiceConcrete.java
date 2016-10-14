@@ -64,7 +64,7 @@ public class NameServiceConcrete extends UnicastRemoteObject implements NameServ
 
     /**
      *
-     * @return
+     * @returnString[]
      */
     public static NameService getNameService(String host)
             throws RemoteException, NotBoundException {

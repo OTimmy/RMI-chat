@@ -402,8 +402,6 @@ public class GUIClient {
 
                 String msg = ta.getText();
 
-                System.out.println("IM HERE");
-
                 ta.setText("");
                 return msg;
             }
@@ -473,8 +471,6 @@ public class GUIClient {
 
     public Class getCom() {
 
-        System.out.println(groupNameInput.getText());
-
         if (basicNonReliableRadioButton.isSelected()) {
             return NonReliableCommunication.class.getClass();
         }
@@ -521,9 +517,9 @@ public class GUIClient {
                 String[] data = ta.getText().split("\n");
 
                 ta.setText("");
-                for(int j = 0; j < data.length; j--){
-                    if(!data[i].equals(name)){
-                        ta.append(data[i]);
+                for(int j = 0; j < data.length; j++){
+                    if(!data[j].equals(name)){
+                        ta.append(data[j]);
                     }
                 }
             }
@@ -541,7 +537,7 @@ public class GUIClient {
                 JViewport viewport = sp.getViewport();
                 JTextArea ta = (JTextArea) viewport.getView();
 
-                ta.append(name);
+                ta.append(name+"\n");
             }
         }
     }
@@ -603,10 +599,8 @@ public class GUIClient {
 
 
                 if (result == JOptionPane.OK_OPTION) {
-                    System.out.println("info");
                     ok = true;
                 } else {
-                    System.out.println("Cancelled");
                     ok = false;
                     return;
                 }
