@@ -537,7 +537,7 @@ public class GUIClient {
                 JViewport viewport = sp.getViewport();
                 JTextArea ta = (JTextArea) viewport.getView();
 
-                ta.append(name+"\n");
+                ta.append("\n"+name);
             }
         }
     }
