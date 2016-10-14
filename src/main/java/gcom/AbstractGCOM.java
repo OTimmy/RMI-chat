@@ -235,7 +235,9 @@ public abstract class AbstractGCOM implements Subject{
                     }else if(message.getMessageType() == MessageType.ELECTION_MESSAGE) {
                         Election e = (Election) message;
                         groupManager.setLeader(e.getLeader());
-                        System.out.println("Neeew leader!!!!");
+                    }else if(message.getMessageType() == MessageType.JOIN_MESSAGE) {
+                        Join j = (Join) message;
+                        groupManager.addMember(j.getMember());
                     }
 
                     notifyObserver(ObserverEvent.CHAT_MESSAGE,message);

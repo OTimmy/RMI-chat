@@ -72,7 +72,6 @@ public class GroupManager implements Manager,Subject{
         member = new GroupMember(name,this);
         leader = nameService.getGroupLeader(properties.getGroupName());
         leader.requestToJoin(member);
-        members.put(name,member);
         return getMembers();
     }
 
@@ -135,8 +134,10 @@ public class GroupManager implements Manager,Subject{
             throw new GCOMException(GCOMError.NAME_EXISTS);
         }
         //add members to newly joined member
-        Member[] members = getMembers();
-        m.setMember(members);
+        Member[] currentMembers = getMembers();
+        members.put(m.getName(),m);
+
+        m.setMember(currentMembers);
 
         Message message = new JoinMessage(m);
         notifyObserver(ObserverEvent.MESSAGE_TO_GROUP,message);
