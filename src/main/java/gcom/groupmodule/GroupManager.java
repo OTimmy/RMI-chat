@@ -134,8 +134,8 @@ public class GroupManager implements Manager,Subject{
             throw new GCOMException(GCOMError.NAME_EXISTS);
         }
         //add members to newly joined member
-        Member[] currentMembers = getMembers();
         members.put(m.getName(),m);
+        Member[] currentMembers = getMembers();
 
         m.setMember(currentMembers);
 
