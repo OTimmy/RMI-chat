@@ -530,6 +530,22 @@ public class GUIClient {
         }
     }
 
+    public void addMember(String group, String name) {
+        for (int i = tabbedPane.getTabCount() - 1; i >= 1; i--) {
+
+            JComponent tp = (JComponent) tabbedPane.getComponentAt(i);
+
+            if (tabbedPane.getTitleAt(i).equals(group)) {
+                JScrollPane sp = (JScrollPane) tp.getComponent(0);
+
+                JViewport viewport = sp.getViewport();
+                JTextArea ta = (JTextArea) viewport.getView();
+
+                ta.append(name);
+            }
+        }
+    }
+
     public String showGroupCreation() {
         new JGroupCreation();
         if (ok) {

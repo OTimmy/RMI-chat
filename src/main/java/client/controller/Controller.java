@@ -171,21 +171,36 @@ public class Controller {
         Observer ob = new Observer() {
             @Override
             public void update(ObserverEvent e, Message msg) throws RemoteException, GCOMException {
-                if(msg.getMessageType() == MessageType.CHAT_MESSAGE) {
-                    Chat chat = (Chat) msg;
-                    gui.appendMessage(group, chat.getUser() + ": " + chat.getMessage() + "\n\n");
-                }else if (msg.getMessageType() == MessageType.LEAVE_MESSAGE){
-                    Leave leave = (Leave) msg;
-                    gui.removeMember(group, leave.getName());
-                    gui.appendMessage(group, leave.getName() + " has left the chat.\n");
-                } else if (msg.getMessageType() == MessageType.ELECTION_MESSAGE) {
-                    Election election = (Election) msg;
 
-                    if(gui.myNameInGroup(group,election.getLeader().getName())){
-                        gui.setLeaderOf(group);
-                    }
+                switch (msg.getMessageType()){
 
-                    gui.appendMessage(group, election.getLeader().getName()+ " Is now leader.\n");
+                    case CHAT_MESSAGE:
+                        Chat chat = (Chat) msg;
+                        gui.appendMessage(group, chat.getUser() + ": " + chat.getMessage() + "\n\n");
+                        break;
+
+                    case LEAVE_MESSAGE:
+                        Leave leave = (Leave) msg;
+                        gui.removeMember(group, leave.getName());
+                        gui.appendMessage(group, leave.getName() + " has left the chat.\n");
+                        break;
+
+                    case JOIN_MESSAGE:
+                        Join join = (Join) msg;
+                        gui.appendMessage(group, join.getMember().getName() + " has joined the chat\n");
+                        gui.addMember(group,join.getMember().getName());
+                        break;
+
+                    case ELECTION_MESSAGE:
+                        Election election = (Election) msg;
+
+                        if(gui.myNameInGroup(group,election.getLeader().getName())){
+                            gui.setLeaderOf(group);
+                        }
+                        gui.appendMessage(group, election.getLeader().getName()+ " Is now leader.\n");
+                        break;
+                    default:
+                        break;
                 }
             }
         };
