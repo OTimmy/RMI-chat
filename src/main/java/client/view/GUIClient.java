@@ -515,7 +515,7 @@ public class GUIClient {
 
         ta.setText("");
         for (int j = 0; j < data.length; j++) {
-            if (!data[j].equals("--> " + name)) {
+            if (!data[j].equals(name)) {
                 ta.append(data[j]);
             }
         }
