@@ -1,23 +1,22 @@
 package gcom.messagemodule;
 
 
-import gcom.groupmodule.Member;
+import gcom.message.Message;
 
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by timmy on 03/10/16.
  */
-public class CausalMessageOrdering implements MessageOrdering{
+public class CausalOrdering implements Ordering {
     private String name;
 
     private HashMap<String,Integer> vectorClock;
     private BlockingQueue inQue;
     // have a delay que, that's used of messages that arent complete, and check this every time theres a new message in inQue
 
-    public CausalMessageOrdering(String name) {
+    public CausalOrdering(String name) {
         this.name = name;
         vectorClock = new HashMap<>();
     }

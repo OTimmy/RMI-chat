@@ -1,6 +1,7 @@
 package client.controller;
 
 import gcom.AbstractGCOM;
+import gcom.message.*;
 import gcom.messagemodule.*;
 import gcomretail.GCOMRetail;
 import gcom.groupmodule.GroupProperties;
@@ -56,7 +57,7 @@ public class Controller {
                     GroupProperties p = null;
 
                     try {
-                        p = new GroupProperties(gui.getCom(), UnorderedMessageOrdering.class.getClass(), group);
+                        p = new GroupProperties(gui.getCom(), UnorderedOrdering.class.getClass(), group);
                     } catch (RemoteException e1) {
                         e1.printStackTrace();
                     }

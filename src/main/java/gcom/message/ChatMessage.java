@@ -1,4 +1,4 @@
-package gcom.messagemodule;
+package gcom.message;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

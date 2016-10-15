@@ -1,9 +1,8 @@
 package gcom.observer;
 
-import gcom.messagemodule.Message;
+import gcom.message.Message;
 import gcom.status.GCOMException;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**

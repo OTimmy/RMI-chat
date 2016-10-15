@@ -1,13 +1,11 @@
 package gcom.messagemodule;
 
-import gcom.groupmodule.Member;
-
-import java.rmi.RemoteException;
+import gcom.message.Message;
 
 /**
  * Created by timmy on 03/10/16.
  */
-public interface MessageOrdering {
+public interface Ordering {
 
     /**
      * Will update current vector clock and include it in the message

@@ -4,6 +4,7 @@ import gcom.communicationmodule.Communication;
 import gcom.communicationmodule.CommunicationFactory;
 import gcom.communicationmodule.NonReliableCommunication;
 import gcom.groupmodule.*;
+import gcom.message.*;
 import gcom.messagemodule.*;
 import gcom.observer.ObserverEvent;
 import gcom.observer.Observer;
@@ -25,9 +26,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class AbstractGCOM implements Subject{
 
     //The modules
-    private GroupManager groupManager;
-    private MessageOrdering messageOrdering;
-    private Communication communication;
+    protected GroupManager groupManager;
+    protected Ordering messageOrdering;
+    protected Communication communication;
 
     private ArrayList<Observer> observers;
 
@@ -57,6 +58,8 @@ public abstract class AbstractGCOM implements Subject{
 
         groupManager.registerObservers(createObserverMemberLeave());
         groupManager.registerObservers(createCommunicationObs());
+        //groupManager.registerMemberOserver()
+        //groupManager.registerCommunicationObserver(communication)
     }
 
     /**
@@ -92,7 +95,7 @@ public abstract class AbstractGCOM implements Subject{
                                                         p.getMessagetype(),
                                                         p.getGroupName());
 
-            messageOrdering = createMessageOrdering(properties.getMessagetype(),name);
+            messageOrdering = createOrdering(properties.getMessagetype(),name);
             communication   = createCommunication(properties.getComtype());
 
 
@@ -106,10 +109,6 @@ public abstract class AbstractGCOM implements Subject{
         } catch (RemoteException e) {
             e.printStackTrace();
             throw new GCOMException(e.toString());
-        } catch (AlreadyBoundException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
         }
 
         threadConsumer.start();
@@ -125,7 +124,8 @@ public abstract class AbstractGCOM implements Subject{
     private Observer createCommunicationObs() {
         Observer ob = new Observer() {
             @Override
-            public void update(ObserverEvent e,Message m) throws RemoteException, GCOMException {
+            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+                Message m = (Message) t;
                 if(e == ObserverEvent.RECEIVED_MESSAGE) {
                     communication.putMessage(m);
                 }
@@ -133,7 +133,6 @@ public abstract class AbstractGCOM implements Subject{
         };
         return ob;
     }
-
 
     /**
      * Creats a group as given user as it's leader, then
@@ -146,7 +145,7 @@ public abstract class AbstractGCOM implements Subject{
         try {
 
             communication   = createCommunication(p.getComtype());
-            messageOrdering = createMessageOrdering(p.getMessagetype(),name);
+            messageOrdering = createOrdering(p.getMessagetype(),name);
             groupManager.createGroup(p,name);
 
         } catch (Exception e) {
@@ -162,8 +161,10 @@ public abstract class AbstractGCOM implements Subject{
      * @param m the message to be sent to the current group, will be
      *          placed in a pending que.
      */
-    public void sendMessageToGroup(Message m)  {
+    public void sendMessageToGroup(Message m) throws RemoteException {
         try {
+            String groupName = groupManager.getProperties().getGroupName();
+            m.setGroupName(groupName);
             outgoingChatMessage.put(m);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -177,7 +178,8 @@ public abstract class AbstractGCOM implements Subject{
     private Observer createObserverMemberLeave() {
         Observer ob = new Observer() {
             @Override
-            public void update(ObserverEvent e,Message m) throws RemoteException, GCOMException {
+            public<T> void update(ObserverEvent e,T t) throws RemoteException, GCOMException {
+                Message m = (Message) t;
                 if(e == ObserverEvent.MESSAGE_TO_GROUP) {
                     sendMessageToGroup(m);
                 }
@@ -199,7 +201,7 @@ public abstract class AbstractGCOM implements Subject{
         Thread t = new Thread(() -> {
             while(isProducerThreadActive()) {
                 try {
-                    System.out.println("Sendig message!");
+
                     Message message  = outgoingChatMessage.take();
                     Member[] members = groupManager.getMembers();
 
@@ -293,32 +295,37 @@ public abstract class AbstractGCOM implements Subject{
         }
     }
 
-    /**
-     * Creates a communcation with repsect to given type.
-     * And add appropiate listeners and observers
-     * @param type of communication
-     * @return
-     */
-    private Communication createCommunication(Class type) throws RemoteException, AlreadyBoundException, NotBoundException {
-        if(NonReliableCommunication.class.getClass() == type) {
-            return CommunicationFactory.createNonReliableCommunication();
-        }
+//    /**
+//     * Creates a communcation with repsect to given type.
+//     * And add appropiate listeners and observers
+//     * @param type of communication
+//     * @return
+//     */
+//    private Communication createCommunication(Class type) throws RemoteException, AlreadyBoundException, NotBoundException {
+//        if(NonReliableCommunication.class.getClass() == type) {
+//            return CommunicationFactory.createNonReliableCommunication();
+//        }
+//
+//        return null;
+//    }
 
-        return null;
-    }
+    protected abstract Communication createCommunication(Class type);
 
-    /**
-     * @param name the name of the sender. That's the current user.
-     * @param type
-     * @return
-     */
-    private MessageOrdering createMessageOrdering(Class type, String name) {
-        if(CausalMessageOrdering.class.getClass() == type) {
-            return new CausalMessageOrdering(name);
-        }
+//    /**
+//     * @param name the name of the sender. That's the current user.
+//     * @param type
+//     * @return
+//     */
+//    private Ordering createMessageOrdering(Class type, String name) {
+//        if(CausalOrdering.class.getClass() == type) {
+//            return new CausalOrdering(name);
+//        }
+//
+//        return new UnorderedOrdering(name);
+//    }
 
-        return new UnorderedMessageOrdering(name);
-    }
+
+    protected abstract Ordering createOrdering(Class type, String name);
 
     /**
      * Register observers

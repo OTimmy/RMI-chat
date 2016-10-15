@@ -1,16 +1,14 @@
 package gcom.messagemodule;
 
-import gcom.groupmodule.Member;
-
-import java.rmi.RemoteException;
+import gcom.message.Message;
 
 /**
  * Created by c12ton on 2016-10-04.
  */
-public class UnorderedMessageOrdering implements MessageOrdering{
+public class UnorderedOrdering implements Ordering {
 
     private String name;
-    public UnorderedMessageOrdering(String name) {
+    public UnorderedOrdering(String name) {
         this.name = name;
     }
 

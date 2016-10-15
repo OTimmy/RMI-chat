@@ -1,16 +1,18 @@
-package gcom.messagemodule;
+package gcom.message;
 
 import gcom.groupmodule.Member;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 /**
  * Created by c12ton on 10/14/16.
  */
-public class JoinMessage implements Join,Message {
+public class JoinMessage extends UnicastRemoteObject implements Join,Message {
 
     private Member member;
-    public JoinMessage(Member member) {
+    public JoinMessage(Member member) throws RemoteException {
+        super();
         this.member = member;
     }
 

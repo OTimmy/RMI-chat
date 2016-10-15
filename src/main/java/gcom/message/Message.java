@@ -1,6 +1,4 @@
-package gcom.messagemodule;
-
-import gcom.status.GCOMError;
+package gcom.message;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -14,4 +12,6 @@ public interface Message extends Remote{
 //    MessageType getMessageType() throws RemoteException;
 //    String getChatMessage() throws RemoteException;
     MessageType getMessageType() throws RemoteException;
+    void setGroupName(String groupName);
+    String getGroupName();
 }
