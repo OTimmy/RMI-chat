@@ -9,5 +9,5 @@ import java.rmi.RemoteException;
  * Created by c12ton on 9/29/16.
  */
 public interface Observer {
-    void update(ObserverEvent e,Message t) throws RemoteException, GCOMException;
+    <T>void update(ObserverEvent e,T t) throws RemoteException, GCOMException;
 }

@@ -60,35 +60,4 @@ public class NameServiceConcrete extends UnicastRemoteObject implements NameServ
         return leaders.get(groupName);
     }
 
-    /**
-     *
-     * @returnString[]
-     */
-    public static NameService getNameService(String host)
-            throws RemoteException, NotBoundException {
-
-        Registry registry = LocateRegistry.getRegistry(host);
-        return (NameService) registry.lookup(NameService.class.getSimpleName());
-    }
-
-
-    public static void main(String[] args) {
-        startService();
-    }
-
-    private static void startService() {
-
-        try {
-            Registry registry = LocateRegistry.createRegistry(1099);
-            //Initiate an empty hashet of groups
-            NameService nameService = new NameServiceConcrete();
-            registry.rebind(NameService.class.getSimpleName(), nameService);
-            System.out.println("Sever is ready!");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
 }

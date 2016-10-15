@@ -13,9 +13,9 @@ import java.util.concurrent.LinkedBlockingDeque;
  * An unreliable communication implementation,
  * it does not care for if message has been received or not.
  */
-public class NonReliableCommunication implements Communication{
+public class NonReliableCommunication extends Communication{
 
-    private BlockingDeque<Message> inMessages;
+//    private BlockingDeque<Message> inMessages;
 
     public NonReliableCommunication()  {
         inMessages = new LinkedBlockingDeque<>();
@@ -44,11 +44,6 @@ public class NonReliableCommunication implements Communication{
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public Message getMessage() throws RemoteException, GCOMException, InterruptedException {
-        return inMessages.take();
     }
 
 }

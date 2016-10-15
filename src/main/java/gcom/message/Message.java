@@ -12,4 +12,6 @@ public interface Message extends Remote{
 //    MessageType getMessageType() throws RemoteException;
 //    String getChatMessage() throws RemoteException;
     MessageType getMessageType() throws RemoteException;
+    void setGroupName(String groupName);
+    String getGroupName();
 }

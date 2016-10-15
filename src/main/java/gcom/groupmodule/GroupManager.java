@@ -4,6 +4,7 @@ import gcom.message.ElectionMessage;
 import gcom.message.JoinMessage;
 import gcom.message.LeaveMessage;
 import gcom.message.Message;
+import rmi.RMIServer;
 import rmi.nameservice.NameService;
 import rmi.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
@@ -30,7 +31,7 @@ public class GroupManager implements Manager,Subject{
     private NameService nameService;
 
     public GroupManager(String host) throws RemoteException, NotBoundException {
-        nameService = NameServiceConcrete.getNameService(host);
+        nameService = RMIServer.getNameService(host);
         members = new LinkedHashMap<>();
         observers = new ArrayList<>();
     }

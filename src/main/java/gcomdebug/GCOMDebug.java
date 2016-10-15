@@ -1,11 +1,16 @@
 package gcomdebug;
 
 import gcom.AbstractGCOM;
+import gcom.communicationmodule.Communication;
+import gcom.communicationmodule.NonReliableCommunication;
 import gcom.message.Message;
+import gcom.messagemodule.Ordering;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.observer.Subject;
 import gcom.status.GCOMException;
+import gcomdebug.communicationmodule.NonReliableDebug;
+import rmi.RMIServer;
 import rmi.RMIService;
 import rmi.debugservice.DebugService;
 
@@ -15,31 +20,33 @@ import java.rmi.RemoteException;
 /**
  * Created by c12ton on 10/12/16.
  */
-public class GCOMDebug extends AbstractGCOM implements Observer{
+public class GCOMDebug extends AbstractGCOM {
     private DebugService debugService;
+    private String host;
     public GCOMDebug(String host) throws RemoteException, NotBoundException {
         super(host);
-        debugService = RMIServiceServer.getDebugService(host);
-
-
+        debugService = RMIServer.getDebugService(host);
+        this.host = host;
     }
 
     @Override
-    protected Observer createCommunicationObs() {
-
-        Observer ob = new Observer() {
-            @Override
-            public void update(ObserverEvent e, Message m) throws RemoteException, GCOMException {
-                if (e == ObserverEvent.RECEIVED_MESSAGE) {
-                    debugService.addMessage(m);
-                }
-            }
-        };
-        return  ob;
+    protected Communication createCommunication(Class type) {
+        if(NonReliableCommunication.class.getClass() == type) {
+            return new NonReliableDebug(host);
+        }
+        return null;
     }
 
     @Override
-    public void update(ObserverEvent e, Message t) throws RemoteException, GCOMException {
-        communication.putMessage(t);
+    protected Ordering createOrdering(Class type, String name) {
+        return null;
     }
+
+
+    //Override createMessageOrder
+        // return extendedUnOrdered
+
+    //Override createCommunicationOrder
+        //return extendedUnOrdered
+
 }

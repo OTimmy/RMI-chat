@@ -1,7 +1,9 @@
 package gcomretail;
 
 import gcom.AbstractGCOM;
+import gcom.communicationmodule.Communication;
 import gcom.message.Message;
+import gcom.messagemodule.Ordering;
 import gcom.observer.ObserverEvent;
 import gcom.observer.Observer;
 import gcom.status.GCOMException;
@@ -21,16 +23,13 @@ public class GCOMRetail extends AbstractGCOM{
         super(host);
     }
 
-    /**
-     * @return An observer for communication.
-     */
-    protected Observer createCommunicationObs() {
-        Observer ob = (e, m) -> {
-            if(e == ObserverEvent.RECEIVED_MESSAGE) {
-                communication.putMessage(m);
-            }
-        };
-        return ob;
+    @Override
+    protected Communication createCommunication(Class type) {
+        return null;
     }
 
+    @Override
+    protected Ordering createOrdering(Class type, String name) {
+        return null;
+    }
 }
