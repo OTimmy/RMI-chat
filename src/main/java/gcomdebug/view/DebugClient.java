@@ -4,7 +4,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.security.PublicKey;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Created by c13slk on 2016-10-14.
@@ -17,11 +18,12 @@ public class DebugClient {
     private DefaultTableModel outgoingModel = new DefaultTableModel();
     private DefaultTableModel vectorModel = new DefaultTableModel();
 
-    private JButton rs = new JButton("Release selected");
     private JButton ds = new JButton("Drop selected");
     private JButton ra = new JButton("Release all");
+    private JButton refreshButton;
 
     private JTable debugGroups;
+    private JTable incommingTable;
 
     public DebugClient() {
 
@@ -35,7 +37,7 @@ public class DebugClient {
         };
         JScrollPane groupsSp = new JScrollPane(debugGroups);
 
-        JButton refreshButton = new JButton("Refresh");
+        refreshButton = new JButton("Refresh");
         refreshButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel g = new JLabel("Groups");
@@ -49,13 +51,11 @@ public class DebugClient {
 
         //--------------------------------------------------------------------->
 
-
         JPanel buttons = new JPanel();
-        buttons.add(rs);
         buttons.add(ds);
         buttons.add(ra);
 
-        JTable incommingTable = new JTable(incommingModel) {
+        incommingTable = new JTable(incommingModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -127,30 +127,33 @@ public class DebugClient {
 
     }
 
-    public void removeFromIncomming(int row){
-        incommingModel.removeRow(row);
-    }
-
     public void addOutgoing(String member, String message){
         outgoingModel.addRow(new Object[]{member, message});
-
     }
 
     public void removeFromOutgoing(int row){
         outgoingModel.removeRow(row);
-
     }
 
-    public void addVector(){
-
+    public void addVector(String mem, String vector){
+        vectorModel.addRow(new Object[]{mem, vector});
     }
 
-    public void removeVector(){
-
+    public void removeVector(String mem){
+        for(int i = 0; i<vectorModel.getRowCount(); i++){
+            if(vectorModel.getValueAt(i, 0).equals(mem)){
+                vectorModel.removeRow(i);
+            }
+        }
     }
 
-    public void updateVector(){
+    public void updateVector(String mem, String vector){
 
+        for(int i = 0; i<vectorModel.getRowCount(); i++){
+            if(vectorModel.getValueAt(i, 0).equals(mem)){
+                vectorModel.setValueAt(vector, i, 1);
+            }
+        }
     }
 
     public void updateDebugGroups(String[] groups) {
@@ -165,15 +168,55 @@ public class DebugClient {
         }
     }
 
-    public void addListenerToRs(ActionListener a){
-        rs.addActionListener(a);
-    }
     public void addListenerToDs(ActionListener a){
         ds.addActionListener(a);
     }
     public void addListenerToRa(ActionListener a){
         ra.addActionListener(a);
     }
+    public void addListenerToIncTable(MouseListener e){ incommingTable.addMouseListener(e);}
 
 
+    public int moveRow(MouseEvent e) {
+
+        Point p = e.getPoint();
+        int row = incommingTable.rowAtPoint(p);
+
+        String mem = (String) incommingModel.getValueAt(row, 0);
+        String message = (String) incommingModel.getValueAt(row, 1);
+        outgoingModel.addRow(new Object[]{mem, message});
+        incommingModel.removeRow(row);
+
+        return row;
+
+    }
+
+    public int moveRow() {
+
+        int row = 0;
+        String mem = (String) incommingModel.getValueAt(row, 0);
+        String message = (String) incommingModel.getValueAt(row, 1);
+        outgoingModel.addRow(new Object[]{mem, message});
+        incommingModel.removeRow(row);
+
+        return row;
+
+    }
+
+    public int getTableRowCount(){
+
+        return incommingModel.getRowCount();
+    }
+
+    public int dropSelected() {
+        int row = incommingTable.getSelectedRow();
+        if(row != -1) {
+            incommingModel.removeRow(row);
+        }
+        return row;
+    }
+
+    public void addListenerToRefresh(ActionListener a) {
+        refreshButton.addActionListener(a);
+    }
 }

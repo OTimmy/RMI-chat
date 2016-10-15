@@ -237,10 +237,9 @@ public class GUIClient {
         sendButton.setPreferredSize(new Dimension(80, 62));
 
         messageArea.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
 
-            }
+            @Override
+            public void keyTyped(KeyEvent e) {}
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -251,9 +250,7 @@ public class GUIClient {
             }
 
             @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
+            public void keyReleased(KeyEvent e) {}
         });
 
         JScrollPane textPane = new JScrollPane(messageArea);
