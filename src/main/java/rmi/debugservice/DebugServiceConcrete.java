@@ -7,6 +7,7 @@ import gcom.status.GCOMException;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -75,9 +76,25 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     @Override
     public void dropMessage(String groupName, int index) throws RemoteException{
 
+        removeMessageFromIndex(groupName,index);
+    }
+
+
+    private void removeMessageFromIndex(String groupName, int index) {
         Message[] messages = inMessages.get(groupName).toArray(new Message[]{});
-        Message m = messages[index];
-        inMessages.remove(m);
+        ArrayList<Message> msgs = new ArrayList<>();
+        for(int i = 0; i < messages.length; i++) {
+            if(i != index) {
+                msgs.add(messages[i]);
+            }
+        }
+
+        LinkedBlockingDeque l = inMessages.get(groupName);
+        l.clear();
+
+        for(Message m:msgs) {
+            l.add(m);
+        }
     }
 
     private void createMessageQueForGroup(String groupName) {

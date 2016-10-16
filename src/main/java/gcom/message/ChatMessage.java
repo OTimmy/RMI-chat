@@ -7,7 +7,7 @@ import java.rmi.server.UnicastRemoteObject;
 /**
  * Created by c12ton on 2016-10-06.
  */
-public class ChatMessage extends UnicastRemoteObject implements Message,Chat{
+public class ChatMessage extends UnicastRemoteObject implements Message,Chat,Cloneable{
     private String message;
     private String user;
     private String groupName;
@@ -68,5 +68,9 @@ public class ChatMessage extends UnicastRemoteObject implements Message,Chat{
     @Override
     public String getToName() throws RemoteException {
         return toName;
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

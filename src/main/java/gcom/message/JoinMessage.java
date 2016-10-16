@@ -8,7 +8,7 @@ import java.rmi.server.UnicastRemoteObject;
 /**
  * Created by c12ton on 10/14/16.
  */
-public class JoinMessage extends UnicastRemoteObject implements Join,Message {
+public class JoinMessage extends UnicastRemoteObject implements Join,Message, Cloneable {
 
     private Member member;
     private String groupName;
@@ -62,5 +62,9 @@ public class JoinMessage extends UnicastRemoteObject implements Join,Message {
     @Override
     public String getToName() throws RemoteException {
         return toName;
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
