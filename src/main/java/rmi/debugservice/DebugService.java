@@ -2,7 +2,6 @@ package rmi.debugservice;
 
 import gcom.message.Message;
 import gcom.observer.Observer;
-import gcom.observer.Subject;
 import gcom.status.GCOMException;
 
 import java.rmi.Remote;
@@ -42,9 +41,10 @@ public interface DebugService extends Remote {
 
 
     /**
+     * @param groupName
      * @param b
      */
-    void registerCommunicationObserver(Observer b) throws RemoteException;
+    void registerCommunicationObserver(String groupName, Observer b) throws RemoteException;
 
     /**
      * @param b

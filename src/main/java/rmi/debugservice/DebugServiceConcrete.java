@@ -3,7 +3,6 @@ package rmi.debugservice;
 import gcom.message.Message;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
-import gcom.observer.Subject;
 import gcom.status.GCOMException;
 
 import java.rmi.RemoteException;
@@ -20,13 +19,12 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
     private Observer controllerObserverVector;
     private Observer controllerObserverMessage;
-    private ArrayList<Observer> communicationObservers;
+    private ConcurrentHashMap<String,ArrayList<Observer>> communicationObservers;
     private ConcurrentHashMap<String,LinkedBlockingDeque<Message>> inMessages;
 
     public DebugServiceConcrete() throws RemoteException {
         inMessages = new ConcurrentHashMap<>();
-        communicationObservers = new ArrayList<>();
-
+        communicationObservers = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -48,13 +46,14 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     @Override
     public void passMessages(String groupName) throws GCOMException, RemoteException {
         LinkedBlockingDeque l = inMessages.get(groupName);
-        l.clear();
+        while(!l.isEmpty()) {
+            Message m = (Message) l.pop();
+            notifyObserverCommunicators(m);
+        }
     }
 
     @Override
     public void updateVectorClock(String name, HashMap<String, Integer> vectorClock) throws RemoteException {
-        //copy raw data
-
         HashMap<String,Integer> vec = new HashMap<>();
         String[] keys = vectorClock.keySet().toArray(new String[]{});
         for(String key:keys) {
@@ -71,9 +70,16 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         }
     }
 
+    private void createCommunicationListForNonExisting(String groupName) {
+        if(!communicationObservers.containsKey(groupName)) {
+            ArrayList<Observer> observers = new ArrayList<>();
+            communicationObservers.put(groupName,observers);
+        }
+    }
+
     @Override
-    public void registerCommunicationObserver(Observer b) throws RemoteException{
-        communicationObservers.add(b);
+    public void registerCommunicationObserver(String groupName, Observer b) throws RemoteException{
+        communicationObservers.get(groupName).add(b);
     }
 
     @Override
@@ -89,7 +95,8 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
 
     private void notifyObserverCommunicators(Message m) throws GCOMException, RemoteException {
-        for(Observer ob:communicationObservers) {
+        Observer[] obs = communicationObservers.get(m.getGroupName()).toArray(new Observer[]{});
+        for(Observer ob:obs) {
             ob.update(ObserverEvent.RECEIVED_MESSAGE,m);
         }
     }
