@@ -12,6 +12,7 @@ import rmi.debugservice.DebugService;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -29,7 +30,7 @@ import static javafx.scene.input.KeyCode.T;
  */
 public class DebugController {
     private static int num = 0;
-    private static String group = null;
+    private static String group = "";
     private static DebugClient gui;
     private static GCOMDebug gcom;
     private static DebugService debugService = null;
@@ -102,7 +103,10 @@ public class DebugController {
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
                 Message msg = (Message) t;
 
-                if(group == (msg.getGroupName())) {
+                System.out.println("Message res to group: " + msg.getGroupName());
+                System.out.println("Selected group: " + group);
+
+                if(group.equals(msg.getGroupName())) {
                     switch (msg.getMessageType()) {
 
                         case CHAT_MESSAGE:
@@ -128,6 +132,8 @@ public class DebugController {
                         default:
                             break;
                     }
+                }else{
+                    debugService.passMessages(msg.getGroupName());
                 }
             }
         };
@@ -163,9 +169,6 @@ public class DebugController {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui.addIncomming("test", "message" + num);
-                num++;
-
                 gui.updateDebugGroups(gcom.getGroups());
             }
         };
@@ -177,8 +180,17 @@ public class DebugController {
             public void mouseClicked(MouseEvent e) {
 
                 if (e.getClickCount() == 2) {
-                    int index = gui.moveRow(e);
-                    //do something with index!
+                    Point p = e.getPoint();
+                    int index = gui.getIndexFromPointInc(p);
+                    gui.removeFromgIncomming(index);
+
+                    try {
+                        debugService.passMessage(group, index);
+                    } catch (GCOMException e1) {
+                        e1.printStackTrace();
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
 
@@ -206,8 +218,11 @@ public class DebugController {
             public void mouseClicked(MouseEvent e) {
 
                 if (e.getClickCount() == 2) {
+
                     group = gui.getGroupName(e);
                     gui.clearDebug();
+
+                    System.out.println("Selected group: " + gui.getGroupName(e));
                 }
             }
 

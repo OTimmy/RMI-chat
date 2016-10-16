@@ -40,6 +40,7 @@ public class DebugClient {
                 return false;
             }
         };
+        groupsModel.addColumn("Groups");
         JScrollPane groupsSp = new JScrollPane(debugGroups);
 
         refreshButton = new JButton("Refresh");
@@ -134,6 +135,14 @@ public class DebugClient {
 
     }
 
+    public void removeFromgIncomming(int row){
+        incommingModel.removeRow(row);
+    }
+
+    public int getIndexFromPointInc(Point p){
+        return incommingTable.rowAtPoint(p);
+    }
+
     public void addOutgoing(String member, String message){
         outgoingModel.addRow(new Object[]{member, message});
     }
@@ -171,6 +180,7 @@ public class DebugClient {
         }
 
         for (String group : groups) {
+            System.out.println(group);
             groupsModel.addRow(new Object[]{group});
         }
     }
