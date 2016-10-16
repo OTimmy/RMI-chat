@@ -280,4 +280,12 @@ public class DebugClient {
 
         g.setText("Currently selected: " + group);
     }
+
+    public String getFrom(Point p) {
+        return (String) incommingTable.getValueAt(incommingTable.rowAtPoint(p), 0);
+    }
+
+    public String getTo(Point p) {
+        return (String) incommingTable.getValueAt(incommingTable.rowAtPoint(p), 1);
+    }
 }

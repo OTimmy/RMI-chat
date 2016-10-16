@@ -175,15 +175,15 @@ public class DebugController {
                 if (e.getClickCount() == 2) {
                     Point p = e.getPoint();
                     int index = gui.getIndexFromPointInc(p);
-                    gui.removeFromgIncomming(index);
 
                     try {
-                        debugService.passMessage(group, index);
+                        debugService.passMessage(group, gui.getTo(p), index);
                     } catch (GCOMException e1) {
                         e1.printStackTrace();
                     } catch (RemoteException e1) {
                         e1.printStackTrace();
                     }
+                    gui.removeFromgIncomming(index);
                 }
             }
 
