@@ -218,6 +218,16 @@ public class DebugController {
             public void mouseClicked(MouseEvent e) {
 
                 if (e.getClickCount() == 2) {
+                    for(int i = 0; 1 < gui.getTableRowCount(); i++){
+                        gui.removeFromgIncomming(0);
+                    }
+                    try {
+                        debugService.passMessages(group);
+                    } catch (GCOMException e1) {
+                        e1.printStackTrace();
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    }
 
                     group = gui.getGroupName(e);
                     gui.clearDebug();
