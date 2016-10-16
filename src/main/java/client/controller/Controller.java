@@ -100,7 +100,7 @@ public class Controller {
                     gcom.registerObservers(createMessageObserver(group));
                     GroupProperties p = null;
 
-                    Class order = null;
+                    Class order;
 
                     if(gui.getIfNoOrder()){
                         order = UnorderedOrdering.class.getClass();

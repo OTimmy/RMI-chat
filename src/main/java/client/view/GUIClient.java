@@ -77,7 +77,7 @@ public class GUIClient {
 
         nonDebugRB.setSelected(true);
 
-        orderButtonGroup.add(nonDebugRB);
+        orderButtonGroup.add(noOrderRB);
         orderButtonGroup.add(casualOrderRB);
 
         noOrderRB.setSelected(true);
