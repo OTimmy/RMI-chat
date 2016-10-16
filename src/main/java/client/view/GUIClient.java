@@ -1,6 +1,5 @@
 package client.view;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import gcom.communicationmodule.NonReliableCommunication;
 
 import javax.swing.*;
@@ -9,14 +8,11 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Hashtable;
-
-import static javax.swing.BoxLayout.Y_AXIS;
 
 /**
  * Causal ordering builds upon FIFO ordering.
@@ -202,7 +198,7 @@ public class GUIClient {
     }
 
     public void setHost() {
-        new TestDialog();
+        new HostDialog();
         host = hostTextField.getText();
     }
 
@@ -436,10 +432,6 @@ public class GUIClient {
         leaderOf.add(group);
     }
 
-    public void removeLeaderOf(String group) {
-        leaderOf.remove(group);
-    }
-
     private JTextArea getTextArea(String group, int index) {
 
         JTextArea ta = null;
@@ -565,19 +557,21 @@ public class GUIClient {
         }
     }
 
-    public class TestDialog {
+    public class HostDialog {
 
-        public TestDialog() {
+        public HostDialog() {
 
-            JPanel panel = new JPanel();
-            panel.add(new JLabel("Enter host:"));
+            JPanel panel = new JPanel(new GridLayout(0, 1));
+            JPanel panel2 = new JPanel();
+            panel2.add(new JLabel("Enter host:"));
+            panel2.add(hostTextField);
 
+            JPanel panel3 = new JPanel();
+            panel3.add(nonDebugRB);
+            panel3.add(debugRB);
 
-            panel.add(hostTextField);
-
-            panel.add(nonDebugRB);
-            panel.add(debugRB);
-
+            panel.add(panel2);
+            panel.add(panel3);
             int result = JOptionPane.showOptionDialog(tabbedPane, panel, "Enter Host",
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
                     null, null, null);

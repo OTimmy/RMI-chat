@@ -48,7 +48,7 @@ public class DebugClient {
         refreshButton = new JButton("Refresh");
         refreshButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        g = new JLabel("Groups");
+        g = new JLabel("Currently selected: none");
         g.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel groupPanel = new JPanel();
