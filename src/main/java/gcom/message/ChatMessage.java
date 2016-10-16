@@ -11,6 +11,9 @@ public class ChatMessage extends UnicastRemoteObject implements Message,Chat{
     private String message;
     private String user;
     private String groupName;
+
+    private String fromName;
+    private String toName;
     /**
      * @param user the username of the sender
      * @param message the chat message, null if non is needed
@@ -45,5 +48,25 @@ public class ChatMessage extends UnicastRemoteObject implements Message,Chat{
     @Override
     public String getGroupName() throws RemoteException{
         return groupName;
+    }
+
+    @Override
+    public void setFromName(String fromName) throws RemoteException {
+        this.fromName = fromName;
+    }
+
+    @Override
+    public void setToName(String toName) throws RemoteException {
+        this.toName = toName;
+    }
+
+    @Override
+    public String getFromName() throws RemoteException {
+        return fromName;
+    }
+
+    @Override
+    public String getToName() throws RemoteException {
+        return toName;
     }
 }

@@ -169,6 +169,7 @@ public abstract class AbstractGCOM implements Subject{
         try {
             String groupName = groupManager.getProperties().getGroupName();
             m.setGroupName(groupName);
+            m.setFromName(groupManager.getName());
             outgoingChatMessage.put(m);
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -10,7 +10,8 @@ import java.rmi.server.UnicastRemoteObject;
 public class LeaveMessage extends UnicastRemoteObject implements Message,Leave{
     private String name;
     private String groupName;
-
+    private String fromName;
+    private String toName;
     /**
      * @param name the name of the user that left the group
      * @throws RemoteException
@@ -37,5 +38,25 @@ public class LeaveMessage extends UnicastRemoteObject implements Message,Leave{
     @Override
     public String getGroupName() {
         return groupName;
+    }
+
+    @Override
+    public void setFromName(String fromName) throws RemoteException {
+        this.fromName = fromName;
+    }
+
+    @Override
+    public void setToName(String toName) throws RemoteException {
+        this.toName = toName;
+    }
+
+    @Override
+    public String getFromName() throws RemoteException {
+        return fromName;
+    }
+
+    @Override
+    public String getToName() throws RemoteException {
+        return toName;
     }
 }

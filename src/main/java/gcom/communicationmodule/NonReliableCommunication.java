@@ -38,7 +38,7 @@ public class NonReliableCommunication extends Communication{
     public void sendMessage(Member[] members, Message message)  {
         for(Member m:members) {
             try {
-                System.out.println("Sending to:" + m.getName());
+                message.setToName(m.getName());
                 m.sendMessage(message);
             } catch (RemoteException e) {
                 e.printStackTrace();

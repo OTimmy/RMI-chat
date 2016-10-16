@@ -63,6 +63,7 @@ public interface Manager extends Remote{
 
     void setLeader(Member m);
 
+    String getName();
 
     /**
      * Is called when member want's to join current group.

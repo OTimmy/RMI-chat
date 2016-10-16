@@ -6,7 +6,6 @@ import gcom.message.LeaveMessage;
 import gcom.message.Message;
 import rmi.RMIServer;
 import rmi.nameservice.NameService;
-import rmi.nameservice.NameServiceConcrete;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.observer.Subject;
@@ -148,6 +147,16 @@ public class GroupManager implements Manager,Subject{
     @Override
     public void setLeader(Member leader) {
         this.leader = leader;
+    }
+
+    @Override
+    public String getName() {
+        try {
+            return member.getName();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

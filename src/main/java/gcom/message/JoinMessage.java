@@ -12,6 +12,9 @@ public class JoinMessage extends UnicastRemoteObject implements Join,Message {
 
     private Member member;
     private String groupName;
+    private String fromName;
+    private String toName;
+
     public JoinMessage(Member member) throws RemoteException {
         super();
         this.member = member;
@@ -39,5 +42,25 @@ public class JoinMessage extends UnicastRemoteObject implements Join,Message {
     @Override
     public String getGroupName() {
         return groupName;
+    }
+
+    @Override
+    public void setFromName(String fromName) throws RemoteException {
+        this.fromName = fromName;
+    }
+
+    @Override
+    public void setToName(String toName) throws RemoteException {
+        this.toName = toName;
+    }
+
+    @Override
+    public String getFromName() throws RemoteException {
+        return fromName;
+    }
+
+    @Override
+    public String getToName() throws RemoteException {
+        return toName;
     }
 }
