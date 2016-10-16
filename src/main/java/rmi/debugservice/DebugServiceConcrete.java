@@ -29,7 +29,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     }
 
     @Override
-    public void addMessage(Message m) {
+    public void addMessage(Message m) throws RemoteException{
         inMessages.get(m.getGroupName()).add(m);
         notifyObserverControllerMessage(m);
     }
@@ -41,7 +41,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     }
 
     @Override
-    public void updateVectorClock(String name, HashMap<String, Integer> vectorClock) {
+    public void updateVectorClock(String name, HashMap<String, Integer> vectorClock) throws RemoteException {
         //copy raw data
 
         HashMap<String,Integer> vec = new HashMap<>();
@@ -55,18 +55,18 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     }
 
     @Override
-    public void registerCommunicationObserver(Observer b) {
+    public void registerCommunicationObserver(Observer b) throws RemoteException{
         communicationObservers.add(b);
     }
 
     @Override
-    public void registerControllerObserverMessage(Observer b) {
+    public void registerControllerObserverMessage(Observer b) throws RemoteException{
         controllerObserverMessage = b;
 
     }
 
     @Override
-    public void registerControllerObserverVector(Observer b) {
+    public void registerControllerObserverVector(Observer b) throws RemoteException{
         controllerObserverVector = b;
     }
 
@@ -77,7 +77,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         }
     }
 
-    private void notifyObserverControllerVector(String name, HashMap<String, Integer> vectorClock) {
+    private void notifyObserverControllerVector(String name, HashMap<String, Integer> vectorClock) throws RemoteException{
         try {
             controllerObserverVector.update(ObserverEvent.DEBUG_GUI,vectorClock);
         } catch (RemoteException e) {
@@ -87,7 +87,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         }
     }
 
-    private void notifyObserverControllerMessage(Message m) {
+    private void notifyObserverControllerMessage(Message m) throws RemoteException{
         try {
             controllerObserverMessage.update(ObserverEvent.DEBUG_GUI,m);
         } catch (RemoteException e) {
