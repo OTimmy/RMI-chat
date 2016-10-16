@@ -28,6 +28,8 @@ public class DebugClient {
     private JTable incommingTable;
     private JTable outgoingTable;
 
+    private JLabel g;
+
     public DebugClient() {
 
         setHost();
@@ -46,7 +48,7 @@ public class DebugClient {
         refreshButton = new JButton("Refresh");
         refreshButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel g = new JLabel("Groups");
+        g = new JLabel("Groups");
         g.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel groupPanel = new JPanel();
@@ -270,5 +272,10 @@ public class DebugClient {
         for(int i = 0; i < vectorModel.getRowCount(); i++){
             vectorModel.removeRow(0);
         }
+    }
+
+    public void addCurrentGroup(String group) {
+
+        g.setText("Currently selected: " + group);
     }
 }
