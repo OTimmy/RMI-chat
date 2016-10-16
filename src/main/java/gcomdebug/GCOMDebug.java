@@ -32,9 +32,18 @@ public class GCOMDebug extends AbstractGCOM {
     @Override
     protected Communication createCommunication(Class type) {
         if(NonReliableCommunication.class.getClass() == type) {
-            return new NonReliableDebug(host);
+            try {
+                return new NonReliableDebug(host,groupManager.getProperties().getGroupName());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
-        return new NonReliableDebug(host);
+        try {
+            return new NonReliableDebug(host,groupManager.getProperties().getGroupName());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return  null;
     }
 
     @Override
