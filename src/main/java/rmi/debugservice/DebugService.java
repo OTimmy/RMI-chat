@@ -22,7 +22,7 @@ public interface DebugService extends Remote {
      * @param groupName
      * @param index
      */
-    void passMessage(String groupName,int index) throws GCOMException, RemoteException;
+    void passMessage(String groupName,String toName, int index) throws GCOMException, RemoteException;
 
     /**
      *

@@ -36,12 +36,12 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     }
 
     @Override
-    public void passMessage(String groupName, int index) throws GCOMException, RemoteException {
+    public void passMessage(String groupName,String toName, int index) throws GCOMException, RemoteException {
         LinkedBlockingDeque<Message> messagesList = inMessages.get(groupName);
         Message[] messages = inMessages.get(groupName).toArray(new Message[]{});
-
         messagesList.remove(messages[index]);
-        String toName = messages[index].getToName();
+        System.out.println("name: " + toName);
+        System.out.println("from " + messages[index]);
 
         notifyObserverCommunicators(toName,messages[index]);
     }
