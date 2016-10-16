@@ -496,7 +496,9 @@ public class GUIClient {
     public void addMember(String group, String name) {
                 JTextArea ta = getTextArea(group, 0);
 
-                ta.append(name + "\n");
+                if(!myNameInGroup(group, name)) {
+                    ta.append(name + "\n");
+                }
     }
 
     public String showGroupCreation() {

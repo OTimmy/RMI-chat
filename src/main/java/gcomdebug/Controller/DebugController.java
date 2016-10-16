@@ -140,8 +140,15 @@ public class DebugController {
             public void actionPerformed(ActionEvent e) {
                 int countRows = gui.getTableRowCount();
                 for (int i = 0; i < countRows; i++) {
-                    int index = gui.moveRow();
-                    //do something with index!
+                    try {
+                        debugService.passMessages(group);
+                    } catch (GCOMException e1) {
+                        e1.printStackTrace();
+                    } catch (RemoteException e1) {
+                        e1.printStackTrace();
+                    }
+
+
                 }
             }
         };
@@ -153,7 +160,11 @@ public class DebugController {
             public void actionPerformed(ActionEvent e) {
 
                 int index = gui.dropSelected();
-                //do something with index!!
+                try {
+                    debugService.dropMessage(group, index);
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                }
             }
         };
     }
