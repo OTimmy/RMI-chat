@@ -32,4 +32,14 @@ public class ElectionMessage extends UnicastRemoteObject implements Message,Elec
     public MessageType getMessageType() throws RemoteException {
         return MessageType.ELECTION_MESSAGE;
     }
+
+    @Override
+    public void setGroupName(String groupName) {
+
+    }
+
+    @Override
+    public String getGroupName() {
+        return null;
+    }
 }

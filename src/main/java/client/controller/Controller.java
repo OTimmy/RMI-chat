@@ -27,6 +27,42 @@ public class Controller {
     private static AbstractGCOM gcom;
     private static Hashtable<String, AbstractGCOM> gcomTable = new Hashtable<>();
 
+    public static void main(String[] args) {
+
+        Controller controller = null;
+
+
+        try {
+            controller = new Controller(new GUIClient());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+
+
+        gui.addActionListenerCreate(controller.createGroupTabListern());
+        gui.addActionListenerDelete(controller.createDeleteListener());
+        gui.addActionListenerJoin(controller.createJoinListener());
+        gui.addActionListererRefresh(controller.refreshListener());
+
+        while (true) {
+            try {
+                gcom = new GCOMRetail(gui.getHost());
+                break;
+            } catch (RemoteException e) {
+                gui.setHost();
+                continue;
+            } catch (NotBoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String[] groups = gcom.getGroups();
+        gui.updateGroups(groups);
+
+    }
+
     private ActionListener createGroupTabListern() {
 
 
@@ -51,7 +87,6 @@ public class Controller {
                     } catch (NotBoundException e1) {
                         gui.inputHostMessage();
                     }
-
 
                     gcom.registerObservers(createMessageObserver(group));
                     GroupProperties p = null;
@@ -148,7 +183,11 @@ public class Controller {
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 }
-                gcom.sendMessageToGroup(msg);
+                try {
+                    gcom.sendMessageToGroup(msg);
+                } catch (RemoteException e1) {
+                    e1.printStackTrace();
+                }
 
             }
         };
@@ -163,17 +202,18 @@ public class Controller {
         };
     }
 
+
     public Controller(GUIClient gui) throws RemoteException, NotBoundException {
         this.gui = gui;
     }
 
-
     private gcom.observer.Observer createMessageObserver(final String group) {
         Observer ob = new Observer() {
             @Override
-            public void update(ObserverEvent e, Message msg) throws RemoteException, GCOMException {
+            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+                Message msg = (Message) t;
 
-                switch (msg.getMessageType()){
+                switch (msg.getMessageType()) {
 
                     case CHAT_MESSAGE:
                         Chat chat = (Chat) msg;
@@ -189,16 +229,16 @@ public class Controller {
                     case JOIN_MESSAGE:
                         Join join = (Join) msg;
                         gui.appendMessage(group, join.getMember().getName() + " has joined the chat\n\n");
-                        gui.addMember(group,join.getMember().getName());
+                        gui.addMember(group, join.getMember().getName());
                         break;
 
                     case ELECTION_MESSAGE:
                         Election election = (Election) msg;
 
-                        if(gui.myNameInGroup(group,election.getLeader().getName())){
+                        if (gui.myNameInGroup(group, election.getLeader().getName())) {
                             gui.setLeaderOf(group);
                         }
-                        gui.appendMessage(group, election.getLeader().getName()+ " Is now leader.\n\n");
+                        gui.appendMessage(group, election.getLeader().getName() + " Is now leader.\n\n");
                         break;
                     default:
                         break;
@@ -207,39 +247,5 @@ public class Controller {
         };
 
         return ob;
-    }
-
-    public static void main(String[] args) {
-
-        Controller controller = null;
-
-        try {
-            controller = new Controller(new GUIClient());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        }
-
-        gui.addActionListenerCreate(controller.createGroupTabListern());
-        gui.addActionListenerDelete(controller.createDeleteListener());
-        gui.addActionListenerJoin(controller.createJoinListener());
-        gui.addActionListererRefresh(controller.refreshListener());
-
-        while (true) {
-            try {
-                gcom = new GCOMRetail(gui.getHost());
-                break;
-            } catch (RemoteException e) {
-                gui.setHost();
-                continue;
-            } catch (NotBoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        String[] groups = gcom.getGroups();
-        gui.updateGroups(groups);
-
     }
 }

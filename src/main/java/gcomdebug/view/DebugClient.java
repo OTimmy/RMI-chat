@@ -12,6 +12,8 @@ import java.awt.event.MouseListener;
  */
 public class DebugClient {
 
+    private String host;
+
     private JFrame debugFrame = new JFrame("Debug");
     private DefaultTableModel groupsModel = new DefaultTableModel();
     private DefaultTableModel incommingModel = new DefaultTableModel();
@@ -26,6 +28,8 @@ public class DebugClient {
     private JTable incommingTable;
 
     public DebugClient() {
+
+        setHost();
 
         JPanel debugPane = new JPanel(new BorderLayout());
 
@@ -175,6 +179,7 @@ public class DebugClient {
         ra.addActionListener(a);
     }
     public void addListenerToIncTable(MouseListener e){ incommingTable.addMouseListener(e);}
+    public void addListenerToGroupsTable(MouseListener e){debugGroups.addMouseListener(e);}
 
 
     public int moveRow(MouseEvent e) {
@@ -218,5 +223,19 @@ public class DebugClient {
 
     public void addListenerToRefresh(ActionListener a) {
         refreshButton.addActionListener(a);
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost() {
+        String userInput = JOptionPane.showInputDialog("Enter Host: ", "localhost");
+
+        if (userInput == null) {
+            System.exit(0);
+        }
+
+        host = userInput;
     }
 }

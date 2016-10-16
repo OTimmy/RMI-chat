@@ -24,7 +24,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     private ConcurrentHashMap<String,LinkedBlockingDeque<Message>> inMessages;
 
     public DebugServiceConcrete() throws RemoteException {
-        inMessages = new ConcurrentHashMap<String,LinkedBlockingDeque<Message>>();
+        inMessages = new ConcurrentHashMap<>();
         communicationObservers = new ArrayList<>();
     }
 

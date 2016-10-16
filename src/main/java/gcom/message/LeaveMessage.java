@@ -27,4 +27,14 @@ public class LeaveMessage extends UnicastRemoteObject implements Message,Leave{
     public MessageType getMessageType() throws RemoteException {
         return MessageType.LEAVE_MESSAGE;
     }
+
+    @Override
+    public void setGroupName(String groupName) {
+
+    }
+
+    @Override
+    public String getGroupName() {
+        return null;
+    }
 }

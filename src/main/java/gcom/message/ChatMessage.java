@@ -35,4 +35,14 @@ public class ChatMessage extends UnicastRemoteObject implements Message,Chat{
     public MessageType getMessageType() throws RemoteException {
         return MessageType.CHAT_MESSAGE;
     }
+
+    @Override
+    public void setGroupName(String groupName) {
+
+    }
+
+    @Override
+    public String getGroupName() {
+        return null;
+    }
 }

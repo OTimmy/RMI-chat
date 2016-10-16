@@ -29,4 +29,14 @@ public class JoinMessage extends UnicastRemoteObject implements Join,Message {
     public MessageType getMessageType() throws RemoteException {
         return MessageType.JOIN_MESSAGE;
     }
+
+    @Override
+    public void setGroupName(String groupName) {
+
+    }
+
+    @Override
+    public String getGroupName() {
+        return null;
+    }
 }
