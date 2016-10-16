@@ -28,33 +28,22 @@ public class GCOMRetail extends AbstractGCOM{
         super(host);
     }
 
-    /**
-     * @param name the name of the sender. That's the current user.
-     * @param type
-     * @return
-     */
     @Override
-    protected Ordering createOrdering(Class type, String name) {
-        if(CausalOrdering.class.getClass() == type) {
-            return new CausalOrdering(name);
-        }
-
-        return new UnorderedOrdering(name);
-    }
-
-    /**
-     * Creates a communcation with repsect to given type.
-     * And add appropiate listeners and observers
-     * @param type of communication
-     * @return
-     */
-    @Override
-    protected Communication createCommunication(Class type) throws RemoteException, AlreadyBoundException, NotBoundException {
+    protected Communication createCommunication(Class type, String groupName, String name) throws RemoteException, AlreadyBoundException, NotBoundException {
         if(NonReliableCommunication.class.getClass() == type) {
             return CommunicationFactory.createNonReliableCommunication();
         }
 
         return null;
+    }
+
+    @Override
+    protected Ordering createOrdering(Class type, String groupName, String name) {
+        if(CausalOrdering.class.getClass() == type) {
+            return new CausalOrdering(name);
+        }
+
+        return new UnorderedOrdering(name);
     }
 
 }

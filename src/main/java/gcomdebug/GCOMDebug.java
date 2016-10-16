@@ -16,6 +16,7 @@ import rmi.RMIServer;
 import rmi.RMIService;
 import rmi.debugservice.DebugService;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -30,12 +31,13 @@ public class GCOMDebug extends AbstractGCOM {
     }
 
     @Override
-    protected Communication createCommunication(Class type) {
-        return new NonReliableDebug(host);
+    protected Communication createCommunication(Class type, String groupName, String name) throws RemoteException, AlreadyBoundException, NotBoundException {
+        return new NonReliableDebug(host,groupName,name);
+
     }
 
     @Override
-    protected Ordering createOrdering(Class type, String name) {
+    protected Ordering createOrdering(Class type, String groupName, String name) {
         if(UnorderedOrdering.class.getClass() == type) {
             return new UnorderedDebug(name);
         }
