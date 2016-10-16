@@ -3,6 +3,7 @@ package client.controller;
 import gcom.AbstractGCOM;
 import gcom.message.*;
 import gcom.messagemodule.*;
+import gcomdebug.GCOMDebug;
 import gcomretail.GCOMRetail;
 import gcom.groupmodule.GroupProperties;
 import gcom.observer.Observer;
@@ -48,7 +49,7 @@ public class Controller {
 
         while (true) {
             try {
-                gcom = new GCOMRetail(gui.getHost());
+                gcom = new GCOMDebug(gui.getHost());
                 break;
             } catch (RemoteException e) {
                 gui.setHost();
@@ -81,7 +82,7 @@ public class Controller {
                 if (group != null) {
 
                     try {
-                        gcom = new GCOMRetail(gui.getHost());
+                        gcom = new GCOMDebug(gui.getHost());
                     } catch (RemoteException e1) {
                         e1.printStackTrace();
                     } catch (NotBoundException e1) {
@@ -134,10 +135,10 @@ public class Controller {
                 }
                 String[] data = s.split("/");
 
-                GCOMRetail gcom = null;
+                GCOMDebug gcom = null;
 
                 try {
-                    gcom = new GCOMRetail(gui.getHost());
+                    gcom = new GCOMDebug(gui.getHost());
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 } catch (NotBoundException e1) {
