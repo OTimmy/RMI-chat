@@ -103,30 +103,23 @@ public class DebugController {
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
                 Message msg = (Message) t;
 
-                System.out.println("Message res to group: " + msg.getGroupName());
-                System.out.println("Selected group: " + group);
-
                 if(group.equals(msg.getGroupName())) {
                     switch (msg.getMessageType()) {
 
                         case CHAT_MESSAGE:
-                            Chat chat = (Chat) msg;
-                            gui.addIncomming(chat.getUser(), chat.getMessage());
+                            gui.addIncomming(msg.getFromName(), msg.getToName(), ((Chat) msg).getMessage());
                             break;
 
                         case LEAVE_MESSAGE:
-                            Leave leave = (Leave) msg;
-                            gui.addIncomming(leave.getName(), "Leave Message");
+                            gui.addIncomming(msg.getFromName(), msg.getToName(), "Leave Message");
                             break;
 
                         case JOIN_MESSAGE:
-                            Join join = (Join) msg;
-                            gui.addIncomming(join.getName(), "JOIN Message");
+                            gui.addIncomming(msg.getFromName(), msg.getToName(), "JOIN Message");
                             break;
 
                         case ELECTION_MESSAGE:
-                            Election election = (Election) msg;
-                            gui.addIncomming(election.getLeader().getName(), "Election message");
+                            gui.addIncomming(msg.getFromName(), msg.getToName(), "Election message");
 
                             break;
                         default:

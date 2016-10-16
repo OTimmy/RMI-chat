@@ -69,7 +69,8 @@ public class DebugClient {
                 return false;
             }
         };
-        incommingModel.addColumn("Member");
+        incommingModel.addColumn("From");
+        incommingModel.addColumn("To");
         incommingModel.addColumn("Message");
         JScrollPane scrollIncommingPane = new JScrollPane(incommingTable);
 
@@ -87,7 +88,8 @@ public class DebugClient {
             }
         };
         outgoingTable.setEnabled(false);//------------------------------------------------------------->
-        outgoingModel.addColumn("Member");
+        outgoingModel.addColumn("From");
+        outgoingModel.addColumn("To");
         outgoingModel.addColumn("Message");
         JScrollPane scrollOutgoingPane = new JScrollPane(outgoingTable);
 
@@ -132,8 +134,8 @@ public class DebugClient {
         debugFrame.setVisible(true);
     }
 
-    public void addIncomming(String member, String message){
-        incommingModel.addRow(new Object[]{member, message});
+    public void addIncomming(String from, String to, String message){
+        incommingModel.addRow(new Object[]{from, to, message});
 
     }
 
@@ -145,8 +147,8 @@ public class DebugClient {
         return incommingTable.rowAtPoint(p);
     }
 
-    public void addOutgoing(String member, String message){
-        outgoingModel.addRow(new Object[]{member, message});
+    public void addOutgoing(String from, String to, String message){
+        outgoingModel.addRow(new Object[]{from, to, message});
     }
 
     public void removeFromOutgoing(int row){
