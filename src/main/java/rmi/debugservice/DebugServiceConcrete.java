@@ -46,9 +46,11 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     @Override
     public void passMessages(String groupName) throws GCOMException, RemoteException {
         LinkedBlockingDeque l = inMessages.get(groupName);
-        while(!l.isEmpty()) {
-            Message m = (Message) l.pop();
-            notifyObserverCommunicators(m);
+        if(l != null) {
+            while(!l.isEmpty()) {
+                Message m = (Message) l.pop();
+                notifyObserverCommunicators(m);
+            }
         }
     }
 
@@ -70,7 +72,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         }
     }
 
-    private void createCommunicationListForNonExisting(String groupName) {
+    private void createCommunicationListenerForNonExisting(String groupName) {
         if(!communicationObservers.containsKey(groupName)) {
             ArrayList<Observer> observers = new ArrayList<>();
             communicationObservers.put(groupName,observers);
@@ -79,6 +81,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
     @Override
     public void registerCommunicationObserver(String groupName, Observer b) throws RemoteException{
+        createCommunicationListenerForNonExisting(groupName);
         communicationObservers.get(groupName).add(b);
     }
 
