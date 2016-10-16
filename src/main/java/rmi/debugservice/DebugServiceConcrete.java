@@ -85,7 +85,6 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     @Override
     public void registerControllerObserverMessage(Observer b) throws RemoteException{
         controllerObserverMessage = b;
-
     }
 
     @Override
