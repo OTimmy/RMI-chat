@@ -30,7 +30,11 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
 
     @Override
     public void putMessage(Message m) {
-        debugService.addMessage(m);
+        try {
+            debugService.addMessage(m);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

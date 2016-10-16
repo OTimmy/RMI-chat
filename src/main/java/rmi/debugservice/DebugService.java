@@ -17,7 +17,7 @@ public interface DebugService extends Remote {
     /**
      * @param m
      */
-    void addMessage(Message m);
+    void addMessage(Message m) throws RemoteException;
 
     /**
      * @param groupName
@@ -29,19 +29,19 @@ public interface DebugService extends Remote {
      * @param name
      * @param vectorClock
      */
-    void updateVectorClock(String name, HashMap<String,Integer> vectorClock);
+    void updateVectorClock(String name, HashMap<String,Integer> vectorClock) throws RemoteException;
 
 
 
     /**
      * @param b
      */
-    void registerCommunicationObserver(Observer b);
+    void registerCommunicationObserver(Observer b) throws RemoteException;
 
     /**
      * @param b
      */
-    void registerControllerObserverMessage(Observer b);
+    void registerControllerObserverMessage(Observer b) throws RemoteException;
 
-    void registerControllerObserverVector(Observer b);
+    void registerControllerObserverVector(Observer b) throws RemoteException;
 }
