@@ -232,6 +232,7 @@ public class DebugController {
                             e1.printStackTrace();
                         }
                         group = gui.getGroupName(e);
+                        gui.addCurrentGroup(group);
                         gui.clearDebug();
                     }
                 }
