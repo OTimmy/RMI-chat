@@ -39,6 +39,12 @@ public interface DebugService extends Remote {
     void updateVectorClock(String name, HashMap<String,Integer> vectorClock) throws RemoteException;
 
 
+    /**
+     * Drops a specific message to a member
+     * @param groupName the group name
+     * @param index index for message
+     */
+    void dropMessage(String groupName,int index) throws RemoteException;
 
     /**
      * @param groupName

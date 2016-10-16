@@ -29,7 +29,6 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
     @Override
     public void addMessage(Message m) throws RemoteException{
-        System.out.println("I got a message from a group :" + m.getGroupName());
         createMessageQueForGroup(m.getGroupName());
         inMessages.get(m.getGroupName()).add(m);
         notifyObserverControllerMessage(m);
@@ -38,10 +37,10 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     @Override
     public void passMessage(String groupName,String toName, int index) throws GCOMException, RemoteException {
         LinkedBlockingDeque<Message> messagesList = inMessages.get(groupName);
+
         Message[] messages = inMessages.get(groupName).toArray(new Message[]{});
         messagesList.remove(messages[index]);
-        System.out.println("name: " + toName);
-        System.out.println("from " + messages[index]);
+
 
         notifyObserverCommunicators(toName,messages[index]);
     }
@@ -71,6 +70,14 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
         notifyObserverControllerVector(name,vec);
 
+    }
+
+    @Override
+    public void dropMessage(String groupName, int index) throws RemoteException{
+
+        Message[] messages = inMessages.get(groupName).toArray(new Message[]{});
+        Message m = messages[index];
+        inMessages.remove(m);
     }
 
     private void createMessageQueForGroup(String groupName) {
