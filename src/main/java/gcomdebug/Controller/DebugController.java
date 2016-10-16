@@ -1,7 +1,13 @@
 package gcomdebug.Controller;
 
+import gcom.message.*;
+import gcom.observer.Observer;
+import gcom.observer.ObserverEvent;
+import gcom.status.GCOMException;
 import gcomdebug.GCOMDebug;
 import gcomdebug.view.DebugClient;
+import rmi.RMIServer;
+import rmi.debugservice.DebugService;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -12,20 +18,25 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * Created by c12ton on 10/12/16.
  */
 public class DebugController {
     private static int num = 0;
+    private static String group = null;
     private static DebugClient gui;
     private static GCOMDebug gcom;
+    private static DebugService debugService = null;
 
     public DebugController(DebugClient gui) {
         this.gui = gui;
     }
 
     public static void main(String[] args) {
+
 
         DebugController controller;
 
@@ -50,8 +61,70 @@ public class DebugController {
             }
         }
 
+
+        try {
+            debugService = RMIServer.getDebugService(gui.getHost());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            debugService.registerControllerObserverMessage(createMessageObserver());
+            debugService.registerControllerObserverVector(createVectorObserver());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         String[] groups = gcom.getGroups();
         gui.updateDebugGroups(groups);
+    }
+
+    private static gcom.observer.Observer createVectorObserver() {
+        return new Observer() {
+            @Override
+            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+                Hashtable<String, Integer> hash = (Hashtable) t;
+            }
+        };
+    }
+
+    private static gcom.observer.Observer createMessageObserver() {
+        return new Observer() {
+            @Override
+            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+                Message msg = (Message) t;
+
+                if(group.equals(msg.getGroupName())) {
+                    switch (msg.getMessageType()) {
+
+                        case CHAT_MESSAGE:
+                            Chat chat = (Chat) msg;
+                            gui.addIncomming(chat.getUser(), chat.getMessage());
+                            break;
+
+                        case LEAVE_MESSAGE:
+                            Leave leave = (Leave) msg;
+                            gui.addIncomming(leave.getName(), "Leave Message");
+                            break;
+
+                        case JOIN_MESSAGE:
+                            Join join = (Join) msg;
+                            gui.addIncomming(join.getName(), "JOIN Message");
+                            break;
+
+                        case ELECTION_MESSAGE:
+                            Election election = (Election) msg;
+                            gui.addIncomming(election.getLeader().getName(), "Election message");
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        };
     }
 
     private static ActionListener createActionlistenerRa() {
@@ -125,9 +198,8 @@ public class DebugController {
             public void mouseClicked(MouseEvent e) {
 
                 if (e.getClickCount() == 2) {
-                    //get the groupname etc.
-
-                    System.out.println("JOIN GROUP NOT IMPLEMENTED YET");
+                    group = gui.getGroupName(e);
+                    gui.clearDebug();
                 }
             }
 

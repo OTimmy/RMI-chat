@@ -26,6 +26,7 @@ public class DebugClient {
 
     private JTable debugGroups;
     private JTable incommingTable;
+    private JTable outgoingTable;
 
     public DebugClient() {
 
@@ -76,12 +77,13 @@ public class DebugClient {
         incWL.add(incLabel);
         incWL.add(scrollIncommingPane);
 
-        JTable outgoingTable = new JTable(outgoingModel) {
+        outgoingTable = new JTable(outgoingModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
+        outgoingTable.setEnabled(false);//------------------------------------------------------------->
         outgoingModel.addColumn("Member");
         outgoingModel.addColumn("Message");
         JScrollPane scrollOutgoingPane = new JScrollPane(outgoingTable);
@@ -105,6 +107,7 @@ public class DebugClient {
                 return false;
             }
         };
+        vectorTable.setEnabled(false);//------------------------------------------------------------->
         vectorModel.addColumn("Member");
         vectorModel.addColumn("Vector");
         JScrollPane scrollvectorPane = new JScrollPane(vectorTable);
@@ -237,5 +240,25 @@ public class DebugClient {
         }
 
         host = userInput;
+    }
+
+    public String getGroupName(MouseEvent e) {
+        return (String) debugGroups.getValueAt(debugGroups.rowAtPoint(e.getPoint()), 0);
+    }
+
+    public void clearDebug() {
+
+        incommingTable.clearSelection();
+        for(int i = 0; i < incommingTable.getRowCount(); i++){
+            incommingModel.removeRow(0);
+        }
+
+        for(int i = 0; i < outgoingTable.getRowCount(); i++){
+            outgoingModel.removeRow(0);
+        }
+
+        for(int i = 0; i < vectorModel.getRowCount(); i++){
+            vectorModel.removeRow(0);
+        }
     }
 }
