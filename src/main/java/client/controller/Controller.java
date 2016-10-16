@@ -100,8 +100,16 @@ public class Controller {
                     gcom.registerObservers(createMessageObserver(group));
                     GroupProperties p = null;
 
+                    Class order = null;
+
+                    if(gui.getIfNoOrder()){
+                        order = UnorderedOrdering.class.getClass();
+                    }else{
+                        order = CausalOrdering.class.getClass();
+                    }
+
                     try {
-                        p = new GroupProperties(gui.getCom(), UnorderedOrdering.class.getClass(), group);
+                        p = new GroupProperties(gui.getCom(), order, group);
                     } catch (RemoteException e1) {
                         e1.printStackTrace();
                     }

@@ -40,6 +40,10 @@ public class GUIClient {
     private JRadioButton nonDebugRB = new JRadioButton("Non-debug mode");
     private JRadioButton debugRB = new JRadioButton("Debug mode");
 
+    private ButtonGroup orderButtonGroup = new ButtonGroup();
+    private JRadioButton noOrderRB = new JRadioButton("No order");
+    private JRadioButton casualOrderRB = new JRadioButton("Casual order");
+
     private JFrame frame = new JFrame("GUIClient");
     private JPanel groupInfoPane = new JPanel();
     private JPanel inputButtonsPane = new JPanel();
@@ -72,6 +76,11 @@ public class GUIClient {
         debugButtonGroup.add(debugRB);
 
         nonDebugRB.setSelected(true);
+
+        orderButtonGroup.add(nonDebugRB);
+        orderButtonGroup.add(casualOrderRB);
+
+        noOrderRB.setSelected(true);
 
         hostTextField.setText("localhost");
         setHost();
@@ -186,6 +195,10 @@ public class GUIClient {
         frame.pack();
         frame.setVisible(true);
 
+    }
+
+    public boolean getIfNoOrder(){
+        return noOrderRB.isSelected();
     }
 
 
@@ -511,12 +524,17 @@ public class GUIClient {
 
             panelg.add(new JLabel("Select commuication"));
 
-            /*temp*/
             basicNonReliableRadioButton.setSelected(true);
 
             panelg.add(basicNonReliableRadioButton);
             panelg.add(basicReliableRadioButton);
             panelg.add(treeBasedReliableRadioButton);
+
+            panelg.add(Box.createVerticalStrut(10));
+            panelg.add(new JLabel("Select ordering"));
+
+            panelg.add(noOrderRB);
+            panelg.add(casualOrderRB);
 
             panelg.add(Box.createVerticalStrut(10));
 
