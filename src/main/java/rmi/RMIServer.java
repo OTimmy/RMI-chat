@@ -36,7 +36,7 @@ public class RMIServer {
      */
     public static NameService getNameService(String host) throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry(host);
-        return (NameService) registry.lookup(host);
+        return (NameService) registry.lookup(NameService.class.getSimpleName());
     }
 
     public static void main(String[]args) {
