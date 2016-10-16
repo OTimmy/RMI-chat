@@ -40,6 +40,8 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         LinkedBlockingDeque<Message> messagesList = inMessages.get(groupName);
         Message[] messages = inMessages.get(groupName).toArray(new Message[]{});
         messagesList.remove(messages[index]);
+//            System.out.println("Removed message!");
+
         notifyObserverCommunicators(messages[index]);
     }
 
