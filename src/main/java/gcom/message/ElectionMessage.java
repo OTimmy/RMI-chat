@@ -14,7 +14,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class ElectionMessage extends UnicastRemoteObject implements Message,Election{
 
     private Member leader;
-
+    private String groupName;
     /**
      * @param leader the new leader for the group
      */
@@ -35,11 +35,11 @@ public class ElectionMessage extends UnicastRemoteObject implements Message,Elec
 
     @Override
     public void setGroupName(String groupName) {
-
+        this.groupName = groupName;
     }
 
     @Override
     public String getGroupName() {
-        return null;
+        return groupName;
     }
 }

@@ -102,7 +102,7 @@ public class DebugController {
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
                 Message msg = (Message) t;
 
-                if(group.equals(msg.getGroupName())) {
+                if(group == (msg.getGroupName())) {
                     switch (msg.getMessageType()) {
 
                         case CHAT_MESSAGE:

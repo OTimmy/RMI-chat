@@ -26,18 +26,28 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     public DebugServiceConcrete() throws RemoteException {
         inMessages = new ConcurrentHashMap<>();
         communicationObservers = new ArrayList<>();
+
     }
 
     @Override
     public void addMessage(Message m) throws RemoteException{
+        System.out.println("I got a message from a group :" + m.getGroupName());
+        createMessageQueForNonExistingGroup(m.getGroupName());
         inMessages.get(m.getGroupName()).add(m);
         notifyObserverControllerMessage(m);
     }
 
     @Override
     public void passMessage(String groupName, int index) throws GCOMException, RemoteException {
+
         Message[] messages = inMessages.get(groupName).toArray(new Message[]{});
         notifyObserverCommunicators(messages[index]);
+    }
+
+    @Override
+    public void passMessages(String groupName) throws GCOMException, RemoteException {
+        LinkedBlockingDeque l = inMessages.get(groupName);
+        l.clear();
     }
 
     @Override
@@ -52,6 +62,12 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
         notifyObserverControllerVector(name,vec);
 
+    }
+    private void createMessageQueForNonExistingGroup(String groupName) {
+        if(!inMessages.containsKey(groupName)) {
+            LinkedBlockingDeque<Message> messages = new LinkedBlockingDeque<>();
+            inMessages.put(groupName,messages);
+        }
     }
 
     @Override

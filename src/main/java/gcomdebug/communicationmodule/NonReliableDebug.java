@@ -10,6 +10,7 @@ import rmi.debugservice.DebugService;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 /**
  * Created by c12ton on 10/15/16.
@@ -21,7 +22,7 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
         super();
         try {
             debugService = RMIServer.getDebugService(host);
-            debugService.registerCommunicationObserver(this);
+            debugService.registerCommunicationObserver((Observer) UnicastRemoteObject.exportObject(this,0));
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (NotBoundException e) {
@@ -32,6 +33,7 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
     @Override
     public void putMessage(Message m) {
         try {
+            System.out.println("Sending message from group: " + m.getGroupName());
             debugService.addMessage(m);
         } catch (RemoteException e) {
             e.printStackTrace();

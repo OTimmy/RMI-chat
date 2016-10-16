@@ -26,6 +26,14 @@ public interface DebugService extends Remote {
     void passMessage(String groupName,int index) throws GCOMException, RemoteException;
 
     /**
+     *
+     * @param groupName
+     * @throws GCOMException
+     * @throws RemoteException
+     */
+    void passMessages(String groupName) throws GCOMException,RemoteException;
+
+    /**
      * @param name
      * @param vectorClock
      */

@@ -131,6 +131,9 @@ public abstract class AbstractGCOM implements Subject{
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
                 Message m = (Message) t;
                 if(e == ObserverEvent.RECEIVED_MESSAGE) {
+                    System.out.println(m.getMessageType().toString());
+                    System.out.println(((Chat )m).getMessage());
+                    System.out.println(m.getGroupName());
                     communication.putMessage(m);
                 }
             }
@@ -150,6 +153,7 @@ public abstract class AbstractGCOM implements Subject{
 
             communication   = createCommunication(p.getComtype());
             messageOrdering = createOrdering(p.getMessagetype(),name);
+            System.out.println("My group is: " + p.getGroupName());
             groupManager.createGroup(p,name);
 
         } catch (Exception e) {

@@ -11,6 +11,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class JoinMessage extends UnicastRemoteObject implements Join,Message {
 
     private Member member;
+    private String groupName;
     public JoinMessage(Member member) throws RemoteException {
         super();
         this.member = member;
@@ -32,11 +33,11 @@ public class JoinMessage extends UnicastRemoteObject implements Join,Message {
 
     @Override
     public void setGroupName(String groupName) {
-
+        this.groupName = groupName;
     }
 
     @Override
     public String getGroupName() {
-        return null;
+        return groupName;
     }
 }

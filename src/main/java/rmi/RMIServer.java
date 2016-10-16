@@ -39,6 +39,7 @@ public class RMIServer {
         return (NameService) registry.lookup(NameService.class.getSimpleName());
     }
 
+
     public static void main(String[]args) {
         try {
             Registry registry = LocateRegistry.createRegistry(1099);

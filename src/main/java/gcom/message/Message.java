@@ -9,6 +9,6 @@ import java.rmi.RemoteException;
  */
 public interface Message extends Remote{
     MessageType getMessageType() throws RemoteException;
-    void setGroupName(String groupName);
-    String getGroupName();
+    void setGroupName(String groupName) throws RemoteException;
+    String getGroupName() throws RemoteException;
 }
