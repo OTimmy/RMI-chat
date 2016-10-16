@@ -27,23 +27,26 @@ public class GCOMDebug extends AbstractGCOM {
     public GCOMDebug(String host) throws RemoteException, NotBoundException {
         super(host);
         this.host = host;
+        registerCommunicationOnDebug(host);
+    }
+
+
+    private void registerCommunicationOnDebug(String host) {
+        try {
+            DebugService debugService = RMIServer.getDebugService(host);
+            NonReliableDebug com = (NonReliableDebug) communication;
+            String name = groupManager.getProperties().getGroupName();
+            debugService.registerCommunicationObserver(name,com.getObserver());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected Communication createCommunication(Class type) {
-        if(NonReliableCommunication.class.getClass() == type) {
-            try {
-                return new NonReliableDebug(host,groupManager.getProperties().getGroupName());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            return new NonReliableDebug(host,groupManager.getProperties().getGroupName());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        return  null;
+        return new NonReliableDebug(host);
     }
 
     @Override

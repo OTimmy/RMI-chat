@@ -18,11 +18,12 @@ import java.rmi.server.UnicastRemoteObject;
 public class NonReliableDebug extends NonReliableCommunication implements Observer{
 
     private DebugService debugService;
-    public NonReliableDebug(String host, String groupName) {
+    private Observer observer;
+    public NonReliableDebug(String host) {
         super();
         try {
             debugService = RMIServer.getDebugService(host);
-            debugService.registerCommunicationObserver(groupName,(Observer) UnicastRemoteObject.exportObject(this,0));
+            observer = (Observer) UnicastRemoteObject.exportObject(this,0);
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (NotBoundException e) {
@@ -44,5 +45,9 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
     public void update(ObserverEvent e, Object arg) throws RemoteException, GCOMException {
         Message m = (Message) arg;
         inMessages.add(m);
+    }
+
+    public Observer getObserver() {
+        return observer;
     }
 }
