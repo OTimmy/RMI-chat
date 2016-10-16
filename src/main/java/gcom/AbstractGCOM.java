@@ -309,7 +309,7 @@ public abstract class AbstractGCOM implements Subject{
 //        return null;
 //    }
 
-    protected abstract Communication createCommunication(Class type);
+    protected abstract Communication createCommunication(Class type) throws RemoteException, AlreadyBoundException, NotBoundException;
 
 //    /**
 //     * @param name the name of the sender. That's the current user.

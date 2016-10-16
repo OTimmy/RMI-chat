@@ -5,11 +5,13 @@ import gcom.communicationmodule.Communication;
 import gcom.communicationmodule.NonReliableCommunication;
 import gcom.message.Message;
 import gcom.messagemodule.Ordering;
+import gcom.messagemodule.UnorderedOrdering;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.observer.Subject;
 import gcom.status.GCOMException;
 import gcomdebug.communicationmodule.NonReliableDebug;
+import gcomdebug.messagemodule.UnorderedDebug;
 import rmi.RMIServer;
 import rmi.RMIService;
 import rmi.debugservice.DebugService;
@@ -21,11 +23,9 @@ import java.rmi.RemoteException;
  * Created by c12ton on 10/12/16.
  */
 public class GCOMDebug extends AbstractGCOM {
-    private DebugService debugService;
     private String host;
     public GCOMDebug(String host) throws RemoteException, NotBoundException {
         super(host);
-        debugService = RMIServer.getDebugService(host);
         this.host = host;
     }
 
@@ -34,19 +34,15 @@ public class GCOMDebug extends AbstractGCOM {
         if(NonReliableCommunication.class.getClass() == type) {
             return new NonReliableDebug(host);
         }
-        return null;
+        return new NonReliableDebug(host);
     }
 
     @Override
     protected Ordering createOrdering(Class type, String name) {
-        return null;
+        if(UnorderedOrdering.class.getClass() == type) {
+            return new UnorderedDebug(name);
+        }
+        return new UnorderedDebug(name);
     }
-
-
-    //Override createMessageOrder
-        // return extendedUnOrdered
-
-    //Override createCommunicationOrder
-        //return extendedUnOrdered
 
 }

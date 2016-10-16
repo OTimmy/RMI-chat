@@ -8,9 +8,6 @@ import java.rmi.RemoteException;
  * Defines what type of message is being sent
  */
 public interface Message extends Remote{
-//    String getUser() throws RemoteException;
-//    MessageType getMessageType() throws RemoteException;
-//    String getChatMessage() throws RemoteException;
     MessageType getMessageType() throws RemoteException;
     void setGroupName(String groupName);
     String getGroupName();
