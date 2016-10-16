@@ -21,6 +21,7 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
         super();
         try {
             debugService = RMIServer.getDebugService(host);
+            debugService.registerCommunicationObserver(this);
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (NotBoundException e) {
