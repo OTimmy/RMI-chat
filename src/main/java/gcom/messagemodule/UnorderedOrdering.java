@@ -13,12 +13,8 @@ public class UnorderedOrdering implements Ordering {
     }
 
     @Override
-    public void setMessageStamp(Message message) {
-
-    }
+    public void setMessageStamp(Message message) {}
 
     @Override
-    public void orderMessage(Message m) {
-
-    }
+    public void orderMessage(Message m) {}
 }

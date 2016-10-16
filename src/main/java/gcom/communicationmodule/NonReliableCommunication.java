@@ -15,8 +15,6 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class NonReliableCommunication extends Communication{
 
-//    private BlockingDeque<Message> inMessages;
-
     public NonReliableCommunication()  {
         inMessages = new LinkedBlockingDeque<>();
     }

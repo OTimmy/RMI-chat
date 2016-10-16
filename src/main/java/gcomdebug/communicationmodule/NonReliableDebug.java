@@ -20,8 +20,14 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
     private DebugService debugService;
     private boolean isRegistedOnDebug = false;
     private Observer observer;
-    public NonReliableDebug(String host) {
+
+    private String groupName;
+    private String name;
+
+    public NonReliableDebug(String host,String groupName,String name) {
         super();
+        this.groupName = groupName;
+        this.name = name;
         try {
             debugService = RMIServer.getDebugService(host);
             observer = (Observer) UnicastRemoteObject.exportObject(this,0);
@@ -35,8 +41,8 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
     @Override
     public void putMessage(Message m) {
         try {
-            if(!isRegistedOnDebug) {
-                debugService.registerCommunicationObserver(m.getGroupName(),observer);
+            if(observer != null) {
+                debugService.registerCommunicationObserver(groupName,name,observer);
                 isRegistedOnDebug = true;
             }
 
@@ -54,5 +60,9 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
 
     public Observer getObserver() {
         return observer;
+    }
+
+    public void setupObserver(String groupName,String name) {
+
     }
 }

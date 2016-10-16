@@ -7,7 +7,6 @@ import gcom.status.GCOMException;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -19,8 +18,9 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
     private Observer controllerObserverVector;
     private Observer controllerObserverMessage;
-    private ConcurrentHashMap<String,ArrayList<Observer>> communicationObservers;
+    private ConcurrentHashMap<String,GroupObservers> communicationObservers;
     private ConcurrentHashMap<String,LinkedBlockingDeque<Message>> inMessages;
+
 
     public DebugServiceConcrete() throws RemoteException {
         inMessages = new ConcurrentHashMap<>();
@@ -30,7 +30,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     @Override
     public void addMessage(Message m) throws RemoteException{
         System.out.println("I got a message from a group :" + m.getGroupName());
-        createMessageQueForNonExistingGroup(m.getGroupName());
+        createMessageQueForGroup(m.getGroupName());
         inMessages.get(m.getGroupName()).add(m);
         notifyObserverControllerMessage(m);
     }
@@ -40,7 +40,8 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         LinkedBlockingDeque<Message> messagesList = inMessages.get(groupName);
         Message[] messages = inMessages.get(groupName).toArray(new Message[]{});
         messagesList.remove(messages[index]);
-        notifyObserverCommunicators(messages[index]);
+        String toName = messages[index].getToName();
+        notifyObserverCommunicators(toName,messages[index]);
     }
 
     @Override
@@ -49,7 +50,11 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         if(l != null) {
             while(!l.isEmpty()) {
                 Message m = (Message) l.pop();
-                notifyObserverCommunicators(m);
+                String[] names = communicationObservers.get(groupName).getNames();
+
+                for(String name:names) {
+                    notifyObserverCommunicators(name,m);
+                }
             }
         }
     }
@@ -65,24 +70,21 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         notifyObserverControllerVector(name,vec);
 
     }
-    private void createMessageQueForNonExistingGroup(String groupName) {
+
+    private void createMessageQueForGroup(String groupName) {
         if(!inMessages.containsKey(groupName)) {
             LinkedBlockingDeque<Message> messages = new LinkedBlockingDeque<>();
             inMessages.put(groupName,messages);
         }
     }
 
-    private void createCommunicationListenerForNonExisting(String groupName) {
-        if(!communicationObservers.containsKey(groupName)) {
-            ArrayList<Observer> observers = new ArrayList<>();
-            communicationObservers.put(groupName,observers);
-        }
-    }
-
     @Override
-    public void registerCommunicationObserver(String groupName, Observer b) throws RemoteException{
-        createCommunicationListenerForNonExisting(groupName);
-        communicationObservers.get(groupName).add(b);
+    public void registerCommunicationObserver(String groupName,String name, Observer b) throws RemoteException{
+
+        GroupObservers groupObservers = new GroupObservers();
+        groupObservers.addUser(name,b);
+
+        communicationObservers.put(groupName,groupObservers);
     }
 
     @Override
@@ -96,11 +98,9 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     }
 
 
-    private void notifyObserverCommunicators(Message m) throws GCOMException, RemoteException {
-        Observer[] obs = communicationObservers.get(m.getGroupName()).toArray(new Observer[]{});
-        for(Observer ob:obs) {
-            ob.update(ObserverEvent.RECEIVED_MESSAGE,m);
-        }
+    private void notifyObserverCommunicators(String toName,Message m) throws GCOMException, RemoteException {
+        Observer ob = communicationObservers.get(m.getGroupName()).getObserver(toName);
+        ob.update(ObserverEvent.RECEIVED_MESSAGE,m);
     }
 
     private void notifyObserverControllerVector(String name, HashMap<String, Integer> vectorClock) throws RemoteException{

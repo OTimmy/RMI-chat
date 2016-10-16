@@ -44,7 +44,7 @@ public interface DebugService extends Remote {
      * @param groupName
      * @param b
      */
-    void registerCommunicationObserver(String groupName, Observer b) throws RemoteException;
+    void registerCommunicationObserver(String groupName,String name, Observer b) throws RemoteException;
 
     /**
      * @param b

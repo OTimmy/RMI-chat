@@ -95,8 +95,8 @@ public abstract class AbstractGCOM implements Subject{
                                                         p.getMessagetype(),
                                                         p.getGroupName());
 
-            messageOrdering = createOrdering(properties.getMessagetype(),name);
-            communication   = createCommunication(properties.getComtype());
+            messageOrdering = createOrdering(properties.getMessagetype(),p.getGroupName(),name);
+            communication   = createCommunication(properties.getComtype(),p.getGroupName(),name);
 
 
             //connect to group
@@ -148,8 +148,8 @@ public abstract class AbstractGCOM implements Subject{
     public void createGroup(Properties p, String name) throws GCOMException {
         try {
 
-            communication   = createCommunication(p.getComtype());
-            messageOrdering = createOrdering(p.getMessagetype(),name);
+            communication   = createCommunication(p.getComtype(),p.getGroupName(),name);
+            messageOrdering = createOrdering(p.getMessagetype(),p.getGroupName(),name);
             groupManager.createGroup(p,name);
 
         } catch (Exception e) {
@@ -314,7 +314,7 @@ public abstract class AbstractGCOM implements Subject{
 //        return null;
 //    }
 
-    protected abstract Communication createCommunication(Class type) throws RemoteException, AlreadyBoundException, NotBoundException;
+    protected abstract Communication createCommunication(Class type,String groupName,String name) throws RemoteException, AlreadyBoundException, NotBoundException;
 
 //    /**
 //     * @param name the name of the sender. That's the current user.
@@ -330,7 +330,7 @@ public abstract class AbstractGCOM implements Subject{
 //    }
 
 
-    protected abstract Ordering createOrdering(Class type, String name);
+    protected abstract Ordering createOrdering(Class type, String groupName,String name);
 
     /**
      * Register observers
