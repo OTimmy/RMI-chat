@@ -18,8 +18,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Hashtable;
+
+import static javafx.scene.input.KeyCode.T;
 
 /**
  * Created by c12ton on 10/12/16.
@@ -81,17 +84,20 @@ public class DebugController {
         gui.updateDebugGroups(groups);
     }
 
-    private static gcom.observer.Observer createVectorObserver() {
-        return new Observer() {
+    private static gcom.observer.Observer createVectorObserver () throws RemoteException {
+        Observer ob = new Observer() {
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
                 Hashtable<String, Integer> hash = (Hashtable) t;
             }
         };
+
+
+        return (Observer) UnicastRemoteObject.exportObject(ob,0);
     }
 
-    private static gcom.observer.Observer createMessageObserver() {
-        return new Observer() {
+    private static gcom.observer.Observer createMessageObserver() throws RemoteException {
+        Observer ob = new Observer() {
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
                 Message msg = (Message) t;
@@ -125,6 +131,8 @@ public class DebugController {
                 }
             }
         };
+
+        return (Observer) UnicastRemoteObject.exportObject(ob,0);
     }
 
     private static ActionListener createActionlistenerRa() {
