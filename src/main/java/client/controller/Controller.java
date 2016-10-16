@@ -49,7 +49,11 @@ public class Controller {
 
         while (true) {
             try {
-                gcom = new GCOMDebug(gui.getHost());
+                if(gui.getIfDebug()){
+                    gcom = new GCOMDebug(gui.getHost());
+                }else{
+                    gcom = new GCOMRetail(gui.getHost());
+                }
                 break;
             } catch (RemoteException e) {
                 gui.setHost();
@@ -82,7 +86,11 @@ public class Controller {
                 if (group != null) {
 
                     try {
-                        gcom = new GCOMDebug(gui.getHost());
+                        if(gui.getIfDebug()){
+                            gcom = new GCOMDebug(gui.getHost());
+                        }else{
+                            gcom = new GCOMRetail(gui.getHost());
+                        }
                     } catch (RemoteException e1) {
                         e1.printStackTrace();
                     } catch (NotBoundException e1) {
@@ -135,10 +143,14 @@ public class Controller {
                 }
                 String[] data = s.split("/");
 
-                GCOMDebug gcom = null;
+                AbstractGCOM gcom = null;
 
                 try {
-                    gcom = new GCOMDebug(gui.getHost());
+                    if(gui.getIfDebug()){
+                        gcom = new GCOMDebug(gui.getHost());
+                    }else{
+                        gcom = new GCOMRetail(gui.getHost());
+                    }
                 } catch (RemoteException e1) {
                     e1.printStackTrace();
                 } catch (NotBoundException e1) {

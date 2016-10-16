@@ -36,14 +36,13 @@ public class GUIClient {
 
     private String host = null;
 
-    private boolean debug = false;
     private boolean ok = true;
 
-    public boolean isOk() {
-        return ok;
-    }
-
     private ButtonGroup radioButtonsGroup = new ButtonGroup();
+
+    private ButtonGroup debugButtonGroup = new ButtonGroup();
+    private JRadioButton nonDebugRB = new JRadioButton("Non-debug mode");
+    private JRadioButton debugRB = new JRadioButton("Debug mode");
 
     private JFrame frame = new JFrame("GUIClient");
     private JPanel groupInfoPane = new JPanel();
@@ -72,6 +71,11 @@ public class GUIClient {
 
 
     public GUIClient() {
+
+        debugButtonGroup.add(nonDebugRB);
+        debugButtonGroup.add(debugRB);
+
+        nonDebugRB.setSelected(true);
 
         hostTextField.setText("localhost");
         setHost();
@@ -188,6 +192,10 @@ public class GUIClient {
 
     }
 
+
+    public boolean getIfDebug(){
+        return debugRB.isSelected();
+    }
 
     public void showErrorMess(String s) {
         JOptionPane.showMessageDialog(tabbedPane, s);
@@ -560,8 +568,6 @@ public class GUIClient {
     public class TestDialog {
 
         public TestDialog() {
-            Object[] options1 = {"Client", "Debug",
-                    "Cancel"};
 
             JPanel panel = new JPanel();
             panel.add(new JLabel("Enter host:"));
@@ -569,16 +575,13 @@ public class GUIClient {
 
             panel.add(hostTextField);
 
+            panel.add(nonDebugRB);
+            panel.add(debugRB);
+
             int result = JOptionPane.showOptionDialog(tabbedPane, panel, "Enter Host",
-                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-                    null, options1, null);
-            if (result == JOptionPane.YES_OPTION) {
-                debug = false;
-                //Client
-            } else if (result == JOptionPane.NO_OPTION) {
-                debug = true;
-                //Debug
-            } else if (result == JOptionPane.CANCEL_OPTION) {
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+                    null, null, null);
+            if (result == JOptionPane.CANCEL_OPTION) {
                 System.exit(0);
             }
         }
