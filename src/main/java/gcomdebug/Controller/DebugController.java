@@ -225,6 +225,7 @@ public class DebugController {
                         debugService.passMessages(group);
                     } catch (GCOMException e1) {
                         e1.printStackTrace();
+
                     } catch (RemoteException e1) {
                         e1.printStackTrace();
                     }
