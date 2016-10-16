@@ -18,6 +18,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class NonReliableDebug extends NonReliableCommunication implements Observer{
 
     private DebugService debugService;
+    private boolean isRegistedOnDebug = false;
     private Observer observer;
     public NonReliableDebug(String host) {
         super();
@@ -34,7 +35,11 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
     @Override
     public void putMessage(Message m) {
         try {
-            System.out.println("Sending message from group: " + m.getGroupName());
+            if(!isRegistedOnDebug) {
+                debugService.registerCommunicationObserver(m.getGroupName(),observer);
+                isRegistedOnDebug = true;
+            }
+
             debugService.addMessage(m);
         } catch (RemoteException e) {
             e.printStackTrace();
