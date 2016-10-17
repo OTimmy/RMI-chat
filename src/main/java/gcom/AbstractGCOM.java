@@ -249,7 +249,7 @@ public abstract class AbstractGCOM implements Subject, Observer{
                                 groupManager.addMember(j.getMember());
                             }
 
-                            notifyObserver(ObserverEvent.CHAT_MESSAGE,message);
+                            notifyObserver(ObserverEvent.CHAT_MESSAGE,m);
                         }
                     }
                 } catch (RemoteException e) {
