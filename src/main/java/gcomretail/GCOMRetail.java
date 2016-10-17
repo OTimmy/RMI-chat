@@ -39,7 +39,7 @@ public class GCOMRetail extends AbstractGCOM{
 
     @Override
     protected Ordering createOrdering(Class type, String groupName, String name) {
-        if(CausalOrdering.class.getClass() == type) {
+        if(CausalOrdering.class.getClass().equals(type)) {
             return new CausalOrdering(name);
         }
 

@@ -4,6 +4,7 @@ import gcom.groupmodule.Member;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 
 /**
  * Created by c12ton on 10/14/16.
@@ -14,6 +15,8 @@ public class JoinMessage extends UnicastRemoteObject implements Join,Message, Cl
     private String groupName;
     private String fromName;
     private String toName;
+
+    private HashMap<String,Integer> vectorClock;
 
     public JoinMessage(Member member) throws RemoteException {
         super();
@@ -64,7 +67,14 @@ public class JoinMessage extends UnicastRemoteObject implements Join,Message, Cl
         return toName;
     }
 
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    @Override
+    public void setVectorClock(HashMap<String, Integer> vectorClock) throws RemoteException{
+        this.vectorClock = vectorClock;
     }
+
+    @Override
+    public HashMap<String, Integer> getVectorClock() throws RemoteException{
+        return vectorClock;
+    }
+
 }

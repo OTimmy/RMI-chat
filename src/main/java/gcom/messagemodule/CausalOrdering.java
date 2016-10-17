@@ -27,7 +27,11 @@ public class CausalOrdering implements Ordering {
         int time = vectorClock.get(name);
         vectorClock.put(name, time+1);
 
-        message.setVectorClock();
+        try {
+            message.setVectorClock((HashMap<String, Integer>) vectorClock.clone());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -84,7 +88,13 @@ public class CausalOrdering implements Ordering {
 
         for(Object mem : keys){
             time = vectorClock.get(mem);
-            msgTime = m.getVectorClock().get(mem);
+
+            try {
+                msgTime = m.getVectorClock().get(mem);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+                return false;
+            }
 
             if(mem.equals(from) /*&& time +1 != newTime*/){
                 return false;

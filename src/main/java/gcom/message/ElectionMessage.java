@@ -4,6 +4,7 @@ import gcom.groupmodule.Member;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 
 /**
  * Containts the member to be the new leader for the group that
@@ -17,6 +18,8 @@ public class ElectionMessage extends UnicastRemoteObject implements Message,Elec
     private String groupName;
     private String fromName;
     private String toName;
+
+    private HashMap<String,Integer> vectorClock;
 
     /**
      * @param leader the new leader for the group
@@ -64,5 +67,15 @@ public class ElectionMessage extends UnicastRemoteObject implements Message,Elec
     @Override
     public String getToName() throws RemoteException {
         return toName;
+    }
+
+    @Override
+    public void setVectorClock(HashMap<String, Integer> vectorClock) throws RemoteException {
+        this.vectorClock = vectorClock;
+    }
+
+    @Override
+    public HashMap<String, Integer> getVectorClock() throws RemoteException{
+        return vectorClock;
     }
 }

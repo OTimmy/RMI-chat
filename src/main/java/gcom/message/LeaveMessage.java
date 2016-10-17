@@ -2,6 +2,7 @@ package gcom.message;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 
 /**
  * Created by c12ton on 10/13/16.
@@ -12,6 +13,9 @@ public class LeaveMessage extends UnicastRemoteObject implements Message,Leave{
     private String groupName;
     private String fromName;
     private String toName;
+
+
+    private HashMap<String,Integer> vectorClock;
     /**
      * @param name the name of the user that left the group
      * @throws RemoteException
@@ -58,5 +62,15 @@ public class LeaveMessage extends UnicastRemoteObject implements Message,Leave{
     @Override
     public String getToName() throws RemoteException {
         return toName;
+    }
+
+    @Override
+    public void setVectorClock(HashMap<String,Integer> vectorClock) throws RemoteException{
+        this.vectorClock = vectorClock;
+    }
+
+    @Override
+    public HashMap<String, Integer> getVectorClock() throws RemoteException{
+        return vectorClock;
     }
 }

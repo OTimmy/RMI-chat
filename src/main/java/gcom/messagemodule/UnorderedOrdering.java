@@ -8,13 +8,18 @@ import gcom.message.Message;
 public class UnorderedOrdering implements Ordering {
 
     private String name;
+    private Message message;
     public UnorderedOrdering(String name) {
         this.name = name;
     }
 
     @Override
-    public void setMessageStamp(Message message) {}
+    public void setMessageStamp(Message message) {
+        this.message = message;
+    }
 
     @Override
-    public Message[] orderMessage(Message m) {}
+    public Message[] orderMessage(Message m) {
+        return new Message[]{message};
+    }
 }

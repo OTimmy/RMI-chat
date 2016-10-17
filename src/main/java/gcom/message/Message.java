@@ -2,6 +2,7 @@ package gcom.message;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 
 /**
  * Created by c12ton on 2016-09-30.
@@ -16,5 +17,6 @@ public interface Message extends Remote{
     String getFromName() throws RemoteException;
     String getToName() throws RemoteException;
 
-    void setVectorClock();
+    void setVectorClock(HashMap<String,Integer> vectorClock) throws RemoteException;
+    HashMap<String,Integer> getVectorClock() throws RemoteException;
 }

@@ -3,6 +3,7 @@ package gcom.message;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 
 /**
  * Created by c12ton on 2016-10-06.
@@ -14,6 +15,9 @@ public class ChatMessage extends UnicastRemoteObject implements Message,Chat,Clo
 
     private String fromName;
     private String toName;
+
+
+    private HashMap<String,Integer> vectorClock;
     /**
      * @param user the username of the sender
      * @param message the chat message, null if non is needed
@@ -70,7 +74,14 @@ public class ChatMessage extends UnicastRemoteObject implements Message,Chat,Clo
         return toName;
     }
 
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    @Override
+    public void setVectorClock(HashMap<String, Integer> vectorClock) throws RemoteException{
+        this.vectorClock = vectorClock;
     }
+
+    @Override
+    public HashMap<String, Integer> getVectorClock() throws RemoteException{
+        return vectorClock;
+    }
+
 }
