@@ -433,10 +433,10 @@ public class GUIClient {
         refreshGroupButton.addActionListener(a);
     }
 
-    public Class getCom() {
+    public String getCom() {
 
         if (basicNonReliableRadioButton.isSelected()) {
-            return NonReliableCommunication.class.getClass();
+            return NonReliableCommunication.class.getClass().getName();
         }
         return null;
     }
