@@ -134,11 +134,15 @@ public class CausalOrdering implements Ordering {
                 compTime += 1;
             }
 
-            if(mem.equals(from) && compTime != msgTime){
-                return false;
+            if(mem.equals(from)){
+                if(compTime != msgTime){
+                    return false;
+                }
 
-            }else if(time < msgTime){
-                return false;
+            }else {
+                if (time < msgTime) {
+                    return false;
+                }
             }
         }
         return true;

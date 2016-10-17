@@ -42,6 +42,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         Message[] messages = inMessages.get(groupName).toArray(new Message[]{});
         messagesList.remove(messages[index]);
 
+        System.out.println("to name : " + toName);
 
         notifyObserverCommunicators(toName,messages[index]);
     }
