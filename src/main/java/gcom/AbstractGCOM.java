@@ -237,6 +237,7 @@ public abstract class AbstractGCOM implements Subject, Observer{
 
                     for(Message m:messages) {
                         if(message.getMessageType() == MessageType.LEAVE_MESSAGE) {
+                            //Remove user from hashmap time stamp
                             Leave leave = (Leave) message;
                             groupManager.removeMember(leave.getName());
                         }else if(message.getMessageType() == MessageType.ELECTION_MESSAGE) {

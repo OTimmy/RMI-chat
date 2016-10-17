@@ -24,6 +24,16 @@ public class CausalOrdering implements Ordering {
 
     @Override
     public void setMessageStamp(Message message) {
+        //if member not exist add to hashmap
+
+        try {
+            if(!vectorClock.containsKey(message.getFromName())) {
+                vectorClock.put(message.getFromName(),0);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         int time = vectorClock.get(name);
         vectorClock.put(name, time+1);
 

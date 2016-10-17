@@ -55,14 +55,14 @@ public class GCOMRetailTest {
      * @throws RemoteException
      */
     private void setUpFakeGroup() throws RemoteException, NotBoundException {
-        String name      = FAKE_LEADER_NAME;
-        String groupName = FAKE_GROUP_NAME;
-
-        GroupManager manager = new GroupManager(null);
-        Class comtype        = NonReliableCommunication.class.getClass();
-        Class msgtype        = UnorderedOrdering.class.getClass();
-        Properties p = new GroupProperties(comtype,msgtype,groupName);
-        manager.createGroup(p,name);
+//        String name      = FAKE_LEADER_NAME;
+//        String groupName = FAKE_GROUP_NAME;
+//
+//        GroupManager manager = new GroupManager(null);
+//        Class comtype        = NonReliableCommunication.class.getClass();
+//        Class msgtype        = UnorderedOrdering.class.getClass();
+//        Properties p = new GroupProperties(comtype,msgtype,groupName);
+//        manager.createGroup(p,name);
     }
 
     @Test

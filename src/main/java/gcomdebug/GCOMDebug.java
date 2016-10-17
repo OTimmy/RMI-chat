@@ -31,14 +31,14 @@ public class GCOMDebug extends AbstractGCOM {
     }
 
     @Override
-    protected Communication createCommunication(Class type, String groupName, String name) throws RemoteException, AlreadyBoundException, NotBoundException {
+    protected Communication createCommunication(String type, String groupName, String name) throws RemoteException, AlreadyBoundException, NotBoundException {
         return new NonReliableDebug(host,groupName,name);
 
     }
 
     @Override
-    protected Ordering createOrdering(Class type, String groupName, String name) {
-        if(UnorderedOrdering.class.getClass() == type) {
+    protected Ordering createOrdering(String type, String groupName, String name) {
+        if(UnorderedOrdering.class.getName().equals(type)) {
             return new UnorderedDebug(name);
         }
         return new UnorderedDebug(name);
