@@ -14,51 +14,18 @@ public class CausalOrdering implements Ordering {
 
     private HashMap<String,Integer> vectorClock;
     private ArrayList<Message> delayQue;
-    // have a delay que, that's used of messages that arent complete, and check this every time theres a new message in inQue
-
-    private int vectorValue;
+    private int receivedFromMySelf = 0;
 
     public CausalOrdering(String name) {
         this.name = name;
         vectorClock = new HashMap<>();
         delayQue = new ArrayList<>();
-        vectorValue = 0;
+        vectorClock.put(name,0);
     }
 
     @Override
-    public void setMessageStamp(Message message) {
+    public void setMessageStamp(Message m) {
         //if member not exist add to hashmap
-        try {
-            if(!vectorClock.containsKey(message.getFromName())) {
-                vectorClock.put(message.getFromName(),0);
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-
-        int time = vectorClock.get(name);
-        vectorClock.put(name, time+1);
-
-        try {
-            message.setVectorClock((HashMap<String, Integer>) vectorClock.clone());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public Message[] orderMessage(Message m) {
-
-
-        //add m in hold-que
-        //messageHold.add(m.getFrom(),message)
-        //vectorI = vectorClock
-        //loop  que
-            //vectorJ = m.getVector();
-            //if(vectorJ[m.getFrom] == (vectorI[m.getFrom]+1) && isLessForAll(m.getFrom)
-                // remove from linkedQue and add to pass que
-
 
         try {
             if(!vectorClock.containsKey(m.getFromName())) {
@@ -68,95 +35,103 @@ public class CausalOrdering implements Ordering {
             e.printStackTrace();
         }
 
-        ArrayList<Message> passMessages = new ArrayList<>();
+        int time = vectorClock.get(name)+1;
+        vectorClock.put(name, time);
 
-        Set keys = vectorClock.keySet();
-        if(checkVectorClocks(m, keys)){
-            passMessages.add(m);
-            try {
-                if(!m.getFromName().equals(name)) {
-                    int v = vectorClock.get(m.getFromName());
-                    vectorClock.put(m.getFromName(), v + 1);
-                }
-                else{
-                    vectorValue++;
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }else {
-            delayQue.add(m);
-            return null;
+        try {
+            m.setVectorClock((HashMap<String, Integer>) vectorClock.clone());
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
-
-        int loops = 0;
-
-        while(loops < delayQue.size()){
-
-            Message msg = delayQue.get(loops);
-
-            if(checkVectorClocks(msg, keys)){
-                passMessages.add(delayQue.remove(loops));
-                try {
-                    if(!msg.getFromName().equals(name)) {
-                        int v = vectorClock.get(msg.getFromName());
-                        vectorClock.put(msg.getFromName(), v + 1);
-                    }else{
-                        vectorValue++;
-                    }
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-                loops = 0;
-            }else{
-                loops++;
-            }
-        }
-        return passMessages.toArray(new Message[]{});
     }
 
-    private boolean checkVectorClocks(Message m, Set keys){
-        int time;
-        int msgTime;
-        String from = null;
+    @Override
+    public Message[] orderMessage(Message m) {
+
+        int timeJ = 0;
         try {
-            from = m.getFromName();
+            if(!vectorClock.containsKey(m.getFromName())) {
+                vectorClock.put(m.getFromName(),0);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
-        for(Object mem : keys){
-            time = vectorClock.get(mem);
+        System.out.println("--------------reciving----------");
 
-            try {
-                msgTime = m.getVectorClock().get(mem);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-                return false;
-            }
+        printVector();
+        System.out.println("................................");
 
-            int compTime = time;
+        HashSet<Message> passMessages = new HashSet<>();
 
-            if(!from.equals(name)){
-                compTime += 1;
-            }else{
-                compTime = vectorValue +1;
-            }
+        try {
+            HashMap<String,Integer> vectorI = vectorClock;
+            delayQue.add(m);
+            //loop all messages again
+            for(int i = 0; i < delayQue.size(); i++) {
+                for(Message msg:delayQue) {
+                    HashMap<String,Integer> vectorJ = msg.getVectorClock();
+                    timeJ = vectorJ.get(msg.getFromName());
 
-            if(mem.equals(from)){
-                if(compTime != msgTime){
-                    return false;
+                    if(m.getFromName().equals(name)) {
+                        timeJ += 1;
+                    }
+
+                    if((timeJ == (vectorI.get(msg.getFromName())+1))
+                            && isLessForAll(msg.getFromName(),vectorJ,vectorI)) {
+
+                        passMessages.add(msg);
+                        updateClock(msg.getFromName());
+
+                    } else {
+                        System.out.println("left in que : " + msg.getFromName());
+                        printVector();
+                    }
                 }
+            }
 
-            }else {
-                if (time < msgTime) {
-                    return false;
+            for(Message msg:passMessages) {
+                System.out.println("Removing item from que: " + msg.getFromName());
+                delayQue.remove(msg);
+            }
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+        return passMessages.toArray(new Message[]{});
+    }
+
+
+    private boolean isLessForAll(String fromName, HashMap<String,Integer> vectorJ,
+                                 HashMap<String,Integer> vectorI) {
+
+        String[] keys = vectorJ.keySet().toArray(new String[]{});
+        for(String key:keys) {
+            if(!key.equals(fromName)) {
+                if(!(vectorJ.get(key) <= vectorI.get(key))) {
+                    System.out.println("Failed isLess");
+                    return  false;
                 }
             }
         }
+
         return true;
     }
+
+    private void updateClock(String fromName) {
+        int time = vectorClock.get(fromName) + 1;
+        vectorClock.put(fromName,time);
+    }
+
+    private void printVector() {
+        String[] keys = vectorClock.keySet().toArray(new String[]{});
+        for(String key:keys) {
+            System.out.println("user: " +key +"value:" + vectorClock.get(key));
+        }
+    }
+
 
 
 //    private void updateVectorClock()

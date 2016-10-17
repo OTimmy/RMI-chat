@@ -3,6 +3,7 @@ package gcomdebug;
 import gcom.AbstractGCOM;
 import gcom.communicationmodule.Communication;
 import gcom.communicationmodule.NonReliableCommunication;
+import gcom.groupmodule.Member;
 import gcom.message.Message;
 import gcom.messagemodule.CausalOrdering;
 import gcom.messagemodule.Ordering;
