@@ -15,4 +15,6 @@ public interface Message extends Remote{
     void setToName(String toName) throws RemoteException;
     String getFromName() throws RemoteException;
     String getToName() throws RemoteException;
+
+    void setVectorClock();
 }

@@ -18,6 +18,6 @@ public interface Ordering {
      * Order incoming messages, and places inconsisten ones in a pending que
      * @param m
      */
-    void orderMessage(Message m);
+    Message[] orderMessage(Message m);
 
 }

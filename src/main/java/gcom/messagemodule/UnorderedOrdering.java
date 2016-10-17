@@ -16,5 +16,5 @@ public class UnorderedOrdering implements Ordering {
     public void setMessageStamp(Message message) {}
 
     @Override
-    public void orderMessage(Message m) {}
+    public Message[] orderMessage(Message m) {}
 }
