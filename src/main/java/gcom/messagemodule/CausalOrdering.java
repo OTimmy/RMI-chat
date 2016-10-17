@@ -15,6 +15,7 @@ public class CausalOrdering implements Ordering {
     private HashMap<String,Integer> vectorClock;
     private ArrayList<Message> delayQue;
     private int receivedFromMySelf = 0;
+    private int myTime = 0;
 
     public CausalOrdering(String name) {
         this.name = name;
@@ -63,7 +64,7 @@ public class CausalOrdering implements Ordering {
         System.out.println("................................");
 
         HashSet<Message> passMessages = new HashSet<>();
-
+        ArrayList<Message> myMessags = new ArrayList<>();
         try {
             HashMap<String,Integer> vectorI = vectorClock;
             delayQue.add(m);
@@ -74,23 +75,28 @@ public class CausalOrdering implements Ordering {
                     timeJ = vectorJ.get(msg.getFromName());
 
                     if(m.getFromName().equals(name)) {
-                        timeJ += 1;
-                    }
-
-                    if((timeJ == (vectorI.get(msg.getFromName())+1))
-                            && isLessForAll(msg.getFromName(),vectorJ,vectorI)) {
-
-                        passMessages.add(msg);
-                        updateClock(msg.getFromName());
+                        if(timeJ == myTime+1) {
+                            if(passMessages.add(msg)) {
+                                myTime++;
+                                myMessags.add(msg);
+                            }
+                        }
 
                     } else {
-                        System.out.println("left in que : " + msg.getFromName());
-                        printVector();
+                        if((timeJ == (vectorI.get(msg.getFromName())+1))
+                                && isLessForAll(msg.getFromName(),vectorJ,vectorI)) {
+
+                            if(passMessages.add(msg)) {
+                                myMessags.add(msg);
+                                updateClock(msg.getFromName());
+
+                            }
+                        }
+                    }
                     }
                 }
-            }
 
-            for(Message msg:passMessages) {
+            for(Message msg:myMessags) {
                 System.out.println("Removing item from que: " + msg.getFromName());
                 delayQue.remove(msg);
             }
@@ -100,7 +106,7 @@ public class CausalOrdering implements Ordering {
         }
 
 
-        return passMessages.toArray(new Message[]{});
+        return myMessags.toArray(new Message[]{});
     }
 
 
