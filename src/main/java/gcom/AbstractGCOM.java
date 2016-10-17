@@ -235,20 +235,22 @@ public abstract class AbstractGCOM implements Subject, Observer{
                     Message message = communication.getMessage();
                     Message[] messages = messageOrdering.orderMessage(message);
 
-                    for(Message m:messages) {
-                        if(message.getMessageType() == MessageType.LEAVE_MESSAGE) {
-                            //Remove user from hashmap time stamp
-                            Leave leave = (Leave) message;
-                            groupManager.removeMember(leave.getName());
-                        }else if(message.getMessageType() == MessageType.ELECTION_MESSAGE) {
-                            Election e = (Election) message;
-                            groupManager.setLeader(e.getLeader());
-                        }else if(message.getMessageType() == MessageType.JOIN_MESSAGE) {
-                            Join j = (Join) message;
-                            groupManager.addMember(j.getMember());
-                        }
+                    if(messages != null){
+                        for(Message m:messages) {
+                            if(message.getMessageType() == MessageType.LEAVE_MESSAGE) {
+                                //Remove user from hashmap time stamp
+                                Leave leave = (Leave) message;
+                                groupManager.removeMember(leave.getName());
+                            }else if(message.getMessageType() == MessageType.ELECTION_MESSAGE) {
+                                Election e = (Election) message;
+                                groupManager.setLeader(e.getLeader());
+                            }else if(message.getMessageType() == MessageType.JOIN_MESSAGE) {
+                                Join j = (Join) message;
+                                groupManager.addMember(j.getMember());
+                            }
 
-                        notifyObserver(ObserverEvent.CHAT_MESSAGE,message);
+                            notifyObserver(ObserverEvent.CHAT_MESSAGE,message);
+                        }
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();

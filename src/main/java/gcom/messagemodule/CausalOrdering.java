@@ -53,8 +53,10 @@ public class CausalOrdering implements Ordering {
         if(checkVectorClocks(m, keys)){
             passMessages.add(m);
             try {
-                int v = vectorClock.get(m.getFromName());
-                vectorClock.put(m.getFromName(), v+1);
+                if(!m.getFromName().equals(name)) {
+                    int v = vectorClock.get(m.getFromName());
+                    vectorClock.put(m.getFromName(), v + 1);
+                }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -72,8 +74,10 @@ public class CausalOrdering implements Ordering {
             if(checkVectorClocks(msg, keys)){
                 passMessages.add(delayQue.remove(loops));
                 try {
-                    int v = vectorClock.get(msg.getFromName());
-                    vectorClock.put(msg.getFromName(), v+1);
+                    if(!msg.getFromName().equals(name)) {
+                        int v = vectorClock.get(msg.getFromName());
+                        vectorClock.put(msg.getFromName(), v + 1);
+                    }
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -83,7 +87,7 @@ public class CausalOrdering implements Ordering {
                 loops++;
             }
         }
-        return (Message[]) passMessages.toArray();
+        return passMessages.toArray(new Message[]{});
     }
 
     private boolean checkVectorClocks(Message m, Set keys){
@@ -106,7 +110,13 @@ public class CausalOrdering implements Ordering {
                 return false;
             }
 
-            if(mem.equals(from) /*&& time +1 != newTime*/){
+            int compTime = time;
+
+            if(!from.equals(name)){
+                compTime += 1;
+            }
+
+            if(mem.equals(from) && compTime != msgTime){
                 return false;
 
             }else if(time < msgTime){
