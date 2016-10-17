@@ -10,10 +10,10 @@ public class GroupProperties extends UnicastRemoteObject implements Properties{
 
     private String groupName;
 
-    private Class comtype;
-    private Class messagetype;
+    private String comtype;
+    private String messagetype;
 
-    public GroupProperties(Class comtype,Class messagetype, String groupName) throws RemoteException {
+    public GroupProperties(String comtype,String messagetype, String groupName) throws RemoteException {
         this.comtype     = comtype;
         this.messagetype = messagetype;
         this.groupName = groupName;
@@ -23,11 +23,11 @@ public class GroupProperties extends UnicastRemoteObject implements Properties{
         return groupName;
     }
 
-    public Class getMessagetype() throws RemoteException {
+    public String getMessagetype() throws RemoteException {
         return messagetype;
     }
 
-    public Class getComtype() throws RemoteException {
+    public String getComtype() throws RemoteException {
         return comtype;
     }
 

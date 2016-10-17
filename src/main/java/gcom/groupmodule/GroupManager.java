@@ -173,8 +173,13 @@ public class GroupManager implements Manager,Subject{
     public void registerObservers(Observer... obs) throws RemoteException {
         for(Observer ob:obs) {
             observers.add(ob);
+            //member.registerObserver(ob)
         }
+        //Add observer for memberleave
     }
+
+
+    //getMember  //.registerObserver(GCOM)
 
     @Override
     public  void notifyObserver(ObserverEvent e, Message m) throws RemoteException {

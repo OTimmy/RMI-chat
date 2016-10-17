@@ -23,7 +23,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * This class implements all the modules, hand handle the communication
  * between them. And
  */
-public abstract class AbstractGCOM implements Subject{
+public abstract class AbstractGCOM implements Subject, Observer{
 
     //The modules
     protected GroupManager groupManager;
@@ -95,9 +95,10 @@ public abstract class AbstractGCOM implements Subject{
                                                         p.getMessagetype(),
                                                         p.getGroupName());
 
-            messageOrdering = createOrdering(properties.getMessagetype(),p.getGroupName(),name);
-            communication   = createCommunication(properties.getComtype(),p.getGroupName(),name);
-
+            messageOrdering = createOrdering(properties.getMessagetype(),
+                                             p.getGroupName(),name);
+            communication   = createCommunication(properties.getComtype(),
+                                                  p.getGroupName(),name);
 
             //connect to group
             Member[] members = groupManager.joinGroup(properties,name);
@@ -130,7 +131,7 @@ public abstract class AbstractGCOM implements Subject{
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
                 Message m = (Message) t;
-                if(e == ObserverEvent.RECEIVED_MESSAGE) {;
+                if(e == ObserverEvent.RECEIVED_MESSAGE) {
                     communication.putMessage(m);
                 }
             }
@@ -193,8 +194,6 @@ public abstract class AbstractGCOM implements Subject{
 
         return ob;
     }
-
-
 
     /**
      * Creats a thread for sending messages, by waiting till a message
@@ -302,37 +301,22 @@ public abstract class AbstractGCOM implements Subject{
         }
     }
 
-//    /**
-//     * Creates a communcation with repsect to given type.
-//     * And add appropiate listeners and observers
-//     * @param type of communication
-//     * @return
-//     */
-//    private Communication createCommunication(Class type) throws RemoteException, AlreadyBoundException, NotBoundException {
-//        if(NonReliableCommunication.class.getClass() == type) {
-//            return CommunicationFactory.createNonReliableCommunication();
-//        }
-//
-//        return null;
-//    }
+    protected abstract Communication createCommunication(String type,String groupName,String name) throws RemoteException, AlreadyBoundException, NotBoundException;
 
-    protected abstract Communication createCommunication(Class type,String groupName,String name) throws RemoteException, AlreadyBoundException, NotBoundException;
-
-//    /**
-//     * @param name the name of the sender. That's the current user.
-//     * @param type
-//     * @return
-//     */
-//    private Ordering createMessageOrdering(Class type, String name) {
-//        if(CausalOrdering.class.getClass() == type) {
-//            return new CausalOrdering(name);
-//        }
-//
-//        return new UnorderedOrdering(name);
-//    }
+    protected abstract Ordering createOrdering(String type, String groupName,String name);
 
 
-    protected abstract Ordering createOrdering(Class type, String groupName,String name);
+    @Override
+    public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+
+        //if instance of groupManager
+            //member has left
+            //sendMessageToGroup(Message)
+        //if instance of member
+            //received message
+            //communication(message)
+
+    }
 
     /**
      * Register observers

@@ -29,8 +29,8 @@ public class GCOMRetail extends AbstractGCOM{
     }
 
     @Override
-    protected Communication createCommunication(Class type, String groupName, String name) throws RemoteException, AlreadyBoundException, NotBoundException {
-        if(NonReliableCommunication.class.getClass() == type) {
+    protected Communication createCommunication(String type, String groupName, String name) throws RemoteException, AlreadyBoundException, NotBoundException {
+        if(NonReliableCommunication.class.getName().equals(type)) {
             return CommunicationFactory.createNonReliableCommunication();
         }
 
@@ -38,8 +38,8 @@ public class GCOMRetail extends AbstractGCOM{
     }
 
     @Override
-    protected Ordering createOrdering(Class type, String groupName, String name) {
-        if(CausalOrdering.class.getClass().equals(type)) {
+    protected Ordering createOrdering(String type, String groupName, String name) {
+        if(CausalOrdering.class.getName().equals(type)) {
             return new CausalOrdering(name);
         }
 

@@ -47,6 +47,4 @@ public class GroupMember extends UnicastRemoteObject implements Member{
        }
     }
 
-    public void setLeader(Member leader) {}
-
 }
