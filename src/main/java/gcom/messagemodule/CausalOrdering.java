@@ -16,10 +16,13 @@ public class CausalOrdering implements Ordering {
     private ArrayList<Message> delayQue;
     // have a delay que, that's used of messages that arent complete, and check this every time theres a new message in inQue
 
+    private int vectorValue;
+
     public CausalOrdering(String name) {
         this.name = name;
         vectorClock = new HashMap<>();
         delayQue = new ArrayList<>();
+        vectorValue = 0;
     }
 
     @Override
@@ -75,6 +78,9 @@ public class CausalOrdering implements Ordering {
                     int v = vectorClock.get(m.getFromName());
                     vectorClock.put(m.getFromName(), v + 1);
                 }
+                else{
+                    vectorValue++;
+                }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -95,6 +101,8 @@ public class CausalOrdering implements Ordering {
                     if(!msg.getFromName().equals(name)) {
                         int v = vectorClock.get(msg.getFromName());
                         vectorClock.put(msg.getFromName(), v + 1);
+                    }else{
+                        vectorValue++;
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -132,6 +140,8 @@ public class CausalOrdering implements Ordering {
 
             if(!from.equals(name)){
                 compTime += 1;
+            }else{
+                compTime = vectorValue +1;
             }
 
             if(mem.equals(from)){

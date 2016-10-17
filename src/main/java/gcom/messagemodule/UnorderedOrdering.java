@@ -14,12 +14,11 @@ public class UnorderedOrdering implements Ordering {
     }
 
     @Override
-    public void setMessageStamp(Message message) {
-        this.message = message;
+    public void setMessageStamp(Message message){
     }
 
     @Override
     public Message[] orderMessage(Message m) {
-        return new Message[]{message};
+        return new Message[]{m};
     }
 }
