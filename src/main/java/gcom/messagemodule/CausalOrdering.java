@@ -25,7 +25,6 @@ public class CausalOrdering implements Ordering {
     @Override
     public void setMessageStamp(Message message) {
         //if member not exist add to hashmap
-
         try {
             if(!vectorClock.containsKey(message.getFromName())) {
                 vectorClock.put(message.getFromName(),0);
@@ -33,6 +32,7 @@ public class CausalOrdering implements Ordering {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
 
         int time = vectorClock.get(name);
         vectorClock.put(name, time+1);
@@ -46,6 +46,24 @@ public class CausalOrdering implements Ordering {
 
     @Override
     public Message[] orderMessage(Message m) {
+
+
+        //add m in hold-que
+        //messageHold.add(m.getFrom(),message)
+        //vectorI = vectorClock
+        //loop  que
+            //vectorJ = m.getVector();
+            //if(vectorJ[m.getFrom] == (vectorI[m.getFrom]+1) && isLessForAll(m.getFrom)
+                // remove from linkedQue and add to pass que
+
+
+        try {
+            if(!vectorClock.containsKey(m.getFromName())) {
+                vectorClock.put(m.getFromName(),0);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
         ArrayList<Message> passMessages = new ArrayList<>();
 
@@ -125,4 +143,7 @@ public class CausalOrdering implements Ordering {
         }
         return true;
     }
+
+
+//    private void updateVectorClock()
 }

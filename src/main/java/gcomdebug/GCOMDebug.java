@@ -4,6 +4,7 @@ import gcom.AbstractGCOM;
 import gcom.communicationmodule.Communication;
 import gcom.communicationmodule.NonReliableCommunication;
 import gcom.message.Message;
+import gcom.messagemodule.CausalOrdering;
 import gcom.messagemodule.Ordering;
 import gcom.messagemodule.UnorderedOrdering;
 import gcom.observer.Observer;
@@ -11,6 +12,7 @@ import gcom.observer.ObserverEvent;
 import gcom.observer.Subject;
 import gcom.status.GCOMException;
 import gcomdebug.communicationmodule.NonReliableDebug;
+import gcomdebug.messagemodule.CausalDebug;
 import gcomdebug.messagemodule.UnorderedDebug;
 import rmi.RMIServer;
 import rmi.RMIService;
@@ -38,9 +40,10 @@ public class GCOMDebug extends AbstractGCOM {
 
     @Override
     protected Ordering createOrdering(String type, String groupName, String name) {
-        if(UnorderedOrdering.class.getName().equals(type)) {
-            return new UnorderedDebug(name);
+        if(CausalOrdering.class.getName().equals(type)) {
+            return new CausalDebug(name,host);
         }
+
         return new UnorderedDebug(name);
     }
 

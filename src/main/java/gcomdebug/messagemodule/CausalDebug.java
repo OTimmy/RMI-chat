@@ -15,6 +15,7 @@ public class CausalDebug extends CausalOrdering {
         this.name = name;
     }
 
+
     //updateVectorClock(String memberName)
         //increment vector clock
         //debugService.updateVectorClock(vector,this.name)
