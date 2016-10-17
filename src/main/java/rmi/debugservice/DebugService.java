@@ -58,4 +58,6 @@ public interface DebugService extends Remote {
     void registerControllerObserverMessage(Observer b) throws RemoteException;
 
     void registerControllerObserverVector(Observer b) throws RemoteException;
+
+    String[] getMemberOfGroups(String groupName) throws RemoteException;
 }

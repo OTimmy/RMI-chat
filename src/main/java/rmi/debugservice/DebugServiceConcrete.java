@@ -123,6 +123,12 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         controllerObserverVector = b;
     }
 
+    @Override
+    public String[] getMemberOfGroups(String groupName) throws RemoteException {
+        GroupObservers groupObservers = communicationObservers.get(groupName);
+        return groupObservers.getNames();
+    }
+
 
     private void notifyObserverCommunicators(String toName,Message m) throws GCOMException, RemoteException {
         Observer ob = communicationObservers.get(m.getGroupName()).getObserver(toName);
