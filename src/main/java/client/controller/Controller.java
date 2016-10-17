@@ -102,13 +102,13 @@ public class Controller {
 
                     if(gui.getIfNoOrder()){
                         try {
-                            p = new GroupProperties(gui.getCom(), UnorderedOrdering.class.getClass().getName(), group);
+                            p = new GroupProperties(gui.getCom(), UnorderedOrdering.class.getName(), group);
                         } catch (RemoteException e1) {
                             e1.printStackTrace();
                         }
                     }else{
                         try {
-                            p = new GroupProperties(gui.getCom(), CausalOrdering.class.getClass().getName(), group);
+                            p = new GroupProperties(gui.getCom(), CausalOrdering.class.getName(), group);
                         } catch (RemoteException e1) {
                             e1.printStackTrace();
                         }

@@ -436,7 +436,7 @@ public class GUIClient {
     public String getCom() {
 
         if (basicNonReliableRadioButton.isSelected()) {
-            return NonReliableCommunication.class.getClass().getName();
+            return NonReliableCommunication.class.getName();
         }
         return null;
     }
