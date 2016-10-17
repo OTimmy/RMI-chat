@@ -198,32 +198,32 @@ public class DebugClient {
     public void addListenerToIncTable(MouseListener e){ incommingTable.addMouseListener(e);}
     public void addListenerToGroupsTable(MouseListener e){debugGroups.addMouseListener(e);}
 
-
-    public int moveRow(MouseEvent e) {
-
-        Point p = e.getPoint();
-        int row = incommingTable.rowAtPoint(p);
-
-        String mem = (String) incommingModel.getValueAt(row, 0);
-        String message = (String) incommingModel.getValueAt(row, 1);
-        outgoingModel.addRow(new Object[]{mem, message});
-        incommingModel.removeRow(row);
-
-        return row;
-
-    }
-
-    public int moveRow() {
-
-        int row = 0;
-        String mem = (String) incommingModel.getValueAt(row, 0);
-        String message = (String) incommingModel.getValueAt(row, 1);
-        outgoingModel.addRow(new Object[]{mem, message});
-        incommingModel.removeRow(row);
-
-        return row;
-
-    }
+//
+//    public int moveRow(MouseEvent e) {
+//
+//        Point p = e.getPoint();
+//        int row = incommingTable.rowAtPoint(p);
+//
+//        String mem = (String) incommingModel.getValueAt(row, 0);
+//        String message = (String) incommingModel.getValueAt(row, 1);
+//        outgoingModel.addRow(new Object[]{mem, message});
+//        incommingModel.removeRow(row);
+//
+//        return row;
+//
+//    }
+//
+//    public int moveRow() {
+//
+//        int row = 0;
+//        String mem = (String) incommingModel.getValueAt(row, 0);
+//        String message = (String) incommingModel.getValueAt(row, 1);
+//        outgoingModel.addRow(new Object[]{mem, message});
+//        incommingModel.removeRow(row);
+//
+//        return row;
+//
+//    }
 
     public int getTableRowCount(){
 
@@ -279,10 +279,6 @@ public class DebugClient {
     public void addCurrentGroup(String group) {
 
         g.setText("Currently selected: " + group);
-    }
-
-    public String getFrom(Point p) {
-        return (String) incommingTable.getValueAt(incommingTable.rowAtPoint(p), 0);
     }
 
     public String getTo(Point p) {

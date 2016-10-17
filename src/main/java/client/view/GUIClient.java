@@ -503,10 +503,8 @@ public class GUIClient {
 
     public String showGroupCreation() {
         new JGroupCreation();
-        if (ok) {
-            return groupNameInput.getText();
-        }
-        return null;
+
+        return groupNameInput.getText();
     }
 
     public String getName() {
