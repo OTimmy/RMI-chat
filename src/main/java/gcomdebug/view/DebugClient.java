@@ -303,12 +303,14 @@ public class DebugClient {
         int loop = 0;
 
         while(loop < rows) {
-            rows = outgoingModel.getRowCount();
+
             if (outgoingModel.getValueAt(loop, 0).equals(name)) {
                 outgoingModel.removeRow(loop);
-                loop--;
+                loop = 0;
+                rows = outgoingModel.getRowCount();
+            }else {
+                loop++;
             }
-            loop ++;
         }
     }
 }
