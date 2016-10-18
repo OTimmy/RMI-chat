@@ -58,14 +58,13 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     }
 
     @Override
-    public void updateVectorClock(String name, HashMap<String, Integer> vectorClock) throws RemoteException {
-        HashMap<String,Integer> vec = new HashMap<>();
-        String[] keys = vectorClock.keySet().toArray(new String[]{});
-        for(String key:keys) {
-            vec.put(key,vectorClock.get(key));
-        }
+    public void updateVectorClock(String groupName, String name, HashMap<String, Integer> vectorClock) throws RemoteException {
+        VectorData vectorData = new VectorData(groupName,name,vectorClock);
+        notifyObserverControllerVector(vectorData);
+    }
 
-        notifyObserverControllerVector(name,vec);
+    @Override
+    public void updateDelayQue(String groupName, String name, ArrayList<Message> delayQue) throws RemoteException {
 
     }
 
@@ -129,15 +128,14 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         return groupObservers.getNames();
     }
 
-
     private void notifyObserverCommunicators(String toName,Message m) throws GCOMException, RemoteException {
         Observer ob = communicationObservers.get(m.getGroupName()).getObserver(toName);
         ob.update(ObserverEvent.RECEIVED_MESSAGE,m);
     }
 
-    private void notifyObserverControllerVector(String name, HashMap<String, Integer> vectorClock) throws RemoteException{
+    private void notifyObserverControllerVector(VectorContainer container) throws RemoteException{
         try {
-            controllerObserverVector.update(ObserverEvent.DEBUG_GUI,vectorClock);
+            controllerObserverVector.update(ObserverEvent.DEBUG_GUI,container);
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (GCOMException e) {

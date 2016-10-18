@@ -12,8 +12,8 @@ import java.util.*;
 public class CausalOrdering implements Ordering {
     private String name;
 
-    private HashMap<String, Integer> vectorClock;
-    private ArrayList<Message> delayQue;
+    protected HashMap<String, Integer> vectorClock;
+    protected ArrayList<Message> delayQue;
     private int myTime = 0;
 
     public CausalOrdering(String name) {
@@ -48,7 +48,6 @@ public class CausalOrdering implements Ordering {
     @Override
     public Message[] orderMessage(Message m) {
 
-        int timeJ = 0;
         try {
             if (!vectorClock.containsKey(m.getFromName())) {
                 vectorClock.put(m.getFromName(), 0);
@@ -62,12 +61,13 @@ public class CausalOrdering implements Ordering {
         ArrayList<Message> myMessags = new ArrayList<>();
         try {
             HashMap<String, Integer> vectorI = vectorClock;
-            delayQue.add(m);
+            addToDelayQue(m);
+//            delayQue.add(m);
             //loop all messages again
             for (int i = 0; i < delayQue.size(); i++) {
                 for (Message msg : delayQue) {
                     HashMap<String, Integer> vectorJ = msg.getVectorClock();
-                    timeJ = vectorJ.get(msg.getFromName());
+                    int timeJ = vectorJ.get(msg.getFromName());
 
                     if (m.getFromName().equals(name)) {
                         if (timeJ == myTime + 1) {
@@ -92,7 +92,7 @@ public class CausalOrdering implements Ordering {
             }
 
             for (Message msg : myMessags) {
-                delayQue.remove(msg);
+                removeFromDelayQue(msg);
             }
 
         } catch (RemoteException e) {
@@ -137,7 +137,7 @@ public class CausalOrdering implements Ordering {
         return true;
     }
 
-    private void updateClock(String fromName) {
+    protected void updateClock(String fromName) {
         if(!vectorClock.containsKey(fromName)) {
             vectorClock.put(fromName,0);
         }
@@ -146,8 +146,11 @@ public class CausalOrdering implements Ordering {
     }
 
 
+    protected void addToDelayQue(Message m) {
+        delayQue.add(m);
+    }
 
-    private void addToDelayQue(Message m) {
-
+    protected void removeFromDelayQue(Message m) {
+        delayQue.remove(m);
     }
 }
