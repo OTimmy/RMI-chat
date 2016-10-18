@@ -12,7 +12,7 @@ import java.util.*;
 public class CausalOrdering implements Ordering {
     private String name;
 
-    private HashMap<String,Integer> vectorClock;
+    private HashMap<String, Integer> vectorClock;
     private ArrayList<Message> delayQue;
     // have a delay que, that's used of messages that arent complete, and check this every time theres a new message in inQue
 
@@ -29,8 +29,8 @@ public class CausalOrdering implements Ordering {
     public void setMessageStamp(Message message) {
         //if member not exist add to hashmap
         try {
-            if(!vectorClock.containsKey(message.getFromName())) {
-                vectorClock.put(message.getFromName(),0);
+            if (!vectorClock.containsKey(message.getFromName())) {
+                vectorClock.put(message.getFromName(), 0);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -38,7 +38,7 @@ public class CausalOrdering implements Ordering {
 
 
         int time = vectorClock.get(name);
-        vectorClock.put(name, time+1);
+        vectorClock.put(name, time + 1);
 
         try {
             message.setVectorClock((HashMap<String, Integer>) vectorClock.clone());
@@ -55,14 +55,14 @@ public class CausalOrdering implements Ordering {
         //messageHold.add(m.getFrom(),message)
         //vectorI = vectorClock
         //loop  que
-            //vectorJ = m.getVector();
-            //if(vectorJ[m.getFrom] == (vectorI[m.getFrom]+1) && isLessForAll(m.getFrom)
-                // remove from linkedQue and add to pass que
+        //vectorJ = m.getVector();
+        //if(vectorJ[m.getFrom] == (vectorI[m.getFrom]+1) && isLessForAll(m.getFrom)
+        // remove from linkedQue and add to pass que
 
 
         try {
-            if(!vectorClock.containsKey(m.getFromName())) {
-                vectorClock.put(m.getFromName(),0);
+            if (!vectorClock.containsKey(m.getFromName())) {
+                vectorClock.put(m.getFromName(), 0);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -71,52 +71,44 @@ public class CausalOrdering implements Ordering {
         ArrayList<Message> passMessages = new ArrayList<>();
 
         Set keys = vectorClock.keySet();
-        if(checkVectorClocks(m, keys)){
+        if (checkVectorClocks(m, keys)) {
             passMessages.add(m);
+
             try {
-                if(!m.getFromName().equals(name)) {
-                    int v = vectorClock.get(m.getFromName());
-                    vectorClock.put(m.getFromName(), v + 1);
-                }
-                else{
-                    vectorValue++;
-                }
+                incrementVClocks(m.getFromName());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-        }else {
+
+        } else {
             delayQue.add(m);
             return null;
         }
 
         int loops = 0;
 
-        while(loops < delayQue.size()){
+        while (loops < delayQue.size()) {
 
             Message msg = delayQue.get(loops);
 
-            if(checkVectorClocks(msg, keys)){
+            if (checkVectorClocks(msg, keys)) {
                 passMessages.add(delayQue.remove(loops));
+
                 try {
-                    if(!msg.getFromName().equals(name)) {
-                        int v = vectorClock.get(msg.getFromName());
-                        vectorClock.put(msg.getFromName(), v + 1);
-                    }else{
-                        vectorValue++;
-                    }
+                    incrementVClocks(msg.getFromName());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
 
                 loops = 0;
-            }else{
+            } else {
                 loops++;
             }
         }
         return passMessages.toArray(new Message[]{});
     }
 
-    private boolean checkVectorClocks(Message m, Set keys){
+    private boolean checkVectorClocks(Message m, Set keys) {
         int time;
         int msgTime;
         String from = null;
@@ -126,7 +118,7 @@ public class CausalOrdering implements Ordering {
             e.printStackTrace();
         }
 
-        for(Object mem : keys){
+        for (Object mem : keys) {
             time = vectorClock.get(mem);
 
             try {
@@ -138,18 +130,18 @@ public class CausalOrdering implements Ordering {
 
             int compTime = time;
 
-            if(!from.equals(name)){
+            if (!from.equals(name)) {
                 compTime += 1;
-            }else{
-                compTime = vectorValue +1;
+            } else {
+                compTime = vectorValue + 1;
             }
 
-            if(mem.equals(from)){
-                if(compTime != msgTime){
+            if (mem.equals(from)) {
+                if (compTime != msgTime) {
                     return false;
                 }
 
-            }else {
+            } else {
                 if (time < msgTime) {
                     return false;
                 }
@@ -158,6 +150,16 @@ public class CausalOrdering implements Ordering {
         return true;
     }
 
+    public void incrementVClocks(String from) {
+        if (!from.equals(name)) {
+            int v = vectorClock.get(from);
+            vectorClock.put(from, v + 1);
+        } else {
+            vectorValue++;
+        }
+
+
+    }
 
 //    private void updateVectorClock()
 }
