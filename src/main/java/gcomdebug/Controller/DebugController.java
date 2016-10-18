@@ -89,7 +89,18 @@ public class DebugController {
         Observer ob = new Observer() {
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
-                Hashtable<String, Integer> hash = (Hashtable) t;
+                Hashtable<String, Integer> hashTable = (Hashtable) t;
+
+                String[] columns = gui.getVectorColumns();
+                int[] values = new int[columns.length];
+
+                for(int i = 0; i < columns.length; i++){
+                    values[i] = hashTable.get(columns[i]);
+                }
+
+                String first = (String) hashTable.keySet().toArray()[0];
+
+                gui.addVector(first, values);
             }
         };
 
@@ -112,10 +123,12 @@ public class DebugController {
 
                         case LEAVE_MESSAGE:
                             gui.addIncomming(msg.getFromName(), msg.getToName(), "Leave Message");
+                            gui.removeVector(((Leave)msg).getName());
                             break;
 
                         case JOIN_MESSAGE:
                             gui.addIncomming(msg.getFromName(), msg.getToName(), "JOIN Message");
+                            gui.addColVector(((Join)msg).getName());
                             break;
 
                         case ELECTION_MESSAGE:
@@ -224,7 +237,7 @@ public class DebugController {
                 if (e.getClickCount() == 2) {
 
                     if(!group.equals(gui.getGroupName(e))) {
-                        for (int i = 0; 1 < gui.getTableRowCount(); i++) {
+                        for (int i = 0; i < gui.getTableRowCount(); i++) {
                             gui.removeFromgIncomming(0);
                         }
                         try {
@@ -238,6 +251,17 @@ public class DebugController {
                         group = gui.getGroupName(e);
                         gui.addCurrentGroup(group);
                         gui.clearDebug();
+
+                        String[] members = new String[0];
+                        try {
+                            members = debugService.getMemberOfGroups(gui.getGroupName(e));
+                        } catch (RemoteException e1) {
+                            e1.printStackTrace();
+                        }
+
+                        for (String mem :members) {
+                            gui.addColVector(mem);
+                        }
                     }
                 }
             }

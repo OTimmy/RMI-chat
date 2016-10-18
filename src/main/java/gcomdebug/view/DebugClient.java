@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 /**
  * Created by c13slk on 2016-10-14.
@@ -27,6 +28,7 @@ public class DebugClient {
     private JTable debugGroups;
     private JTable incommingTable;
     private JTable outgoingTable;
+    private JTable vectorTable;
 
     private JLabel g;
 
@@ -106,7 +108,7 @@ public class DebugClient {
         incOutPane.add(outWL);
 
 
-        JTable vectorTable = new JTable(vectorModel) {
+        vectorTable = new JTable(vectorModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -114,7 +116,6 @@ public class DebugClient {
         };
         vectorTable.setEnabled(false);//------------------------------------------------------------->
         vectorModel.addColumn("Member");
-        vectorModel.addColumn("Vector");
         JScrollPane scrollvectorPane = new JScrollPane(vectorTable);
 
         JPanel tableBPane = new JPanel();
@@ -155,14 +156,30 @@ public class DebugClient {
         outgoingModel.removeRow(row);
     }
 
-    public void addVector(String mem, String vector){
+    public void addColVector(String member){
+        if(vectorModel.findColumn(member) == -1){
+            vectorModel.addColumn(member);
+        }
+    }
+
+    public void addVector(String mem, int[] vector){
         vectorModel.addRow(new Object[]{mem, vector});
+    }
+
+    public String[] getVectorColumns(){
+        ArrayList<String> columns = new ArrayList<>();
+
+        for (int i = 0; i < vectorModel.getColumnCount(); i++){
+            columns.add(vectorModel.getColumnName(i));
+        }
+        return columns.toArray(new String[]{});
     }
 
     public void removeVector(String mem){
         for(int i = 0; i<vectorModel.getRowCount(); i++){
             if(vectorModel.getValueAt(i, 0).equals(mem)){
                 vectorModel.removeRow(i);
+                vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(i));
             }
         }
     }
