@@ -1,49 +1,32 @@
 package gcom.message;
 
-import gcom.groupmodule.Member;
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
 /**
- * Created by c12ton on 10/14/16.
+ * Created by c12ton on 10/18/16.
  */
-public class JoinMessage extends UnicastRemoteObject implements Join,Message, Cloneable {
+public class DeleteMessage extends UnicastRemoteObject implements Delete,Message, Cloneable{
+    protected DeleteMessage() throws RemoteException {}
 
-    private Member member;
     private String groupName;
     private String fromName;
     private String toName;
-
     private HashMap<String,Integer> vectorClock;
-
-    public JoinMessage(Member member) throws RemoteException {
-        super();
-        this.member = member;
-    }
-
-    public String getName() throws RemoteException {
-        return member.getName();
-    }
-
-    @Override
-    public Member getMember() throws RemoteException{
-        return member;
-    }
 
     @Override
     public MessageType getMessageType() throws RemoteException {
-        return MessageType.JOIN_MESSAGE;
+        return MessageType.DELETE_MESSAGE;
     }
 
     @Override
-    public void setGroupName(String groupName) {
+    public void setGroupName(String groupName) throws RemoteException {
         this.groupName = groupName;
     }
 
     @Override
-    public String getGroupName() {
+    public String getGroupName() throws RemoteException {
         return groupName;
     }
 
@@ -68,18 +51,17 @@ public class JoinMessage extends UnicastRemoteObject implements Join,Message, Cl
     }
 
     @Override
-    public void setVectorClock(HashMap<String, Integer> vectorClock) throws RemoteException{
+    public void setVectorClock(HashMap<String, Integer> vectorClock) throws RemoteException {
         this.vectorClock = vectorClock;
     }
 
     @Override
-    public HashMap<String, Integer> getVectorClock() throws RemoteException{
-        return vectorClock;
+    public HashMap<String, Integer> getVectorClock() throws RemoteException {
+        return null;
     }
 
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
-
 }

@@ -1,6 +1,10 @@
 package rmi.debugservice;
 
+import gcom.groupmodule.Member;
+import gcom.message.Chat;
+import gcom.message.Join;
 import gcom.message.Message;
+import gcom.message.MessageType;
 import gcom.observer.Observer;
 import gcom.observer.ObserverEvent;
 import gcom.status.GCOMException;
@@ -60,22 +64,49 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
     @Override
     public void updateVectorClock(String groupName, String name, HashMap<String, Integer> vectorClock) throws RemoteException {
+
         VectorData vectorData = new VectorData(groupName,name,vectorClock);
         notifyObserverControllerVector(vectorData);
     }
 
     @Override
     public void updateDelayQue(String groupName, String name, ArrayList<Message> delayQue) throws RemoteException {
-        DelayContainer delay = new DelayData(groupName,name,delayQue);
-        notifyControllerObserDelayQue(delay);
+        ArrayList<DelayContainer> delays = new ArrayList<>();
+
+        for(Message m:delayQue) {
+            String textMessage = "";
+            DelayContainer data = new DelayData(groupName,m.getFromName(),m.getToName());
+            switch(m.getMessageType()) {
+                case CHAT_MESSAGE:
+                    Chat chat = (Chat)m;
+                    textMessage = chat.getMessage();
+                    break;
+                case DELETE_MESSAGE:
+                    textMessage = MessageType.DELETE_MESSAGE.toString();
+                    break;
+                case JOIN_MESSAGE:
+                    textMessage = MessageType.JOIN_MESSAGE.toString();
+                    break;
+                case LEAVE_MESSAGE:
+                    textMessage = MessageType.LEAVE_MESSAGE.toString();
+                    break;
+                case ELECTION_MESSAGE:
+                    textMessage = MessageType.ELECTION_MESSAGE.toString();
+                    break;
+            }
+            data.setMessage(textMessage);
+            delays.add(data);
+        }
+
+        System.out.println("Updating delay que for member: "+ name);
+
+        notifyControllerObserDelayQue(delays);
     }
 
     @Override
     public void dropMessage(String groupName, int index) throws RemoteException{
-
         removeMessageFromIndex(groupName,index);
     }
-
 
     private void removeMessageFromIndex(String groupName, int index) {
         Message[] messages = inMessages.get(groupName).toArray(new Message[]{});
@@ -129,7 +160,6 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         controllerObserDelayQue = b;
     }
 
-
     @Override
     public String[] getMemberOfGroups(String groupName) throws RemoteException {
         GroupObservers groupObservers = communicationObservers.get(groupName);
@@ -161,7 +191,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         }
     }
 
-    private void notifyControllerObserDelayQue(DelayContainer d) throws RemoteException{
+    private void notifyControllerObserDelayQue(ArrayList<DelayContainer> d) throws RemoteException{
         try {
             controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,d);
         } catch (RemoteException e) {

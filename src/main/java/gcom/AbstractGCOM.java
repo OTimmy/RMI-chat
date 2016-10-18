@@ -273,6 +273,40 @@ public abstract class AbstractGCOM implements Subject, Observer{
         return t;
     }
 
+    /**
+     *
+     * @param m
+     */
+    private void handleMessageType(Message m) {
+        try {
+            MessageType type = m.getMessageType();
+
+            switch(type) {
+                case JOIN_MESSAGE:
+                    Join j = (Join) m;
+                    groupManager.addMember(j.getMember());
+                    break;
+                case LEAVE_MESSAGE:
+                    Leave l = (Leave) m;
+                    groupManager.removeMember(l.getName());
+                    break;
+                case ELECTION_MESSAGE:
+                    Election e = (Election) m;
+                    groupManager.setLeader(e.getLeader());
+                    break;
+                case DELETE_MESSAGE:
+                    groupManager = null;
+                    break;
+            }
+
+
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void leaveGroup() {
         //stop producerThread()
         //stop consumerThread()

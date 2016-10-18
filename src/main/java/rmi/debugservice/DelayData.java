@@ -12,29 +12,34 @@ import java.util.ArrayList;
 public class DelayData extends UnicastRemoteObject implements DelayContainer {
     private String groupName;
     private String name;
+    private String fromName;
+    private String toName;
 
-    private ArrayList<Message> delay;
-
-    public DelayData(String groupName, String name, ArrayList<Message> delay) throws RemoteException {
+    private String message;
+    public DelayData(String groupName, String fromName, String toName) throws RemoteException {
         super();
         this.groupName = groupName;
-        this.name = name;
-        this.delay = delay;
-
+        this.fromName = fromName;
+        this.toName = toName;
     }
 
     @Override
-    public String getName() throws RemoteException{
-        return name;
+    public String getFromName() {
+        return fromName;
     }
 
     @Override
-    public String getGroupName() throws RemoteException{
-        return groupName;
+    public String getToName() {
+        return toName;
     }
 
     @Override
-    public ArrayList<Message> getDelayQue() throws RemoteException{
-        return delay;
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public void setMessage(String msg) throws RemoteException {
+        this.message = msg;
     }
 }

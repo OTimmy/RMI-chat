@@ -8,7 +8,7 @@ import java.util.HashMap;
  * Created by c12ton on 10/13/16.
  * Is used to send leave messages to members
  */
-public class LeaveMessage extends UnicastRemoteObject implements Message,Leave{
+public class LeaveMessage extends UnicastRemoteObject implements Message,Leave,Cloneable{
     private String name;
     private String groupName;
     private String fromName;
@@ -72,5 +72,10 @@ public class LeaveMessage extends UnicastRemoteObject implements Message,Leave{
     @Override
     public HashMap<String, Integer> getVectorClock() throws RemoteException{
         return vectorClock;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

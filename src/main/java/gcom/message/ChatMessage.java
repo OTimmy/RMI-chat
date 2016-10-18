@@ -84,4 +84,9 @@ public class ChatMessage extends UnicastRemoteObject implements Message,Chat,Clo
         return vectorClock;
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        return super.clone();
+    }
+
 }
