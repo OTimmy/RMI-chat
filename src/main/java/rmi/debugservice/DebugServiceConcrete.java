@@ -161,7 +161,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         }
     }
 
-    private void notifyControllerObserDelayQue(DelayContainer d) {
+    private void notifyControllerObserDelayQue(DelayContainer d) throws RemoteException{
         try {
             controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,d);
         } catch (RemoteException e) {

@@ -8,6 +8,7 @@ import gcomdebug.GCOMDebug;
 import gcomdebug.view.DebugClient;
 import rmi.RMIServer;
 import rmi.debugservice.DebugService;
+import rmi.debugservice.DelayContainer;
 import rmi.debugservice.VectorContainer;
 import rmi.debugservice.VectorData;
 
@@ -43,10 +44,7 @@ public class DebugController {
 
     public static void main(String[] args) {
 
-
-        DebugController controller;
-
-        controller = new DebugController(new DebugClient());
+        new DebugController(new DebugClient());
 
         gui.addListenerToRa(createActionlistenerRa());
         gui.addListenerToDs(createActionlistenerDs());
@@ -79,6 +77,7 @@ public class DebugController {
         try {
             debugService.registerControllerObserverMessage(createMessageObserver());
             debugService.registerControllerObserverVector(createVectorObserver());
+            debugService.registerControllerOutGoingMessage(createDelayObserver());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -106,6 +105,46 @@ public class DebugController {
                 String first = data.getName();
 
                 gui.addVector(first, values);
+            }
+        };
+
+
+        return (Observer) UnicastRemoteObject.exportObject(ob,0);
+    }
+
+    private static gcom.observer.Observer createDelayObserver() throws RemoteException{
+        Observer ob = new Observer() {
+            @Override
+            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+
+                DelayContainer data = (DelayContainer) t;
+
+                for(Message m :data.getDelayQue()){
+                    switch (m.getMessageType()) {
+
+                        case CHAT_MESSAGE:
+                            gui.addIncomming(m.getFromName(), m.getToName(), ((Chat) m).getMessage());
+                            break;
+
+                        case LEAVE_MESSAGE:
+                            gui.addIncomming(m.getFromName(), m.getToName(), "Leave Message");
+                            gui.removeVector(((Leave)m).getName());
+                            break;
+
+                        case JOIN_MESSAGE:
+                            gui.addIncomming(m.getFromName(), m.getToName(), "JOIN Message");
+                            gui.addColVector(((Join)m).getName());
+                            break;
+
+                        case ELECTION_MESSAGE:
+                            gui.addIncomming(m.getFromName(), m.getToName(), "Election message");
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
             }
         };
 
