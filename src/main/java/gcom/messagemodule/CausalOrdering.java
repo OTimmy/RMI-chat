@@ -58,10 +58,6 @@ public class CausalOrdering implements Ordering {
             e.printStackTrace();
         }
 
-        System.out.println("--------------reciving----------");
-
-        printVector();
-        System.out.println("................................");
 
         HashSet<Message> passMessages = new HashSet<>();
         ArrayList<Message> myMessags = new ArrayList<>();
@@ -137,8 +133,5 @@ public class CausalOrdering implements Ordering {
             System.out.println("user: " +key +"value:" + vectorClock.get(key));
         }
     }
-
-
-
-//    private void updateVectorClock()
+    
 }
