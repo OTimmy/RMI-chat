@@ -298,10 +298,17 @@ public class DebugClient {
     }
 
     public void clearOutGoingTable(String name) {
-        for(int i = 0; i < outgoingModel.getRowCount(); i++){
-            if(outgoingModel.getValueAt(i, 0).equals(name)) {
-                outgoingModel.removeRow(0);
+
+        int rows = outgoingModel.getRowCount();
+        int loop = 0;
+
+        while(loop < rows) {
+            rows = outgoingModel.getRowCount();
+            if (outgoingModel.getValueAt(loop, 0).equals(name)) {
+                outgoingModel.removeRow(loop);
+                loop--;
             }
+            loop ++;
         }
     }
 }
