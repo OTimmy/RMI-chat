@@ -127,14 +127,10 @@ public class DebugController {
                 ArrayList<DelayContainer> data = (ArrayList<DelayContainer>) t;
 
                 if(data.size() > 0) {
-                    if (group.equals(data.get(0).getGroupName())) {
-                        gui.clearOutGoingTable(data.get(0).getToName());
-                    }
+                    gui.clearOutGoingTable();
 
                     for (DelayContainer delay : data) {
-                        System.out.println("From queue: from: " + delay.getFromName()+" to: "+ delay.getToName()+ " Mess: "+ delay.getMessage());
                         if (group.equals(delay.getGroupName())) {
-                            //System.out.println("From queue: from: " + delay.getFromName()+" to: "+ delay.getToName()+ " Mess: "+ delay.getMessage());
                             gui.addOutgoing(delay.getFromName(), delay.getToName(), delay.getMessage());
                         }
                     }
