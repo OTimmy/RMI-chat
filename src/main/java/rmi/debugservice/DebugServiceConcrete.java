@@ -47,8 +47,8 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         LinkedBlockingDeque<Message> messagesList = inMessages.get(groupName);
 
         Message[] messages = inMessages.get(groupName).toArray(new Message[]{});
-        messagesList.remove(messages[index]);
 
+        messagesList.remove(messages[index]);
 
         notifyObserverCommunicators(toName,messages[index]);
     }
@@ -204,6 +204,11 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
                 }
             }
             controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,del);
+            System.out.println("---------------------------");
+            for(DelayContainer baa: del) {
+                System.out.println("Delay from: " + baa.getFromName() +" to: " + baa.getToName());
+            }
+            System.out.println("---------------------------");
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (GCOMException e) {

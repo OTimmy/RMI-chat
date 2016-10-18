@@ -145,6 +145,11 @@ public class GroupManager implements Manager,Subject{
     }
 
     @Override
+    public void leaderDeleteGroup() {
+        //notfyObserver of
+    }
+
+    @Override
     public void setLeader(Member leader) {
         this.leader = leader;
     }

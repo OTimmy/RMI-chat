@@ -8,7 +8,7 @@ import java.util.HashMap;
  * Created by c12ton on 2016-09-30.
  * Defines what type of message is being sent
  */
-public interface Message extends Remote{
+public interface Message {
     MessageType getMessageType() throws RemoteException;
     void setGroupName(String groupName) throws RemoteException;
     String getGroupName() throws RemoteException;
@@ -19,4 +19,5 @@ public interface Message extends Remote{
 
     void setVectorClock(HashMap<String,Integer> vectorClock) throws RemoteException;
     HashMap<String,Integer> getVectorClock() throws RemoteException;
+    public Object clone() throws CloneNotSupportedException;
 }

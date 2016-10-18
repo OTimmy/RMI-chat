@@ -1,5 +1,6 @@
 package gcom.message;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
@@ -7,7 +8,7 @@ import java.util.HashMap;
 /**
  * Created by c12ton on 10/18/16.
  */
-public class DeleteMessage extends UnicastRemoteObject implements Delete,Message, Cloneable{
+public class DeleteMessage implements Delete,Message, Serializable, Cloneable{
     protected DeleteMessage() throws RemoteException {}
 
     private String groupName;
@@ -58,5 +59,10 @@ public class DeleteMessage extends UnicastRemoteObject implements Delete,Message
     @Override
     public HashMap<String, Integer> getVectorClock() throws RemoteException {
         return null;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

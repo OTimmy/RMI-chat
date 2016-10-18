@@ -1,5 +1,6 @@
 package gcom.message;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -8,7 +9,7 @@ import java.util.HashMap;
 /**
  * Created by c12ton on 2016-10-06.
  */
-public class ChatMessage extends UnicastRemoteObject implements Message,Chat{
+public class ChatMessage  implements Message,Chat, Serializable, Cloneable{
     private String message;
     private String user;
     private String groupName;
@@ -84,4 +85,9 @@ public class ChatMessage extends UnicastRemoteObject implements Message,Chat{
         return vectorClock;
     }
 
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

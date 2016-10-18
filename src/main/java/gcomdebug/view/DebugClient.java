@@ -269,22 +269,12 @@ public class DebugClient {
 
 
     public void clearOutGoingTable() {
-        int rows = outgoingModel.getRowCount();
-//        for(int row = 0; row < rows;row++) {
-//            outgoingModel.insertRow(row,new Object[]{""});
-////            outgoingModel.setRowCount(0);
-//        }
-
-//        if (outgoingModel.getRowCount() > 0) {
-//            for (int i = outgoingModel.getRowCount();i >= 0;) {
-//                if(outgoingModel.getRowCount()>= 0) {
-//                    outgoingModel.removeRow(i);
-//                }
-//            }
-//        }
-        outgoingModel.setRowCount(0);
-        outgoingModel.setRowCount(1);
-
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                outgoingModel.setRowCount(0);
+            }
+        });
     }
 
     public void clearIncomming() {
