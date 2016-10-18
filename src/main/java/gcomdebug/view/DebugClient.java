@@ -304,13 +304,20 @@ public class DebugClient {
 
         while(loop < rows) {
 
-            if (outgoingModel.getValueAt(loop, 0).equals(name)) {
+            if (outgoingModel.getValueAt(loop, 1).equals(name)) {
                 outgoingModel.removeRow(loop);
                 loop = 0;
                 rows = outgoingModel.getRowCount();
             }else {
                 loop++;
             }
+        }
+    }
+
+    public void clearOutGoingTable() {
+
+        for (int i = 0; i < outgoingModel.getRowCount(); i++){
+            outgoingModel.removeRow(0);
         }
     }
 }
