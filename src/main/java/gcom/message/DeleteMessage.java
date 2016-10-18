@@ -59,9 +59,4 @@ public class DeleteMessage extends UnicastRemoteObject implements Delete,Message
     public HashMap<String, Integer> getVectorClock() throws RemoteException {
         return null;
     }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 }

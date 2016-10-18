@@ -8,7 +8,7 @@ import java.util.HashMap;
 /**
  * Created by c12ton on 2016-10-06.
  */
-public class ChatMessage extends UnicastRemoteObject implements Message,Chat,Cloneable{
+public class ChatMessage extends UnicastRemoteObject implements Message,Chat{
     private String message;
     private String user;
     private String groupName;
@@ -82,11 +82,6 @@ public class ChatMessage extends UnicastRemoteObject implements Message,Chat,Clo
     @Override
     public HashMap<String, Integer> getVectorClock() throws RemoteException{
         return vectorClock;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException{
-        return super.clone();
     }
 
 }

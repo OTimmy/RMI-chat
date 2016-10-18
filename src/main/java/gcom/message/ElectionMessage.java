@@ -12,7 +12,7 @@ import java.util.HashMap;
  *
  * Created by c12ton on 10/14/16.
  */
-public class ElectionMessage extends UnicastRemoteObject implements Message,Election,Cloneable{
+public class ElectionMessage extends UnicastRemoteObject implements Message,Election{
 
     private Member leader;
     private String groupName;
@@ -79,8 +79,4 @@ public class ElectionMessage extends UnicastRemoteObject implements Message,Elec
         return vectorClock;
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 }

@@ -132,6 +132,7 @@ public class DebugController {
                     }
 
                     for (DelayContainer delay : data) {
+                        System.out.println("From queue: from: " + delay.getFromName()+" to: "+ delay.getToName()+ " Mess: "+ delay.getMessage());
                         if (group.equals(delay.getGroupName())) {
                             gui.addOutgoing(delay.getFromName(), delay.getToName(), delay.getMessage());
                         }
