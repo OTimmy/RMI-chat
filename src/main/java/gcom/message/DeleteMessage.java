@@ -1,57 +1,33 @@
 package gcom.message;
 
 import java.io.Serializable;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
 /**
- * Created by c12ton on 2016-10-06.
+ * Created by c12ton on 10/18/16.
  */
-public class ChatMessage  implements Message,Chat, Serializable, Cloneable{
-    private String message;
-    private String user;
-    private String groupName;
+public class DeleteMessage implements Delete,Message, Serializable, Cloneable{
+    protected DeleteMessage() throws RemoteException {}
 
+    private String groupName;
     private String fromName;
     private String toName;
-
-
     private HashMap<String,Integer> vectorClock;
-    /**
-     * @param user the username of the sender
-     * @param message the chat message, null if non is needed
-     * @throws RemoteException
-     */
-    public ChatMessage(String user, String message) throws RemoteException {
-        super();
-        this.message = message;
-        this.user = user;
-    }
-
-    @Override
-    public String getMessage() throws RemoteException {
-        return message;
-    }
-
-    @Override
-    public String getUser() throws RemoteException {
-        return user;
-    }
 
     @Override
     public MessageType getMessageType() throws RemoteException {
-        return MessageType.CHAT_MESSAGE;
+        return MessageType.DELETE_MESSAGE;
     }
 
     @Override
-    public void setGroupName(String groupName) throws RemoteException{
+    public void setGroupName(String groupName) throws RemoteException {
         this.groupName = groupName;
     }
 
     @Override
-    public String getGroupName() throws RemoteException{
+    public String getGroupName() throws RemoteException {
         return groupName;
     }
 
@@ -76,15 +52,14 @@ public class ChatMessage  implements Message,Chat, Serializable, Cloneable{
     }
 
     @Override
-    public void setVectorClock(HashMap<String, Integer> vectorClock) throws RemoteException{
+    public void setVectorClock(HashMap<String, Integer> vectorClock) throws RemoteException {
         this.vectorClock = vectorClock;
     }
 
     @Override
-    public HashMap<String, Integer> getVectorClock() throws RemoteException{
-        return vectorClock;
+    public HashMap<String, Integer> getVectorClock() throws RemoteException {
+        return null;
     }
-
 
     @Override
     public Object clone() throws CloneNotSupportedException {

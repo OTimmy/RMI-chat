@@ -2,14 +2,14 @@ package gcom.message;
 
 import gcom.groupmodule.Member;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
 /**
  * Created by c12ton on 10/14/16.
  */
-public class JoinMessage extends UnicastRemoteObject implements Join,Message, Cloneable {
+public class JoinMessage implements Join,Message, Serializable,Cloneable {
 
     private Member member;
     private String groupName;
@@ -77,4 +77,8 @@ public class JoinMessage extends UnicastRemoteObject implements Join,Message, Cl
         return vectorClock;
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

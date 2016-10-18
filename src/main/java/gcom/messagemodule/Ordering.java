@@ -2,6 +2,8 @@ package gcom.messagemodule;
 
 import gcom.message.Message;
 
+import java.util.HashMap;
+
 /**
  * Created by timmy on 03/10/16.
  */
@@ -19,5 +21,8 @@ public interface Ordering {
      * @param m
      */
     Message[] orderMessage(Message m);
+
+
+    void setVectorClock(HashMap<String, Integer> vectorClock, String fromName);
 
 }

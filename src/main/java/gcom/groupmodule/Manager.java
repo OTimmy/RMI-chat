@@ -72,6 +72,9 @@ public interface Manager extends Remote{
      */
     void leaderMemberJoin(Member m) throws RemoteException, GCOMException;
 
-
+    /**
+     *  Delets the grom from name service, and sends delete message to group
+     */
+    void leaderDeleteGroup();
 
 }

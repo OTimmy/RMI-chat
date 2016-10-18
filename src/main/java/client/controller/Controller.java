@@ -171,7 +171,7 @@ public class Controller {
                 try {
                     members = gcom.connectToGroup(data[1], data[0]);
                 } catch (GCOMException e1) {
-                    gui.showErrorMess("Connection refused: " + e1.getMessage());
+                    gui.showErrorMess("Connection refused! \nYou cannot join the group right now.");
                     return;
                 }
 

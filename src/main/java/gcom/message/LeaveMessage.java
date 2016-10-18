@@ -1,5 +1,6 @@
 package gcom.message;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import java.util.HashMap;
  * Created by c12ton on 10/13/16.
  * Is used to send leave messages to members
  */
-public class LeaveMessage extends UnicastRemoteObject implements Message,Leave{
+public class LeaveMessage implements Message,Leave,Serializable, Cloneable{
     private String name;
     private String groupName;
     private String fromName;
@@ -72,5 +73,8 @@ public class LeaveMessage extends UnicastRemoteObject implements Message,Leave{
     @Override
     public HashMap<String, Integer> getVectorClock() throws RemoteException{
         return vectorClock;
+    }
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

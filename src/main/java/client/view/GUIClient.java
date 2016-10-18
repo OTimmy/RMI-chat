@@ -487,7 +487,7 @@ public class GUIClient {
         ta.setText("");
         for (int j = 0; j < data.length; j++) {
             if (!data[j].equals(name)) {
-                ta.append(data[j]);
+                ta.append(data[j] + "\n");
             }
         }
     }
@@ -504,7 +504,10 @@ public class GUIClient {
     public String showGroupCreation() {
         new JGroupCreation();
 
-        return groupNameInput.getText();
+        if(ok) {
+            return groupNameInput.getText();
+        }
+        return null;
     }
 
     public String getName() {

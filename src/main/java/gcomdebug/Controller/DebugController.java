@@ -8,6 +8,9 @@ import gcomdebug.GCOMDebug;
 import gcomdebug.view.DebugClient;
 import rmi.RMIServer;
 import rmi.debugservice.DebugService;
+import rmi.debugservice.DelayContainer;
+import rmi.debugservice.VectorContainer;
+import rmi.debugservice.VectorData;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -20,6 +23,7 @@ import java.awt.event.MouseListener;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -35,16 +39,15 @@ public class DebugController {
     private static GCOMDebug gcom;
     private static DebugService debugService = null;
 
+    private  static final Object lock = new Object();
+
     public DebugController(DebugClient gui) {
         this.gui = gui;
     }
 
     public static void main(String[] args) {
 
-
-        DebugController controller;
-
-        controller = new DebugController(new DebugClient());
+        new DebugController(new DebugClient());
 
         gui.addListenerToRa(createActionlistenerRa());
         gui.addListenerToDs(createActionlistenerDs());
@@ -77,6 +80,7 @@ public class DebugController {
         try {
             debugService.registerControllerObserverMessage(createMessageObserver());
             debugService.registerControllerObserverVector(createVectorObserver());
+            debugService.registerControllerOutGoingMessage(createDelayObserver());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -89,21 +93,60 @@ public class DebugController {
         Observer ob = new Observer() {
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
-                Hashtable<String, Integer> hashTable = (Hashtable) t;
 
-                String[] columns = gui.getVectorColumns();
-                int[] values = new int[columns.length];
+                VectorContainer data = (VectorContainer) t;
 
-                for(int i = 0; i < columns.length; i++){
-                    values[i] = hashTable.get(columns[i]);
+                if(group.equals(data.getGroupName())) {
+                    HashMap<String, Integer> hashTable = data.getVectorClock();
+
+                    String[] columns = gui.getVectorColumns();
+                    int[] values = new int[columns.length];
+
+                    for (int i = 0; i < columns.length; i++) {
+
+                        if (hashTable.get(columns[i]) == null) {
+                            values[i] = 0;
+                        } else {
+                            values[i] = hashTable.get(columns[i]);
+                        }
+                    }
+
+                    String first = data.getName();
+
+                    gui.addVector(first, values);
                 }
-
-                String first = (String) hashTable.keySet().toArray()[0];
-
-                gui.addVector(first, values);
             }
         };
 
+        return (Observer) UnicastRemoteObject.exportObject(ob,0);
+    }
+
+    private static gcom.observer.Observer createDelayObserver() throws RemoteException{
+        Observer ob = new Observer() {
+            @Override
+            public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
+
+                synchronized (lock) {
+                    ArrayList<Message> messages = (ArrayList<Message>) t;
+
+                    gui.clearOutGoingTable();
+                    for (Message delay : messages) {
+                        if (group.equals(delay.getGroupName())) {
+                            String messageText = "";
+                            switch (delay.getMessageType()) {
+                                case CHAT_MESSAGE:
+                                    messageText = ((Chat)delay).getMessage();
+                                    break;
+                                default:
+                                    messageText = delay.getMessageType().toString();
+                                    break;
+                            }
+                            gui.addOutgoing(delay.getFromName(), delay.getToName(), messageText);
+                        }
+                    }
+                }
+            }
+        };
 
         return (Observer) UnicastRemoteObject.exportObject(ob,0);
     }
@@ -156,9 +199,7 @@ public class DebugController {
                     try {
                         debugService.passMessages(group);
                     } catch (GCOMException e1) {
-                        e1.printStackTrace();
                     } catch (RemoteException e1) {
-                        e1.printStackTrace();
                     }
 
 
@@ -195,6 +236,7 @@ public class DebugController {
         return new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
+
 
                 if (e.getClickCount() == 2) {
                     Point p = e.getPoint();
@@ -237,9 +279,8 @@ public class DebugController {
                 if (e.getClickCount() == 2) {
 
                     if(!group.equals(gui.getGroupName(e))) {
-                        for (int i = 0; i < gui.getTableRowCount(); i++) {
-                            gui.removeFromgIncomming(0);
-                        }
+                        gui.clearIncomming();
+
                         try {
                             debugService.passMessages(group);
                         } catch (GCOMException e1) {

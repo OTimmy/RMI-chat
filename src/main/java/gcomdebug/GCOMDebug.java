@@ -42,7 +42,7 @@ public class GCOMDebug extends AbstractGCOM {
     @Override
     protected Ordering createOrdering(String type, String groupName, String name) {
         if(CausalOrdering.class.getName().equals(type)) {
-            return new CausalDebug(name,host);
+            return new CausalDebug(host,groupName,name);
         }
 
         return new UnorderedDebug(name);

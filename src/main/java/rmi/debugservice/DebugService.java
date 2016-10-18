@@ -6,6 +6,7 @@ import gcom.status.GCOMException;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -33,10 +34,13 @@ public interface DebugService extends Remote {
     void passMessages(String groupName) throws GCOMException,RemoteException;
 
     /**
+     * @param groupName
      * @param name
      * @param vectorClock
      */
-    void updateVectorClock(String name, HashMap<String,Integer> vectorClock) throws RemoteException;
+    void updateVectorClock(String groupName, String name, HashMap<String, Integer> vectorClock) throws RemoteException;
+
+    void updateDelayQue(String groupName, String name, ArrayList<Message> delayQue) throws RemoteException;
 
 
     /**
@@ -59,5 +63,10 @@ public interface DebugService extends Remote {
 
     void registerControllerObserverVector(Observer b) throws RemoteException;
 
+    void registerControllerOutGoingMessage(Observer b) throws RemoteException;
+
+
     String[] getMemberOfGroups(String groupName) throws RemoteException;
+
+
 }
