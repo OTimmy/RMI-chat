@@ -184,6 +184,7 @@ public class DebugClient {
             vectorModel.addRow(ob);
         }else{
             vectorModel.insertRow(index, ob);
+
         }
     }
 
