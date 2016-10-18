@@ -13,13 +13,13 @@ public class CausalOrdering implements Ordering {
     private String name;
 
     protected HashMap<String, Integer> vectorClock;
-    protected ArrayList<Message> delayQue;
+    protected ArrayList<Message> holdQue;
     private int myTime = 0;
 
     public CausalOrdering(String name) {
         this.name = name;
         vectorClock = new HashMap<>();
-        delayQue = new ArrayList<>();
+        holdQue = new ArrayList<>();
         vectorClock.put(name, 0);
     }
 
@@ -56,16 +56,15 @@ public class CausalOrdering implements Ordering {
             e.printStackTrace();
         }
 
+        LinkedHashSet<Message> passMessages = new LinkedHashSet<>();
 
-        HashSet<Message> passMessages = new HashSet<>();
-        ArrayList<Message> myMessags = new ArrayList<>();
         try {
             HashMap<String, Integer> vectorI = vectorClock;
             addToDelayQue(m);
-//            delayQue.add(m);
+
             //loop all messages again
-            for (int i = 0; i < delayQue.size(); i++) {
-                for (Message msg : delayQue) {
+            for (int i = 0; i < holdQue.size(); i++) {
+                for (Message msg : holdQue) {
                     HashMap<String, Integer> vectorJ = msg.getVectorClock();
                     int timeJ = vectorJ.get(msg.getFromName());
 
@@ -73,7 +72,6 @@ public class CausalOrdering implements Ordering {
                         if (timeJ == myTime + 1) {
                             if (passMessages.add(msg)) {
                                 myTime++;
-                                myMessags.add(msg);
                             }
                         }
 
@@ -82,16 +80,14 @@ public class CausalOrdering implements Ordering {
                                 && isLessForAll(msg.getFromName(), vectorJ, vectorI)) {
 
                             if (passMessages.add(msg)) {
-                                myMessags.add(msg);
                                 updateClock(msg.getFromName());
-
                             }
                         }
                     }
                 }
             }
 
-            for (Message msg : myMessags) {
+            for (Message msg : passMessages) {
                 removeFromDelayQue(msg);
             }
 
@@ -100,7 +96,7 @@ public class CausalOrdering implements Ordering {
         }
 
 
-        return myMessags.toArray(new Message[]{});
+        return passMessages.toArray(new Message[]{});
     }
 
     @Override
@@ -121,7 +117,14 @@ public class CausalOrdering implements Ordering {
         }
     }
 
-
+    /**
+     * From the algorithm, it determines if the process from the received message,
+     * knows of any more messages than this current process does.
+     * @param fromName the senders name
+     * @param vectorJ the senders process vector clock
+     * @param vectorI current process vector clock
+     * @return true if current process has received all messages before this else false
+     */
     private boolean isLessForAll(String fromName, HashMap<String, Integer> vectorJ,
                                  HashMap<String, Integer> vectorI) {
 
@@ -137,6 +140,10 @@ public class CausalOrdering implements Ordering {
         return true;
     }
 
+    /**
+     * Increments the clock for given name
+     * @param fromName the name that should be incremented in the clock
+     */
     protected void updateClock(String fromName) {
         if(!vectorClock.containsKey(fromName)) {
             vectorClock.put(fromName,0);
@@ -147,10 +154,10 @@ public class CausalOrdering implements Ordering {
 
 
     protected void addToDelayQue(Message m) {
-        delayQue.add(m);
+        holdQue.add(m);
     }
 
     protected void removeFromDelayQue(Message m) {
-        delayQue.remove(m);
+        holdQue.remove(m);
     }
 }

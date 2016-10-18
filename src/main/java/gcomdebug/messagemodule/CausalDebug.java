@@ -48,7 +48,7 @@ public class CausalDebug extends CausalOrdering {
         super.addToDelayQue(m);
         try {
             System.out.println("Added message from: " +m.getFromName());
-            debugService.updateDelayQue(groupName,name, (ArrayList<Message>) delayQue.clone());
+            debugService.updateDelayQue(groupName,name, (ArrayList<Message>) holdQue.clone());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -59,7 +59,7 @@ public class CausalDebug extends CausalOrdering {
         super.removeFromDelayQue(m);
         try {
             System.out.println("Deleted message from: " +m.getFromName());
-            debugService.updateDelayQue(groupName,name, (ArrayList<Message>) delayQue.clone());
+            debugService.updateDelayQue(groupName,name, (ArrayList<Message>) holdQue.clone());
         } catch (RemoteException e) {
             e.printStackTrace();
         }

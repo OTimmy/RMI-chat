@@ -75,7 +75,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     public void updateDelayQue(String groupName, String name, ArrayList<Message> delayQue) throws RemoteException {
         delays.put(name,delayQue);
 //        ArrayList<DelayContainer> datas = new ArrayList<>();
-//        for(Message m:delayQue) {
+//        for(Message m:holdQue) {
 //            String textMessage = "";
 //            DelayContainer data = new DelayData(groupName,m.getFromName(),m.getToName());
 //            switch(m.getMessageType()) {
