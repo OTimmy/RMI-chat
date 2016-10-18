@@ -124,44 +124,19 @@ public class DebugController {
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
 
-                DelayContainer data = (DelayContainer) t;
+                ArrayList<DelayContainer> data = (ArrayList<DelayContainer>) t;
 
-                if(group.equals(data.getGroupName())) {
+                if(data.size() > 0) {
+                    if (group.equals(data.get(0).getGroupName())) {
+                        gui.clearOutGoingTable(data.get(0).getFromName());
+                    }
 
-
-                    gui.clearOutGoingTable(data.getName());
-
-                    ArrayList<Message> messages = data.getDelayQue();
-
-                    for (Message m : messages) {
-
-                        switch (m.getMessageType()) {
-
-                            case CHAT_MESSAGE:
-                                System.out.println(" --------->>>  MessageFrom: " + m.getFromName() + "   MessageTo: " + m.getToName() + "     Message: "  + ((Chat)m).getMessage());
-                                gui.addOutgoing(m.getFromName(), m.getToName(), ((Chat) m).getMessage());
-                                break;
-
-                            case LEAVE_MESSAGE:
-                                gui.addOutgoing(m.getFromName(), m.getToName(), "Leave Message");
-                                gui.removeVector(((Leave) m).getName());
-                                break;
-
-                            case JOIN_MESSAGE:
-                                gui.addOutgoing(m.getFromName(), m.getToName(), "JOIN Message");
-                                gui.addColVector(((Join) m).getName());
-                                break;
-
-                            case ELECTION_MESSAGE:
-                                gui.addOutgoing(m.getFromName(), m.getToName(), "Election message");
-                                break;
-
-                            default:
-                                break;
+                    for (DelayContainer delay : data) {
+                        if (group.equals(delay.getGroupName())) {
+                            gui.addOutgoing(delay.getFromName(), delay.getToName(), delay.getMessage());
                         }
                     }
                 }
-
             }
         };
 
