@@ -26,11 +26,13 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     private Observer controllerObserDelayQue;
     private ConcurrentHashMap<String,GroupObservers> communicationObservers;
     private ConcurrentHashMap<String,LinkedBlockingDeque<Message>> inMessages;
+    private HashMap<String,ArrayList<DelayContainer>> delays;
 
 
     public DebugServiceConcrete() throws RemoteException {
         inMessages = new ConcurrentHashMap<>();
         communicationObservers = new ConcurrentHashMap<>();
+        delays = new HashMap<>();
     }
 
     @Override
@@ -71,8 +73,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
     @Override
     public void updateDelayQue(String groupName, String name, ArrayList<Message> delayQue) throws RemoteException {
-        ArrayList<DelayContainer> delays = new ArrayList<>();
-
+        ArrayList<DelayContainer> datas = new ArrayList<>();
         for(Message m:delayQue) {
             String textMessage = "";
             DelayContainer data = new DelayData(groupName,m.getFromName(),m.getToName());
@@ -95,9 +96,10 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
                     break;
             }
             data.setMessage(textMessage);
-            delays.add(data);
+            datas.add(data);
         }
 
+        delays.put(name,datas);
         System.out.println("Updating delay que for member: "+ name);
 
         notifyControllerObserDelayQue(delays);
@@ -191,9 +193,17 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         }
     }
 
-    private void notifyControllerObserDelayQue(ArrayList<DelayContainer> d) throws RemoteException{
+    private void notifyControllerObserDelayQue(HashMap<String,ArrayList<DelayContainer>> delays) throws RemoteException{
+        ArrayList<DelayContainer> del = new ArrayList<>();
         try {
-            controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,d);
+            String[] keys = delays.keySet().toArray(new String[]{});
+            for(String key:keys) {
+                ArrayList<DelayContainer> temp = delays.get(key);
+                for(DelayContainer d:temp) {
+                    del.add(d);
+                }
+            }
+            controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,del);
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (GCOMException e) {
