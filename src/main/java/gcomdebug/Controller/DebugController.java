@@ -23,6 +23,7 @@ import java.awt.event.MouseListener;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -93,21 +94,27 @@ public class DebugController {
 
                 VectorContainer data = (VectorContainer) t;
 
-                HashMap<String, Integer> hashTable = data.getVectorClock();
+                if(group.equals(data.getGroupName())) {
+                    HashMap<String, Integer> hashTable = data.getVectorClock();
 
-                String[] columns = gui.getVectorColumns();
-                int[] values = new int[columns.length];
+                    String[] columns = gui.getVectorColumns();
+                    int[] values = new int[columns.length];
 
-                for(int i = 0; i < columns.length; i++){
-                    values[i] = hashTable.get(columns[i]);
+                    for (int i = 0; i < columns.length; i++) {
+
+                        if (hashTable.get(columns[i]) == null) {
+                            values[i] = 0;
+                        } else {
+                            values[i] = hashTable.get(columns[i]);
+                        }
+                    }
+
+                    String first = data.getName();
+
+                    gui.addVector(first, values);
                 }
-
-                String first = data.getName();
-
-                gui.addVector(first, values);
             }
         };
-
 
         return (Observer) UnicastRemoteObject.exportObject(ob,0);
     }
@@ -119,35 +126,41 @@ public class DebugController {
 
                 DelayContainer data = (DelayContainer) t;
 
-                for(Message m :data.getDelayQue()){
-                    switch (m.getMessageType()) {
+                if(group.equals(data.getGroupName())) {
 
-                        case CHAT_MESSAGE:
-                            gui.addIncomming(m.getFromName(), m.getToName(), ((Chat) m).getMessage());
-                            break;
+                    gui.clearOutGoingTable();
 
-                        case LEAVE_MESSAGE:
-                            gui.addIncomming(m.getFromName(), m.getToName(), "Leave Message");
-                            gui.removeVector(((Leave)m).getName());
-                            break;
+                    ArrayList<Message> messages = data.getDelayQue();
 
-                        case JOIN_MESSAGE:
-                            gui.addIncomming(m.getFromName(), m.getToName(), "JOIN Message");
-                            gui.addColVector(((Join)m).getName());
-                            break;
+                    for (Message m : messages) {
+                        switch (m.getMessageType()) {
 
-                        case ELECTION_MESSAGE:
-                            gui.addIncomming(m.getFromName(), m.getToName(), "Election message");
+                            case CHAT_MESSAGE:
+                                gui.addOutgoing(m.getFromName(), m.getToName(), ((Chat) m).getMessage());
+                                break;
 
-                            break;
-                        default:
-                            break;
+                            case LEAVE_MESSAGE:
+                                gui.addOutgoing(m.getFromName(), m.getToName(), "Leave Message");
+                                gui.removeVector(((Leave) m).getName());
+                                break;
+
+                            case JOIN_MESSAGE:
+                                gui.addOutgoing(m.getFromName(), m.getToName(), "JOIN Message");
+                                gui.addColVector(((Join) m).getName());
+                                break;
+
+                            case ELECTION_MESSAGE:
+                                gui.addOutgoing(m.getFromName(), m.getToName(), "Election message");
+                                break;
+
+                            default:
+                                break;
+                        }
                     }
                 }
 
             }
         };
-
 
         return (Observer) UnicastRemoteObject.exportObject(ob,0);
     }

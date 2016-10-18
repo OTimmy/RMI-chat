@@ -163,7 +163,28 @@ public class DebugClient {
     }
 
     public void addVector(String mem, int[] vector){
-        vectorModel.addRow(new Object[]{mem, vector});
+
+        Object[] ob = new Object[vector.length+1];
+        ob[0] = mem;
+
+        for(int i = 0; i < vector.length; i++){
+            ob[i+1] = vector[i];
+        }
+
+        int index = -1;
+
+        for(int i = 0; i < vectorModel.getRowCount(); i++){
+            if(vectorModel.getValueAt(i, 0).equals(mem)){
+                index = i;
+                break;
+            }
+        }
+
+        if(index == -1) {
+            vectorModel.addRow(ob);
+        }else{
+            vectorModel.insertRow(index, ob);
+        }
     }
 
     public String[] getVectorColumns(){
@@ -214,33 +235,6 @@ public class DebugClient {
     }
     public void addListenerToIncTable(MouseListener e){ incommingTable.addMouseListener(e);}
     public void addListenerToGroupsTable(MouseListener e){debugGroups.addMouseListener(e);}
-
-//
-//    public int moveRow(MouseEvent e) {
-//
-//        Point p = e.getPoint();
-//        int row = incommingTable.rowAtPoint(p);
-//
-//        String mem = (String) incommingModel.getValueAt(row, 0);
-//        String message = (String) incommingModel.getValueAt(row, 1);
-//        outgoingModel.addRow(new Object[]{mem, message});
-//        incommingModel.removeRow(row);
-//
-//        return row;
-//
-//    }
-//
-//    public int moveRow() {
-//
-//        int row = 0;
-//        String mem = (String) incommingModel.getValueAt(row, 0);
-//        String message = (String) incommingModel.getValueAt(row, 1);
-//        outgoingModel.addRow(new Object[]{mem, message});
-//        incommingModel.removeRow(row);
-//
-//        return row;
-//
-//    }
 
     public int getTableRowCount(){
 
@@ -300,5 +294,11 @@ public class DebugClient {
 
     public String getTo(Point p) {
         return (String) incommingTable.getValueAt(incommingTable.rowAtPoint(p), 1);
+    }
+
+    public void clearOutGoingTable() {
+        for(int i = 0; i < outgoingModel.getRowCount(); i++){
+            outgoingModel.removeRow(0);
+        }
     }
 }
