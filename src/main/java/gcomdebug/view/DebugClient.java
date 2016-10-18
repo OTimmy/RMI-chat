@@ -149,7 +149,12 @@ public class DebugClient {
     }
 
     public void addOutgoing(String from, String to, String message){
-        outgoingModel.addRow(new Object[]{from, to, message});
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                outgoingModel.addRow(new Object[]{from, to, message});
+            }
+        });
     }
 
     public void addColVector(String member){

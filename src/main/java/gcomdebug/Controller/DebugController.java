@@ -127,25 +127,24 @@ public class DebugController {
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
 
                 synchronized (lock) {
-                    ArrayList<DelayContainer> data = (ArrayList<DelayContainer>) t;
+                    ArrayList<Message> messages = (ArrayList<Message>) t;
 
                     gui.clearOutGoingTable();
-                    for (DelayContainer delay : data) {
+                    for (Message delay : messages) {
                         if (group.equals(delay.getGroupName())) {
-                            gui.addOutgoing(delay.getFromName(), delay.getToName(), delay.getMessage());
+                            String messageText = "";
+                            switch (delay.getMessageType()) {
+                                case CHAT_MESSAGE:
+                                    messageText = ((Chat)delay).getMessage();
+                                    break;
+                                default:
+                                    messageText = delay.getMessageType().toString();
+                                    break;
+                            }
+                            gui.addOutgoing(delay.getFromName(), delay.getToName(), messageText);
                         }
                     }
                 }
-
-//
-//                if (data.size() > 0) {
-//                    gui.clearOutGoingTable();
-//
-
-//                } else {
-//                    gui.clearOutGoingTable();
-//                }
-
             }
         };
 

@@ -26,7 +26,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     private Observer controllerObserDelayQue;
     private ConcurrentHashMap<String,GroupObservers> communicationObservers;
     private ConcurrentHashMap<String,LinkedBlockingDeque<Message>> inMessages;
-    private HashMap<String,ArrayList<DelayContainer>> delays;
+    private HashMap<String,ArrayList<Message>> delays;
 
 
     public DebugServiceConcrete() throws RemoteException {
@@ -73,33 +73,34 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
     @Override
     public void updateDelayQue(String groupName, String name, ArrayList<Message> delayQue) throws RemoteException {
-        ArrayList<DelayContainer> datas = new ArrayList<>();
-        for(Message m:delayQue) {
-            String textMessage = "";
-            DelayContainer data = new DelayData(groupName,m.getFromName(),m.getToName());
-            switch(m.getMessageType()) {
-                case CHAT_MESSAGE:
-                    Chat chat = (Chat)m;
-                    textMessage = chat.getMessage();
-                    break;
-                case DELETE_MESSAGE:
-                    textMessage = MessageType.DELETE_MESSAGE.toString();
-                    break;
-                case JOIN_MESSAGE:
-                    textMessage = MessageType.JOIN_MESSAGE.toString();
-                    break;
-                case LEAVE_MESSAGE:
-                    textMessage = MessageType.LEAVE_MESSAGE.toString();
-                    break;
-                case ELECTION_MESSAGE:
-                    textMessage = MessageType.ELECTION_MESSAGE.toString();
-                    break;
-            }
-            data.setMessage(textMessage);
-            datas.add(data);
-        }
+        delays.put(name,delayQue);
+//        ArrayList<DelayContainer> datas = new ArrayList<>();
+//        for(Message m:delayQue) {
+//            String textMessage = "";
+//            DelayContainer data = new DelayData(groupName,m.getFromName(),m.getToName());
+//            switch(m.getMessageType()) {
+//                case CHAT_MESSAGE:
+//                    Chat chat = (Chat)m;
+//                    textMessage = chat.getMessage();
+//                    break;
+//                case DELETE_MESSAGE:
+//                    textMessage = MessageType.DELETE_MESSAGE.toString();
+//                    break;
+//                case JOIN_MESSAGE:
+//                    textMessage = MessageType.JOIN_MESSAGE.toString();
+//                    break;
+//                case LEAVE_MESSAGE:
+//                    textMessage = MessageType.LEAVE_MESSAGE.toString();
+//                    break;
+//                case ELECTION_MESSAGE:
+//                    textMessage = MessageType.ELECTION_MESSAGE.toString();
+//                    break;
+//            }
+//            data.setMessage(textMessage);
+//            datas.add(data);
+//        }
 
-        delays.put(name,datas);
+//        delays.put(name,datas);
         System.out.println("Updating delay que for member: "+ name);
 
         notifyControllerObserDelayQue(delays);
@@ -193,19 +194,19 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
         }
     }
 
-    private void notifyControllerObserDelayQue(HashMap<String,ArrayList<DelayContainer>> delays) throws RemoteException{
-        ArrayList<DelayContainer> del = new ArrayList<>();
+    private void notifyControllerObserDelayQue(HashMap<String,ArrayList<Message>> delays) throws RemoteException{
+        ArrayList<Message> del = new ArrayList<>();
         try {
             String[] keys = delays.keySet().toArray(new String[]{});
             for(String key:keys) {
-                ArrayList<DelayContainer> temp = delays.get(key);
-                for(DelayContainer d:temp) {
+                ArrayList<Message> temp = delays.get(key);
+                for(Message d:temp) {
                     del.add(d);
                 }
             }
             controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,del);
             System.out.println("---------------------------");
-            for(DelayContainer baa: del) {
+            for(Message baa: del) {
                 System.out.println("Delay from: " + baa.getFromName() +" to: " + baa.getToName());
             }
             System.out.println("---------------------------");
