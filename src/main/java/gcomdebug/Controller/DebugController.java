@@ -39,6 +39,8 @@ public class DebugController {
     private static GCOMDebug gcom;
     private static DebugService debugService = null;
 
+    private  static final Object lock = new Object();
+
     public DebugController(DebugClient gui) {
         this.gui = gui;
     }
@@ -124,20 +126,26 @@ public class DebugController {
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
 
-                ArrayList<DelayContainer> data = (ArrayList<DelayContainer>) t;
+                synchronized (lock) {
+                    ArrayList<DelayContainer> data = (ArrayList<DelayContainer>) t;
 
-                if(data.size() > 0) {
                     gui.clearOutGoingTable();
-
                     for (DelayContainer delay : data) {
                         if (group.equals(delay.getGroupName())) {
                             gui.addOutgoing(delay.getFromName(), delay.getToName(), delay.getMessage());
                         }
                     }
                 }
-                else{
-                    gui.clearOutGoingTable();
-                }
+
+//
+//                if (data.size() > 0) {
+//                    gui.clearOutGoingTable();
+//
+
+//                } else {
+//                    gui.clearOutGoingTable();
+//                }
+
             }
         };
 
@@ -230,6 +238,7 @@ public class DebugController {
             @Override
             public void mouseClicked(MouseEvent e) {
 
+
                 if (e.getClickCount() == 2) {
                     Point p = e.getPoint();
                     int index = gui.getIndexFromPointInc(p);
@@ -271,9 +280,8 @@ public class DebugController {
                 if (e.getClickCount() == 2) {
 
                     if(!group.equals(gui.getGroupName(e))) {
-                        for (int i = 0; i < gui.getTableRowCount(); i++) {
-                            gui.removeFromgIncomming(0);
-                        }
+                        gui.clearIncomming();
+
                         try {
                             debugService.passMessages(group);
                         } catch (GCOMException e1) {

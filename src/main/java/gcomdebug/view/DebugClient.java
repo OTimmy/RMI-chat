@@ -152,10 +152,6 @@ public class DebugClient {
         outgoingModel.addRow(new Object[]{from, to, message});
     }
 
-    public void removeFromOutgoing(int row){
-        outgoingModel.removeRow(row);
-    }
-
     public void addColVector(String member){
         if(vectorModel.findColumn(member) == -1){
             vectorModel.addColumn(member);
@@ -171,21 +167,7 @@ public class DebugClient {
             ob[i+1] = vector[i];
         }
 
-        int index = -1;
-
-        for(int i = 0; i < vectorModel.getRowCount(); i++){
-            if(vectorModel.getValueAt(i, 0).equals(mem)){
-                index = i;
-                break;
-            }
-        }
-
-        if(index == -1) {
-            vectorModel.addRow(ob);
-        }else{
-            vectorModel.insertRow(index, ob);
-
-        }
+        vectorModel.addRow(ob);
     }
 
     public String[] getVectorColumns(){
@@ -198,19 +180,13 @@ public class DebugClient {
     }
 
     public void removeVector(String mem){
-        for(int i = 0; i<vectorModel.getRowCount(); i++){
-            if(vectorModel.getValueAt(i, 0).equals(mem)){
+        int rows = vectorModel.getRowCount();
+        for(int i = 0; i < rows ; i++){
+
+            if (vectorModel.getValueAt(i, 0).equals(mem)) {
                 vectorModel.removeRow(i);
                 vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(i));
-            }
-        }
-    }
-
-    public void updateVector(String mem, String vector){
-
-        for(int i = 0; i<vectorModel.getRowCount(); i++){
-            if(vectorModel.getValueAt(i, 0).equals(mem)){
-                vectorModel.setValueAt(vector, i, 1);
+                i--;
             }
         }
     }
@@ -218,9 +194,7 @@ public class DebugClient {
     public void updateDebugGroups(String[] groups) {
         debugGroups.clearSelection();
 
-        for (int i = debugGroups.getRowCount() - 1; i >= 0; i--) {
-            groupsModel.removeRow(i);
-        }
+        groupsModel.setRowCount(0);
 
         for (String group : groups) {
             System.out.println(group);
@@ -244,7 +218,7 @@ public class DebugClient {
 
     public int dropSelected() {
         int row = incommingTable.getSelectedRow();
-        if(row != -1) {
+        if(row >= 0) {
             incommingModel.removeRow(row);
         }
         return row;
@@ -269,23 +243,17 @@ public class DebugClient {
     }
 
     public String getGroupName(MouseEvent e) {
-        return (String) debugGroups.getValueAt(debugGroups.rowAtPoint(e.getPoint()), 0);
+        String s = (String) debugGroups.getValueAt(debugGroups.rowAtPoint(e.getPoint()), 0);
+        return s;
     }
 
     public void clearDebug() {
 
         incommingTable.clearSelection();
-        for(int i = 0; i < incommingTable.getRowCount(); i++){
-            incommingModel.removeRow(0);
-        }
 
-        for(int i = 0; i < outgoingTable.getRowCount(); i++){
-            outgoingModel.removeRow(0);
-        }
-
-        for(int i = 0; i < vectorModel.getRowCount(); i++){
-            vectorModel.removeRow(0);
-        }
+        incommingModel.setRowCount(0);
+        outgoingModel.setRowCount(0);
+        vectorModel.setRowCount(0);
     }
 
     public void addCurrentGroup(String group) {
@@ -294,30 +262,32 @@ public class DebugClient {
     }
 
     public String getTo(Point p) {
-        return (String) incommingTable.getValueAt(incommingTable.rowAtPoint(p), 1);
+        int row = incommingTable.rowAtPoint(p);
+        String s = (String) incommingTable.getValueAt(row, 1);
+        return s;
     }
 
-    public void clearOutGoingTable(String name) {
-
-        int rows = outgoingModel.getRowCount();
-        int loop = 0;
-
-        while(loop < rows) {
-
-            if (outgoingModel.getValueAt(loop, 1).equals(name)) {
-                outgoingModel.removeRow(loop);
-                loop = 0;
-                rows = outgoingModel.getRowCount();
-            }else {
-                loop++;
-            }
-        }
-    }
 
     public void clearOutGoingTable() {
+        int rows = outgoingModel.getRowCount();
+//        for(int row = 0; row < rows;row++) {
+//            outgoingModel.insertRow(row,new Object[]{""});
+////            outgoingModel.setRowCount(0);
+//        }
 
-        for (int i = 0; i < outgoingModel.getRowCount(); i++){
-            outgoingModel.removeRow(0);
-        }
+//        if (outgoingModel.getRowCount() > 0) {
+//            for (int i = outgoingModel.getRowCount();i >= 0;) {
+//                if(outgoingModel.getRowCount()>= 0) {
+//                    outgoingModel.removeRow(i);
+//                }
+//            }
+//        }
+        outgoingModel.setRowCount(0);
+        outgoingModel.setRowCount(1);
+
+    }
+
+    public void clearIncomming() {
+        incommingModel.setRowCount(0);
     }
 }
