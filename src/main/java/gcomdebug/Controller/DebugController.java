@@ -8,6 +8,8 @@ import gcomdebug.GCOMDebug;
 import gcomdebug.view.DebugClient;
 import rmi.RMIServer;
 import rmi.debugservice.DebugService;
+import rmi.debugservice.VectorContainer;
+import rmi.debugservice.VectorData;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -89,7 +91,10 @@ public class DebugController {
         Observer ob = new Observer() {
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
-                Hashtable<String, Integer> hashTable = (Hashtable) t;
+
+                VectorContainer data = (VectorContainer) t;
+
+                HashMap<String, Integer> hashTable = data.getVectorClock();
 
                 String[] columns = gui.getVectorColumns();
                 int[] values = new int[columns.length];
@@ -98,7 +103,7 @@ public class DebugController {
                     values[i] = hashTable.get(columns[i]);
                 }
 
-                String first = (String) hashTable.keySet().toArray()[0];
+                String first = data.getName();
 
                 gui.addVector(first, values);
             }
