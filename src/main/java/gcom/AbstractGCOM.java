@@ -233,25 +233,34 @@ public abstract class AbstractGCOM implements Subject, Observer{
                 try {
 
                     Message message = communication.getMessage();
-                    Message[] messages = messageOrdering.orderMessage(message);
 
-                    if(messages != null){
-                        for(Message m:messages) {
-                            if(m.getMessageType() == MessageType.LEAVE_MESSAGE) {
-                                //Remove user from hashmap time stamp
-                                Leave leave = (Leave) m;
-                                groupManager.removeMember(leave.getName());
-                            }else if(m.getMessageType() == MessageType.ELECTION_MESSAGE) {
-                                Election e = (Election) m;
-                                groupManager.setLeader(e.getLeader());
-                            }else if(m.getMessageType() == MessageType.JOIN_MESSAGE) {
-                                Join j = (Join) m;
-                                groupManager.addMember(j.getMember());
-                            }
-
-                            notifyObserver(ObserverEvent.CHAT_MESSAGE,m);
+                    if(message.getMessageType() == MessageType.JOIN_MESSAGE) {
+                        Join m = (Join) message;
+                        if(m.getName().equals(groupManager.getName())) {
+                            messageOrdering.setVectorClock(message.getVectorClock(),message.getFromName());
                         }
                     }
+
+
+                    Message[] messages = messageOrdering.orderMessage(message);
+
+
+                    for(Message m:messages) {
+                        if(m.getMessageType() == MessageType.LEAVE_MESSAGE) {
+                            //Remove user from hashmap time stamp
+                            Leave leave = (Leave) m;
+                            groupManager.removeMember(leave.getName());
+                        }else if(m.getMessageType() == MessageType.ELECTION_MESSAGE) {
+                            Election e = (Election) m;
+                            groupManager.setLeader(e.getLeader());
+                        }else if(m.getMessageType() == MessageType.JOIN_MESSAGE) {
+                            Join j = (Join) m;
+                            groupManager.addMember(j.getMember());
+                        }
+
+                        notifyObserver(ObserverEvent.CHAT_MESSAGE,m);
+                    }
+
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {

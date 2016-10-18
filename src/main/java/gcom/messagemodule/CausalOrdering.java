@@ -12,16 +12,15 @@ import java.util.*;
 public class CausalOrdering implements Ordering {
     private String name;
 
-    private HashMap<String,Integer> vectorClock;
+    private HashMap<String, Integer> vectorClock;
     private ArrayList<Message> delayQue;
-    private int receivedFromMySelf = 0;
     private int myTime = 0;
 
     public CausalOrdering(String name) {
         this.name = name;
         vectorClock = new HashMap<>();
         delayQue = new ArrayList<>();
-        vectorClock.put(name,0);
+        vectorClock.put(name, 0);
     }
 
     @Override
@@ -29,14 +28,14 @@ public class CausalOrdering implements Ordering {
         //if member not exist add to hashmap
 
         try {
-            if(!vectorClock.containsKey(m.getFromName())) {
-                vectorClock.put(m.getFromName(),0);
+            if (!vectorClock.containsKey(m.getFromName())) {
+                vectorClock.put(m.getFromName(), 0);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
-        int time = vectorClock.get(name)+1;
+        int time = vectorClock.get(name) + 1;
         vectorClock.put(name, time);
 
         try {
@@ -51,8 +50,8 @@ public class CausalOrdering implements Ordering {
 
         int timeJ = 0;
         try {
-            if(!vectorClock.containsKey(m.getFromName())) {
-                vectorClock.put(m.getFromName(),0);
+            if (!vectorClock.containsKey(m.getFromName())) {
+                vectorClock.put(m.getFromName(), 0);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -62,38 +61,37 @@ public class CausalOrdering implements Ordering {
         HashSet<Message> passMessages = new HashSet<>();
         ArrayList<Message> myMessags = new ArrayList<>();
         try {
-            HashMap<String,Integer> vectorI = vectorClock;
+            HashMap<String, Integer> vectorI = vectorClock;
             delayQue.add(m);
             //loop all messages again
-            for(int i = 0; i < delayQue.size(); i++) {
-                for(Message msg:delayQue) {
-                    HashMap<String,Integer> vectorJ = msg.getVectorClock();
+            for (int i = 0; i < delayQue.size(); i++) {
+                for (Message msg : delayQue) {
+                    HashMap<String, Integer> vectorJ = msg.getVectorClock();
                     timeJ = vectorJ.get(msg.getFromName());
 
-                    if(m.getFromName().equals(name)) {
-                        if(timeJ == myTime+1) {
-                            if(passMessages.add(msg)) {
+                    if (m.getFromName().equals(name)) {
+                        if (timeJ == myTime + 1) {
+                            if (passMessages.add(msg)) {
                                 myTime++;
                                 myMessags.add(msg);
                             }
                         }
 
                     } else {
-                        if((timeJ == (vectorI.get(msg.getFromName())+1))
-                                && isLessForAll(msg.getFromName(),vectorJ,vectorI)) {
+                        if ((timeJ == (vectorI.get(msg.getFromName()) + 1))
+                                && isLessForAll(msg.getFromName(), vectorJ, vectorI)) {
 
-                            if(passMessages.add(msg)) {
+                            if (passMessages.add(msg)) {
                                 myMessags.add(msg);
                                 updateClock(msg.getFromName());
 
                             }
                         }
                     }
-                    }
                 }
+            }
 
-            for(Message msg:myMessags) {
-                System.out.println("Removing item from que: " + msg.getFromName());
+            for (Message msg : myMessags) {
                 delayQue.remove(msg);
             }
 
@@ -105,16 +103,33 @@ public class CausalOrdering implements Ordering {
         return myMessags.toArray(new Message[]{});
     }
 
+    @Override
+    public void setVectorClock(HashMap<String, Integer> vectorClock, String fromName) {
+        String[] keys = vectorClock.keySet().toArray(new String[]{});
+        for(String name:keys) {
+            int time = vectorClock.get(name);
+            if(!fromName.equals(name)) {
+                for(int i = 0; i < time; i++) {
+                    updateClock(name);
+                }
+            } else {
+                for(int i = 1; i < time; i++) {
+                    updateClock(name);
+                }
+            }
 
-    private boolean isLessForAll(String fromName, HashMap<String,Integer> vectorJ,
-                                 HashMap<String,Integer> vectorI) {
+        }
+    }
+
+
+    private boolean isLessForAll(String fromName, HashMap<String, Integer> vectorJ,
+                                 HashMap<String, Integer> vectorI) {
 
         String[] keys = vectorJ.keySet().toArray(new String[]{});
-        for(String key:keys) {
-            if(!key.equals(fromName)) {
-                if(!(vectorJ.get(key) <= vectorI.get(key))) {
-                    System.out.println("Failed isLess");
-                    return  false;
+        for (String key : keys) {
+            if (!key.equals(fromName)) {
+                if (!(vectorJ.get(key) <= vectorI.get(key))) {
+                    return false;
                 }
             }
         }
@@ -123,15 +138,16 @@ public class CausalOrdering implements Ordering {
     }
 
     private void updateClock(String fromName) {
+        if(!vectorClock.containsKey(fromName)) {
+            vectorClock.put(fromName,0);
+        }
         int time = vectorClock.get(fromName) + 1;
-        vectorClock.put(fromName,time);
+        vectorClock.put(fromName, time);
     }
 
-    private void printVector() {
-        String[] keys = vectorClock.keySet().toArray(new String[]{});
-        for(String key:keys) {
-            System.out.println("user: " +key +"value:" + vectorClock.get(key));
-        }
+
+
+    private void addToDelayQue(Message m) {
+
     }
-    
 }
