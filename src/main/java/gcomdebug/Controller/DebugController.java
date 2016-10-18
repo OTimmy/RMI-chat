@@ -128,7 +128,8 @@ public class DebugController {
 
                 if(group.equals(data.getGroupName())) {
 
-                    gui.clearOutGoingTable();
+
+                    gui.clearOutGoingTable(data.getName());
 
                     ArrayList<Message> messages = data.getDelayQue();
 

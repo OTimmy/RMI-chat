@@ -297,9 +297,11 @@ public class DebugClient {
         return (String) incommingTable.getValueAt(incommingTable.rowAtPoint(p), 1);
     }
 
-    public void clearOutGoingTable() {
+    public void clearOutGoingTable(String name) {
         for(int i = 0; i < outgoingModel.getRowCount(); i++){
-            outgoingModel.removeRow(0);
+            if(outgoingModel.getValueAt(i, 0).equals(name)) {
+                outgoingModel.removeRow(0);
+            }
         }
     }
 }
