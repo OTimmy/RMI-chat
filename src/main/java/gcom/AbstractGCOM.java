@@ -108,12 +108,9 @@ public abstract class AbstractGCOM implements Subject, Observer{
             }
 
         } catch (RemoteException e) {
-            e.printStackTrace();
             throw new GCOMException(e.toString());
         } catch (AlreadyBoundException e) {
-            e.printStackTrace();
         } catch (NotBoundException e) {
-            e.printStackTrace();
         }
 
         threadConsumer.start();

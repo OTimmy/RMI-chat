@@ -134,9 +134,11 @@ public class DebugController {
                     ArrayList<Message> messages = data.getDelayQue();
 
                     for (Message m : messages) {
+
                         switch (m.getMessageType()) {
 
                             case CHAT_MESSAGE:
+                                System.out.println(" --------->>>  MessageFrom: " + m.getFromName() + "   MessageTo: " + m.getToName() + "     Message: "  + ((Chat)m).getMessage());
                                 gui.addOutgoing(m.getFromName(), m.getToName(), ((Chat) m).getMessage());
                                 break;
 
@@ -214,9 +216,7 @@ public class DebugController {
                     try {
                         debugService.passMessages(group);
                     } catch (GCOMException e1) {
-                        e1.printStackTrace();
                     } catch (RemoteException e1) {
-                        e1.printStackTrace();
                     }
 
 
