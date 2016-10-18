@@ -19,6 +19,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
     private Observer controllerObserverVector;
     private Observer controllerObserverMessage;
+    private Observer controllerObserDelayQue;
     private ConcurrentHashMap<String,GroupObservers> communicationObservers;
     private ConcurrentHashMap<String,LinkedBlockingDeque<Message>> inMessages;
 
@@ -65,7 +66,8 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
     @Override
     public void updateDelayQue(String groupName, String name, ArrayList<Message> delayQue) throws RemoteException {
-
+        DelayContainer delay = new DelayData(groupName,name,delayQue);
+        notifyControllerObserDelayQue(delay);
     }
 
     @Override
@@ -123,6 +125,12 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     }
 
     @Override
+    public void registerControllerOutGoingMessage(Observer b) throws RemoteException {
+        controllerObserDelayQue = b;
+    }
+
+
+    @Override
     public String[] getMemberOfGroups(String groupName) throws RemoteException {
         GroupObservers groupObservers = communicationObservers.get(groupName);
         return groupObservers.getNames();
@@ -146,6 +154,16 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     private void notifyObserverControllerMessage(Message m) throws RemoteException{
         try {
             controllerObserverMessage.update(ObserverEvent.DEBUG_GUI,m);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (GCOMException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void notifyControllerObserDelayQue(DelayContainer d) {
+        try {
+            controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,d);
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (GCOMException e) {
