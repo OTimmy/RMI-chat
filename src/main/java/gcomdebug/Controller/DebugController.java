@@ -23,10 +23,7 @@ import java.awt.event.MouseListener;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Set;
+import java.util.*;
 
 import static javafx.scene.input.KeyCode.T;
 
@@ -102,16 +99,19 @@ public class DebugController {
                         HashMap<String, Integer> hashTable = data.getVectorClock();
 
                         String[] columns = gui.getVectorColumns();
-                        int[] values = new int[columns.length];
+                        int[] values = new int[columns.length-1];
 
-                        for (int i = 0; i < columns.length; i++) {
+                        for (int i = 1; i < columns.length; i++) {
 
                             if (hashTable.get(columns[i]) == null) {
-                                values[i] = 0;
+                                values[i-1] = 0;
                             } else {
-                                values[i] = hashTable.get(columns[i]);
+                                values[i-1] = hashTable.get(columns[i]);
                             }
                         }
+                        System.out.println("Column vector : " + Arrays.toString(columns));
+
+                        System.out.println("GOT THE VECTOR: " + Arrays.toString(values));
 
                         String first = data.getName();
 
