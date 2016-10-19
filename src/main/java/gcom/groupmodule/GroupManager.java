@@ -60,7 +60,7 @@ public class GroupManager implements Manager,Subject{
 
         leader = member;
         nameService.registerGroup(properties.getGroupName(),member);
-        members.put(properties.getGroupName(),member);
+        members.put(name,member);
     }
 
 

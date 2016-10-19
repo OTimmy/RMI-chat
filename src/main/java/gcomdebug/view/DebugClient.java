@@ -225,7 +225,7 @@ public class DebugClient {
 
                     if (vectorModel.getValueAt(i, 0).equals(mem)) {
                         vectorModel.removeRow(i);
-                        vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(i-1));
+                        vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(i+1));
                         break;
                     }
                 }

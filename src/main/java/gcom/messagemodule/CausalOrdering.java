@@ -27,12 +27,12 @@ public class CausalOrdering implements Ordering {
     public void setMessageStamp(Message m, String[] names) {
         for(String name:names) {
             if(!vectorClock.containsKey(name)) {
-                vectorClock.put(name,0);
+//                vectorClock.put(name,0);
                 setClockForName(name,0);
             }
         }
 
-        int time = vectorClock.get(name) + 1;
+//        int time = vectorClock.get(name) + 1;
 //        vectorClock.put(name, time);
         updateClock(name);
 
@@ -48,7 +48,8 @@ public class CausalOrdering implements Ordering {
 
         try {
             if (!vectorClock.containsKey(m.getFromName())) {
-                vectorClock.put(m.getFromName(), 0);
+//                vectorClock.put(m.getFromName(), 0);
+                setClockForName(m.getFromName(),0);
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -143,7 +144,7 @@ public class CausalOrdering implements Ordering {
      */
     private void updateClock(String fromName) {
         if(!vectorClock.containsKey(fromName)) {
-            vectorClock.put(fromName,0);
+//            vectorClock.put(fromName,0);
             setClockForName(fromName,0);
         }
         int time = vectorClock.get(fromName) + 1;
