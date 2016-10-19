@@ -142,9 +142,23 @@ public class DebugController {
                                     messageText = delay.getMessageType().toString();
                                     break;
                             }
+
+
+                            Integer[] hash = delay.getVectorClock().values().toArray(new Integer[]{});
+
+                            StringBuilder strBuilder = new StringBuilder();
+                            for (int i = 0; i < hash.length; i++) {
+                                strBuilder.append(":"+hash[i]+":");
+                            }
+                            String newString = strBuilder.toString();
+
+                            messageText += " Vector: " + newString;
+                            System.out.println(messageText);
+
                             gui.addOutgoing(delay.getFromName(), delay.getToName(), messageText);
                         }
                     }
+                    System.out.println("\n\n");
                 }
             }
         };
