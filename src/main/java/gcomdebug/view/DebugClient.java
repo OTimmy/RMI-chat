@@ -176,8 +176,26 @@ public class DebugClient {
 
         for(int i = 0; i < vector.length; i++){
             ob[i+1] = vector[i];
+
         }
-        vectorModel.addRow(ob);
+
+        int index = -1;
+        int row = vectorModel.getRowCount();
+
+        for(int i = 0; i < row; i++){
+            if(vectorModel.getValueAt(i,0).equals(mem)){
+                index = i;
+            }
+        }
+
+        if(index != -1){
+            for(int i = 1; i< ob.length;i++){
+                vectorModel.setValueAt(ob[i],index,i);
+            }
+
+        }else {
+            vectorModel.addRow(ob);
+        }
     }
 
     //---------------------------------------------------------------------------------------------------------------->
