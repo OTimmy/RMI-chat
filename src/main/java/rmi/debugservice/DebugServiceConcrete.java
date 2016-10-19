@@ -50,12 +50,6 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
         messagesList.remove(messages[index]);
 
-        if(messages[index].getMessageType() == MessageType.CHAT_MESSAGE) {
-            Chat c = (Chat) messages[index];
-            System.out.println("Message to be sent: " + c.getMessage() + "vec: "+ messages[index].getVectorClock().values().toArray(new Integer[]{}) );
-
-        }
-
         notifyObserverCommunicators(toName,messages[index]);
     }
 
@@ -74,7 +68,6 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
     @Override
     public void updateVectorClock(String groupName, String name, HashMap<String, Integer> vectorClock) throws RemoteException {
-
         VectorData vectorData = new VectorData(groupName,name,vectorClock);
         notifyObserverControllerVector(vectorData);
     }
@@ -82,35 +75,6 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     @Override
     public void updateDelayQue(String groupName, String name, ArrayList<Message> delayQue) throws RemoteException {
         delays.put(name,delayQue);
-//        ArrayList<DelayContainer> datas = new ArrayList<>();
-//        for(Message m:holdQue) {
-//            String textMessage = "";
-//            DelayContainer data = new DelayData(groupName,m.getFromName(),m.getToName());
-//            switch(m.getMessageType()) {
-//                case CHAT_MESSAGE:
-//                    Chat chat = (Chat)m;
-//                    textMessage = chat.getMessage();
-//                    break;
-//                case DELETE_MESSAGE:
-//                    textMessage = MessageType.DELETE_MESSAGE.toString();
-//                    break;
-//                case JOIN_MESSAGE:
-//                    textMessage = MessageType.JOIN_MESSAGE.toString();
-//                    break;
-//                case LEAVE_MESSAGE:
-//                    textMessage = MessageType.LEAVE_MESSAGE.toString();
-//                    break;
-//                case ELECTION_MESSAGE:
-//                    textMessage = MessageType.ELECTION_MESSAGE.toString();
-//                    break;
-//            }
-//            data.setMessage(textMessage);
-//            datas.add(data);
-//        }
-
-//        delays.put(name,datas);
-//        System.out.println("Updating delay que for member: "+ name);
-
         notifyControllerObserDelayQue(delays);
     }
 
@@ -213,11 +177,6 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
                 }
             }
             controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,del);
-//            System.out.println("---------------------------");
-            for(Message baa: del) {
-//                System.out.println("Delay from: " + baa.getFromName() +" to: " + baa.getToName());
-            }
-//            System.out.println("---------------------------");
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (GCOMException e) {
