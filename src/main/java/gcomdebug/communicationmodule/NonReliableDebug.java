@@ -31,6 +31,7 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
         try {
             debugService = RMIServer.getDebugService(host);
             observer = (Observer) UnicastRemoteObject.exportObject(this,0);
+            debugService.registerCommunicationObserver(groupName,name,observer);
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (NotBoundException e) {
@@ -41,11 +42,6 @@ public class NonReliableDebug extends NonReliableCommunication implements Observ
     @Override
     public void putMessage(Message m) {
         try {
-            if(observer != null) {
-                debugService.registerCommunicationObserver(groupName,name,observer);
-                isRegistedOnDebug = true;
-            }
-
             debugService.addMessage(m);
         } catch (RemoteException e) {
             e.printStackTrace();

@@ -81,10 +81,7 @@ public class CausalOrdering implements Ordering {
                         }
                     }
                 }
-
             }
-
-
 
             for (Message msg : passMessages) {
                 removeFromDelayQue(msg);
@@ -93,7 +90,6 @@ public class CausalOrdering implements Ordering {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-
 
         return passMessages.toArray(new Message[]{});
     }

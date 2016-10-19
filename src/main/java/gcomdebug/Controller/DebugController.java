@@ -148,17 +148,16 @@ public class DebugController {
 
                             StringBuilder strBuilder = new StringBuilder();
                             for (int i = 0; i < hash.length; i++) {
-                                strBuilder.append(":"+hash[i]+":");
+                                strBuilder.append(hash[i]+",");
                             }
-                            String newString = strBuilder.toString();
+                            String newString = "  [" + strBuilder.toString();
+                            newString = newString.substring(0,newString.length()-1) + "]";
 
-                            messageText += " Vector: " + newString;
-                            System.out.println(messageText);
+                            messageText += newString;
 
                             gui.addOutgoing(delay.getFromName(), delay.getToName(), messageText);
                         }
                     }
-                    System.out.println("\n\n");
                 }
             }
         };
@@ -183,11 +182,12 @@ public class DebugController {
 
                             StringBuilder strBuilder = new StringBuilder();
                             for (int i = 0; i < hash.length; i++) {
-                                strBuilder.append(":"+hash[i]+":");
+                                strBuilder.append(hash[i]+",");
                             }
-                            String newString = strBuilder.toString();
+                            String newString = "  [" + strBuilder.toString();
+                            newString = newString.substring(0,newString.length()-1) + "]";
 
-                            messageString += " Vector: " + newString;
+                            messageString += newString;
 
                             gui.addIncomming(msg.getFromName(), msg.getToName(), messageString );
                             break;
