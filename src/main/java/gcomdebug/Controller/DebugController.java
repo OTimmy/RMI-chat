@@ -271,7 +271,7 @@ public class DebugController {
             public void mouseClicked(MouseEvent e) {
 
 
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() >= 2) {
                     Point p = e.getPoint();
                     int index = gui.getIndexFromPointInc(p);
 
@@ -309,7 +309,7 @@ public class DebugController {
             @Override
             public void mouseClicked(MouseEvent e) {
 
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() >= 2) {
 
                     if(!group.equals(gui.getGroupName(e))) {
                         gui.clearIncomming();
