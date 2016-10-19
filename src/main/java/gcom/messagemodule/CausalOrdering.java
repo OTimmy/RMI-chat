@@ -64,7 +64,7 @@ public class CausalOrdering implements Ordering {
                     HashMap<String, Integer> vectorJ = msg.getVectorClock();
                     int timeJ = vectorJ.get(msg.getFromName());
 
-                    if (m.getFromName().equals(name)) {
+                    if (msg.getFromName().equals(name)) {
                         if (timeJ == myTime + 1) {
                             if (passMessages.add(msg)) {
                                 myTime++;
