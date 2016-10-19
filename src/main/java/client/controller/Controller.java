@@ -135,7 +135,8 @@ public class Controller {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gui.deleteGroup();
+                AbstractGCOM fetchedGcom = gcomTable.get(gui.selectedGroup());
+                fetchedGcom.leaveGroup();
             }
         };
     }

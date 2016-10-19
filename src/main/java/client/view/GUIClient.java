@@ -343,6 +343,10 @@ public class GUIClient {
         return null;
     }
 
+    public String selectedGroup(){
+        return (String) groupTable.getValueAt(groupTable.getSelectedRow(), 0);
+    }
+
 
     public void appendMessage(String group, String message) {
                 JTextArea ta = getTextArea(group, 1);
@@ -519,7 +523,7 @@ public class GUIClient {
     public void removeGroup(String group) {
         JOptionPane.showMessageDialog(frame, "The group has been disbanded!");
 
-        int i = tabbedPane.getTabCount();
+        int i = tabbedPane.getTabCount()-1;
         for(; i >= 0 ;i--){
             if(tabbedPane.getTitleAt(i).equals(group)){
                 tabbedPane.removeTabAt(i);
