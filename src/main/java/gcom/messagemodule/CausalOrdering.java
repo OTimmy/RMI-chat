@@ -24,15 +24,11 @@ public class CausalOrdering implements Ordering {
     }
 
     @Override
-    public void setMessageStamp(Message m) {
-        //if member not exist add to hashmap
-
-        try {
-            if (!vectorClock.containsKey(m.getFromName())) {
-                vectorClock.put(m.getFromName(), 0);
+    public void setMessageStamp(Message m, String[] names) {
+        for(String name:names) {
+            if(!vectorClock.containsKey(name)) {
+                vectorClock.put(name,0);
             }
-        } catch (RemoteException e) {
-            e.printStackTrace();
         }
 
         int time = vectorClock.get(name) + 1;
@@ -85,7 +81,10 @@ public class CausalOrdering implements Ordering {
                         }
                     }
                 }
+
             }
+
+
 
             for (Message msg : passMessages) {
                 removeFromDelayQue(msg);

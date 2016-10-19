@@ -26,6 +26,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Set;
 
 import static javafx.scene.input.KeyCode.T;
 
@@ -161,7 +162,20 @@ public class DebugController {
                     switch (msg.getMessageType()) {
 
                         case CHAT_MESSAGE:
-                            gui.addIncomming(msg.getFromName(), msg.getToName(), ((Chat) msg).getMessage());
+
+                            String messageString = ((Chat) msg).getMessage();
+
+                            Integer[] hash = msg.getVectorClock().values().toArray(new Integer[]{});
+
+                            StringBuilder strBuilder = new StringBuilder();
+                            for (int i = 0; i < hash.length; i++) {
+                                strBuilder.append(":"+hash[i]+":");
+                            }
+                            String newString = strBuilder.toString();
+
+                            messageString += " Vector: " + newString;
+
+                            gui.addIncomming(msg.getFromName(), msg.getToName(), messageString );
                             break;
 
                         case LEAVE_MESSAGE:

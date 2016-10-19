@@ -16,7 +16,7 @@ public class UnorderedOrdering implements Ordering {
     }
 
     @Override
-    public void setMessageStamp(Message message){
+    public void setMessageStamp(Message message, String[] names){
     }
 
     @Override

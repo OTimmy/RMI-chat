@@ -13,7 +13,7 @@ public interface Ordering {
      * Will update current vector clock and include it in the message
      * @param message the message that should be sent.
      */
-    void setMessageStamp(Message message);  //To be replaced with something alone the lines, setMessageStamp
+    void setMessageStamp(Message message, String[] names);  //To be replaced with something alone the lines, setMessageStamp
 
 
     /**

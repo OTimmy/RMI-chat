@@ -205,8 +205,13 @@ public abstract class AbstractGCOM implements Subject, Observer{
 
                     Message message  = outgoingChatMessage.take();
                     Member[] members = groupManager.getMembers();
+                    String[] names = new String[members.length];
 
-                    messageOrdering.setMessageStamp(message);
+                    for(int i = 0; i < members.length; i++) {
+                        names[i] = members[i].getName();
+                    }
+
+                    messageOrdering.setMessageStamp(message,names);
                     communication.sendMessage(members, message);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

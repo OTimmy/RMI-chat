@@ -38,12 +38,14 @@ public class NonReliableCommunication extends Communication{
      */
     @Override
     public void sendMessage(Member[] members, Message message)  {
+
+
+
         for(Member m:members) {
             try {
 
                 message.setToName(m.getName());
                 Message cloneMessage = (Message) message.clone();
-
 
 //                Message copy = cloneMessage(clo);
                 m.sendMessage(cloneMessage);

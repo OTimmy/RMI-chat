@@ -50,8 +50,16 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 
         messagesList.remove(messages[index]);
 
+        if(messages[index].getMessageType() == MessageType.CHAT_MESSAGE) {
+            Chat c = (Chat) messages[index];
+            System.out.println("Message to be sent: " + c.getMessage() + "vec: "+ messages[index].getVectorClock().values().toArray(new Integer[]{}) );
+
+        }
+
         notifyObserverCommunicators(toName,messages[index]);
     }
+
+
 
     @Override
     public void passMessages(String groupName) throws GCOMException, RemoteException {
@@ -101,7 +109,7 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
 //        }
 
 //        delays.put(name,datas);
-        System.out.println("Updating delay que for member: "+ name);
+//        System.out.println("Updating delay que for member: "+ name);
 
         notifyControllerObserDelayQue(delays);
     }
@@ -205,11 +213,11 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
                 }
             }
             controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,del);
-            System.out.println("---------------------------");
+//            System.out.println("---------------------------");
             for(Message baa: del) {
-                System.out.println("Delay from: " + baa.getFromName() +" to: " + baa.getToName());
+//                System.out.println("Delay from: " + baa.getFromName() +" to: " + baa.getToName());
             }
-            System.out.println("---------------------------");
+//            System.out.println("---------------------------");
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (GCOMException e) {
