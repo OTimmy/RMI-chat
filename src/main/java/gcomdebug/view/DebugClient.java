@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.concurrent.RunnableFuture;
 
 /**
  * Created by c13slk on 2016-10-14.
@@ -171,31 +172,37 @@ public class DebugClient {
 
     public void addVector(String mem, int[] vector){
 
-        Object[] ob = new Object[vector.length+1];
-        ob[0] = mem;
 
-        for(int i = 0; i < vector.length; i++){
-            ob[i+1] = vector[i];
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Object[] ob = new Object[vector.length+1];
+                ob[0] = mem;
 
-        }
+                for(int i = 0; i < vector.length; i++){
+                    ob[i+1] = vector[i];
 
-        int index = -1;
-        int row = vectorModel.getRowCount();
+                }
 
-        for(int i = 0; i < row; i++){
-            if(vectorModel.getValueAt(i,0).equals(mem)){
-                index = i;
+                int index = -1;
+                int row = vectorModel.getRowCount();
+
+                for(int i = 0; i < row; i++){
+                    if(vectorModel.getValueAt(i,0).equals(mem)){
+                        index = i;
+                    }
+                }
+
+                if(index != -1){
+                    for(int i = 1; i< ob.length;i++){
+                        vectorModel.setValueAt(ob[i],index,i);
+                    }
+
+                }else {
+                    vectorModel.addRow(ob);
+                }
             }
-        }
-
-        if(index != -1){
-            for(int i = 1; i< ob.length;i++){
-                vectorModel.setValueAt(ob[i],index,i);
-            }
-
-        }else {
-            vectorModel.addRow(ob);
-        }
+        });
     }
 
     //---------------------------------------------------------------------------------------------------------------->
