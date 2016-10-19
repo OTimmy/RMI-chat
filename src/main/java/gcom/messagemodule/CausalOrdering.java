@@ -91,7 +91,6 @@ public class CausalOrdering implements Ordering {
             e.printStackTrace();
         }
 
-
         return passMessages.toArray(new Message[]{});
     }
 

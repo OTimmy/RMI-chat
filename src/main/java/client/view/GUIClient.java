@@ -345,9 +345,7 @@ public class GUIClient {
 
 
     public void appendMessage(String group, String message) {
-
                 JTextArea ta = getTextArea(group, 1);
-
                 ta.append(message);
     }
 
