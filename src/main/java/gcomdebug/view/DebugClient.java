@@ -217,15 +217,20 @@ public class DebugClient {
     }
 
     public void removeVector(String mem){
-        int rows = vectorModel.getRowCount();
-        for(int i = 0; i < rows ; i++){
 
-            if (vectorModel.getValueAt(i, 0).equals(mem)) {
-                vectorModel.removeRow(i);
-                vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(i));
-                i--;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < vectorModel.getRowCount(); i++){
+
+                    if (vectorModel.getValueAt(i, 0).equals(mem)) {
+                        vectorModel.removeRow(i);
+                        vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(i));
+                        break;
+                    }
+                }
             }
-        }
+        });
     }
 
     public void updateDebugGroups(String[] groups) {

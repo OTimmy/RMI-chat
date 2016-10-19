@@ -195,18 +195,21 @@ public class DebugController {
                             break;
 
                         case LEAVE_MESSAGE:
-                            gui.addIncomming(msg.getFromName(), msg.getToName(), "Leave Message");
+                            gui.addIncomming(msg.getFromName(), msg.getToName(), msg.getMessageType().toString());
                             gui.removeVector(((Leave)msg).getName());
                             break;
 
                         case JOIN_MESSAGE:
-                            gui.addIncomming(msg.getFromName(), msg.getToName(), "JOIN Message");
+                            gui.addIncomming(msg.getFromName(), msg.getToName(), msg.getMessageType().toString());
                             gui.addColVector(((Join)msg).getName());
                             break;
 
                         case ELECTION_MESSAGE:
-                            gui.addIncomming(msg.getFromName(), msg.getToName(), "Election message");
+                            gui.addIncomming(msg.getFromName(), msg.getToName(), msg.getMessageType().toString());
 
+                            break;
+                        case DELETE_MESSAGE:
+                            gui.addIncomming(msg.getFromName(), msg.getToName(), msg.getMessageType().toString());
                             break;
                         default:
                             break;
