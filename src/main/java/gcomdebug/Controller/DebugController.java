@@ -109,11 +109,11 @@ public class DebugController {
                                 values[i-1] = hashTable.get(columns[i]);
                             }
                         }
-                        System.out.println("Column vector : " + Arrays.toString(columns));
-
-                        System.out.println("GOT THE VECTOR: " + Arrays.toString(values));
-
                         String first = data.getName();
+                        System.out.println("Column vector : " + first+ "  :"  + Arrays.toString(columns));
+
+                        System.out.println("GOT THE VECTOR: "+ first+ "  :" + Arrays.toString(values));
+
 
                         gui.addVector(first, values);
                     }
