@@ -127,7 +127,7 @@ public class CausalOrdering implements Ordering {
     private boolean isLessForAll(String fromName, HashMap<String, Integer> vectorJ,
                                  HashMap<String, Integer> vectorI) {
 
-        String[] keys = vectorJ.keySet().toArray(new String[]{});
+        String[] keys = vectorI.keySet().toArray(new String[]{});
         for (String key : keys) {
             if (!key.equals(fromName)) {
                 if (!(vectorJ.get(key) <= vectorI.get(key))) {
