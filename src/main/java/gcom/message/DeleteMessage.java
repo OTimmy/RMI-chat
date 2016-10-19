@@ -9,7 +9,7 @@ import java.util.HashMap;
  * Created by c12ton on 10/18/16.
  */
 public class DeleteMessage implements Delete,Message, Serializable, Cloneable{
-    protected DeleteMessage() throws RemoteException {}
+    public DeleteMessage() throws RemoteException {}
 
     private String groupName;
     private String fromName;
@@ -58,7 +58,7 @@ public class DeleteMessage implements Delete,Message, Serializable, Cloneable{
 
     @Override
     public HashMap<String, Integer> getVectorClock() throws RemoteException {
-        return null;
+        return vectorClock;
     }
 
     @Override

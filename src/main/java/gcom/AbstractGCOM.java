@@ -278,15 +278,17 @@ public abstract class AbstractGCOM implements Subject, Observer{
                 case LEAVE_MESSAGE:
                     Leave l = (Leave) m;
                     groupManager.removeMember(l.getName());
+
                     break;
                 case ELECTION_MESSAGE:
                     Election e = (Election) m;
                     groupManager.setLeader(e.getLeader());
                     break;
                 case DELETE_MESSAGE:
-                    //Remove all members??
-//                    groupManager = null;
-                    //notifygui
+                    groupManager.removeGroup();
+                    groupManager    = null;
+                    messageOrdering = null;
+                    communication   = null;
                     break;
             }
 
@@ -296,11 +298,11 @@ public abstract class AbstractGCOM implements Subject, Observer{
     }
 
 
+    /**
+     * As a leader, delet the current group
+     */
     public void leaveGroup() {
-        //stop producerThread()
-        //stop consumerThread()
-        //Remove user from registry
-        //Remove communcationQue from registry
+        groupManager.leaderDeleteGroup();
     }
 
 

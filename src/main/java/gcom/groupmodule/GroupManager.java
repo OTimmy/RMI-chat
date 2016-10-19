@@ -1,9 +1,6 @@
 package gcom.groupmodule;
 
-import gcom.message.ElectionMessage;
-import gcom.message.JoinMessage;
-import gcom.message.LeaveMessage;
-import gcom.message.Message;
+import gcom.message.*;
 import rmi.RMIServer;
 import rmi.nameservice.NameService;
 import gcom.observer.Observer;
@@ -145,8 +142,22 @@ public class GroupManager implements Manager,Subject{
     }
 
     @Override
+    public void removeGroup() {
+        try {
+            nameService.removeGroup(getProperties().getGroupName());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void leaderDeleteGroup() {
-        //notfyObserver of
+        try {
+            Message message = new DeleteMessage();
+            notifyObserver(ObserverEvent.MESSAGE_TO_GROUP,message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -81,10 +81,7 @@ public class CausalOrdering implements Ordering {
                         }
                     }
                 }
-
             }
-
-
 
             for (Message msg : passMessages) {
                 removeFromDelayQue(msg);

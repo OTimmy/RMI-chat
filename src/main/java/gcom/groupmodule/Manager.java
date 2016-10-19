@@ -27,7 +27,6 @@ public interface Manager extends Remote{
 
     /**
      * Join a group in gcom
-     * @param group the name of the group
      * @param name the of name the user
      * @return A list of current active members
      * @throws GCOMException in case the name already exists
@@ -73,8 +72,16 @@ public interface Manager extends Remote{
     void leaderMemberJoin(Member m) throws RemoteException, GCOMException;
 
     /**
+     * Delets current group from name serivce, should be called when leader
+     * wants to delet group
+     */
+    void removeGroup();
+
+    /**
      *  Delets the grom from name service, and sends delete message to group
      */
     void leaderDeleteGroup();
+
+
 
 }
