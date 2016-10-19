@@ -141,12 +141,14 @@ public class CausalOrdering implements Ordering {
      * Increments the clock for given name
      * @param fromName the name that should be incremented in the clock
      */
-    protected void updateClock(String fromName) {
+    private void updateClock(String fromName) {
         if(!vectorClock.containsKey(fromName)) {
-            vectorClock.put(fromName,0);
+//            vectorClock.put(fromName,0);
+            setClockForName(fromName,0);
         }
         int time = vectorClock.get(fromName) + 1;
-        vectorClock.put(fromName, time);
+        setClockForName(name,time);
+//        vectorClock.put(fromName, time);
     }
 
     protected void setClockForName(String name,int time) {

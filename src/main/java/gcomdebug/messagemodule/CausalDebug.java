@@ -32,15 +32,15 @@ public class CausalDebug extends CausalOrdering {
         }
     }
 
-
     @Override
-    protected void updateClock(String fromName) {
-        super.updateClock(fromName);
+    protected void setClockForName(String name, int time) {
+        super.setClockForName(name, time);
         try {
             debugService.updateVectorClock(groupName,name, (HashMap<String, Integer>) vectorClock.clone());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
