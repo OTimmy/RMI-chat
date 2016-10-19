@@ -14,7 +14,4 @@ public class GCOMException extends Exception{
         super(GCOMError.toString());
     }
 
-    public int getCode() {
-        return GCOMError.getCode();
-    }
 }

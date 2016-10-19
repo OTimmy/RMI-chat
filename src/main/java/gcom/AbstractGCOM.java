@@ -9,6 +9,7 @@ import gcom.messagemodule.*;
 import gcom.observer.ObserverEvent;
 import gcom.observer.Observer;
 import gcom.observer.Subject;
+import gcom.status.GCOMError;
 import gcom.status.GCOMException;
 
 import java.rmi.AlreadyBoundException;
@@ -107,10 +108,9 @@ public abstract class AbstractGCOM implements Subject, Observer{
                 membersNames.add(m.getName());
             }
 
-        } catch (RemoteException e) {
-            throw new GCOMException(e.toString());
-        } catch (AlreadyBoundException e) {
-        } catch (NotBoundException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new GCOMException(GCOMError.CANT_CONNECT_TO_GROUP);
         }
 
         threadConsumer.start();
@@ -214,7 +214,7 @@ public abstract class AbstractGCOM implements Subject, Observer{
                     messageOrdering.setMessageStamp(message,names);
                     communication.sendMessage(members, message);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 } catch (NotBoundException e) {
@@ -278,13 +278,15 @@ public abstract class AbstractGCOM implements Subject, Observer{
                 case LEAVE_MESSAGE:
                     Leave l = (Leave) m;
                     groupManager.removeMember(l.getName());
-
+                    //remove clock from messageOrdering
                     break;
                 case ELECTION_MESSAGE:
                     Election e = (Election) m;
                     groupManager.setLeader(e.getLeader());
                     break;
                 case DELETE_MESSAGE:
+                    stopProducerThread();
+                    stopConsumerThread();
                     groupManager.removeGroup();
                     groupManager    = null;
                     messageOrdering = null;
@@ -309,12 +311,14 @@ public abstract class AbstractGCOM implements Subject, Observer{
     public void stopProducerThread() {
         synchronized (lockIsProdActive) {
             producerThreadActive = false;
+            threadProducer.interrupt();
         }
     }
 
     public void stopConsumerThread() {
         synchronized (lockIsConActive) {
             consumerThreadActive = false;
+            threadConsumer.interrupt();
         }
     }
 

@@ -194,9 +194,6 @@ public class GroupManager implements Manager,Subject{
         //Add observer for memberleave
     }
 
-
-    //getMember  //.registerObserver(GCOM)
-
     @Override
     public  void notifyObserver(ObserverEvent e, Message m) throws RemoteException {
         for(Observer ob:observers) {
