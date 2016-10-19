@@ -516,6 +516,17 @@ public class GUIClient {
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
     }
 
+    public void removeGroup(String group) {
+        JOptionPane.showMessageDialog(frame, "The group has been disbanded!");
+
+        int i = tabbedPane.getTabCount();
+        for(; i >= 0 ;i--){
+            if(tabbedPane.getTitleAt(i).equals(group)){
+                tabbedPane.removeTabAt(i);
+            }
+        }
+    }
+
 
     public class JGroupCreation extends JDialog {
 
@@ -564,7 +575,6 @@ public class GUIClient {
                     occupied = false;
                 }
 
-
                 if (result == JOptionPane.OK_OPTION && usernameTextField.getText() != null) {
                     ok = true;
                 } else {
@@ -572,7 +582,6 @@ public class GUIClient {
                     return;
                 }
             }
-
         }
     }
 

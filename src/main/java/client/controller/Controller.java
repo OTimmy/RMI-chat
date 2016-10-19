@@ -261,6 +261,9 @@ public class Controller {
                         }
                         gui.appendMessage(group, election.getLeader().getName() + " Is now leader.\n");
                         break;
+                    case DELETE_MESSAGE:
+                        gui.removeGroup(group);
+                        break;
                     default:
                         break;
                 }

@@ -95,26 +95,28 @@ public class DebugController {
             @Override
             public <T> void update(ObserverEvent e, T t) throws RemoteException, GCOMException {
 
-                VectorContainer data = (VectorContainer) t;
+                if (t != null){
+                    VectorContainer data = (VectorContainer) t;
 
-                if(group.equals(data.getGroupName())) {
-                    HashMap<String, Integer> hashTable = data.getVectorClock();
+                    if(group.equals(data.getGroupName())) {
+                        HashMap<String, Integer> hashTable = data.getVectorClock();
 
-                    String[] columns = gui.getVectorColumns();
-                    int[] values = new int[columns.length];
+                        String[] columns = gui.getVectorColumns();
+                        int[] values = new int[columns.length];
 
-                    for (int i = 0; i < columns.length; i++) {
+                        for (int i = 0; i < columns.length; i++) {
 
-                        if (hashTable.get(columns[i]) == null) {
-                            values[i] = 0;
-                        } else {
-                            values[i] = hashTable.get(columns[i]);
+                            if (hashTable.get(columns[i]) == null) {
+                                values[i] = 0;
+                            } else {
+                                values[i] = hashTable.get(columns[i]);
+                            }
                         }
+
+                        String first = data.getName();
+
+                        gui.addVector(first, values);
                     }
-
-                    String first = data.getName();
-
-                    gui.addVector(first, values);
                 }
             }
         };

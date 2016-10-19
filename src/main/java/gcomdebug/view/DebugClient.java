@@ -71,6 +71,8 @@ public class DebugClient {
                 return false;
             }
         };
+
+        incommingTable.getTableHeader().setReorderingAllowed(false);
         incommingModel.addColumn("From");
         incommingModel.addColumn("To");
         incommingModel.addColumn("Message");
@@ -90,6 +92,7 @@ public class DebugClient {
             }
         };
         outgoingTable.setEnabled(false);//------------------------------------------------------------->
+        outgoingTable.getTableHeader().setReorderingAllowed(false);
         outgoingModel.addColumn("From");
         outgoingModel.addColumn("To");
         outgoingModel.addColumn("Message");
@@ -115,6 +118,7 @@ public class DebugClient {
             }
         };
         vectorTable.setEnabled(false);//------------------------------------------------------------->
+        vectorTable.getTableHeader().setReorderingAllowed(false);
         vectorModel.addColumn("Member");
         JScrollPane scrollvectorPane = new JScrollPane(vectorTable);
 
@@ -163,6 +167,8 @@ public class DebugClient {
         }
     }
 
+    //---------------------------------------------------------------------------------------------------------------->
+
     public void addVector(String mem, int[] vector){
 
         Object[] ob = new Object[vector.length+1];
@@ -171,9 +177,10 @@ public class DebugClient {
         for(int i = 0; i < vector.length; i++){
             ob[i+1] = vector[i];
         }
-
         vectorModel.addRow(ob);
     }
+
+    //---------------------------------------------------------------------------------------------------------------->
 
     public String[] getVectorColumns(){
         ArrayList<String> columns = new ArrayList<>();
