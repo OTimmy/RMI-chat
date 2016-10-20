@@ -97,23 +97,6 @@ public class CausalOrdering implements Ordering {
         return passMessages.toArray(new Message[]{});
     }
 
-    @Override
-    public void setVectorClock(HashMap<String, Integer> vectorClock, String fromName) {
-        String[] keys = vectorClock.keySet().toArray(new String[]{});
-        for(String name:keys) {
-            int time = vectorClock.get(name);
-            if(!fromName.equals(name)) {
-                for(int i = 0; i < time; i++) {
-                    updateClock(name);
-                }
-            } else {
-                for(int i = 1; i < time; i++) {
-                    updateClock(name);
-                }
-            }
-
-        }
-    }
 
     /**
      * From the algorithm, it determines if the process from the received message,
@@ -138,6 +121,27 @@ public class CausalOrdering implements Ordering {
         return true;
     }
 
+    @Override
+    public void setVectorClock(HashMap<String, Integer> vectorClock, String fromName) {
+        String[] keys = vectorClock.keySet().toArray(new String[]{});
+        for(String name:keys) {
+            int time = vectorClock.get(name);
+            if(!fromName.equals(name)) {
+                for(int i = 0; i < time; i++) {
+                    updateClock(name);
+                }
+            } else {
+                for(int i = 1; i < time; i++) {
+                    updateClock(name);
+                }
+            }
+
+        }
+    }
+
+
+
+
     /**
      * Increments the clock for given name
      * @param fromName the name that should be incremented in the clock
@@ -152,9 +156,17 @@ public class CausalOrdering implements Ordering {
 //        vectorClock.put(fromName, time);
     }
 
+
     protected void setClockForName(String name,int time) {
         vectorClock.put(name,time);
     }
+
+    @Override
+    public void removeVector(String name) throws RemoteException {
+        vectorClock.remove(name);
+    }
+
+
 
 
     protected void addToDelayQue(Message m) {

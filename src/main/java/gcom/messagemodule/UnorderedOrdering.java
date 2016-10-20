@@ -2,6 +2,7 @@ package gcom.messagemodule;
 
 import gcom.message.Message;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 /**
@@ -16,8 +17,7 @@ public class UnorderedOrdering implements Ordering {
     }
 
     @Override
-    public void setMessageStamp(Message message, String[] names){
-    }
+    public void setMessageStamp(Message message, String[] names){}
 
     @Override
     public Message[] orderMessage(Message m) {
@@ -25,9 +25,10 @@ public class UnorderedOrdering implements Ordering {
     }
 
     @Override
-    public void setVectorClock(HashMap<String, Integer> vectorClock, String fromName) {
+    public void setVectorClock(HashMap<String, Integer> vectorClock, String fromName) {}
 
-    }
+    @Override
+    public void removeVector(String name) throws RemoteException {}
 
 
 }

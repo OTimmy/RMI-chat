@@ -280,6 +280,7 @@ public abstract class AbstractGCOM implements Subject, Observer{
                 case LEAVE_MESSAGE:
                     Leave l = (Leave) m;
                     groupManager.removeMember(l.getName());
+                    messageOrdering.removeVector(l.getName());
                     //remove clock from messageOrdering
                     break;
                 case ELECTION_MESSAGE:

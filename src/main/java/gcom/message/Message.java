@@ -20,4 +20,5 @@ public interface Message {
     void setVectorClock(HashMap<String,Integer> vectorClock) throws RemoteException;
     HashMap<String,Integer> getVectorClock() throws RemoteException;
     public Object clone() throws CloneNotSupportedException;
+
 }

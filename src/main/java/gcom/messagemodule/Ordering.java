@@ -2,6 +2,7 @@ package gcom.messagemodule;
 
 import gcom.message.Message;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 /**
@@ -24,5 +25,7 @@ public interface Ordering {
 
 
     void setVectorClock(HashMap<String, Integer> vectorClock, String fromName);
+
+    void removeVector(String name) throws RemoteException;
 
 }
