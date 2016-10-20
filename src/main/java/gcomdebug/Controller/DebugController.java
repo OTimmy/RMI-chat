@@ -234,9 +234,17 @@ public class DebugController {
                     } catch (GCOMException e1) {
                     } catch (RemoteException e1) {
                     }
-
-
                 }
+
+                if(gui.getTableRowCount() > 0){
+                    try {
+                        debugService.passMessages(group);
+                    } catch (GCOMException e1) {
+                    } catch (RemoteException e1) {
+                    }
+                }
+
+                gui.clearIncomming();
             }
         };
     }

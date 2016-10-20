@@ -163,7 +163,8 @@ public class DebugClient {
     }
 
     public void addColVector(String member){
-        if(vectorModel.findColumn(member) == -1){
+
+        if(vectorModel.findColumn(member) < 0) {
             vectorModel.addColumn(member);
         }
     }
@@ -225,7 +226,7 @@ public class DebugClient {
 
                     if (vectorModel.getValueAt(i, 0).equals(mem)) {
                         vectorModel.removeRow(i);
-                        vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(i+1));
+                        vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(vectorModel.findColumn(mem)));
                         break;
                     }
                 }
