@@ -21,6 +21,7 @@ public class CausalOrdering implements Ordering {
         vectorClock = new HashMap<>();
         holdQue = new ArrayList<>();
         vectorClock.put(name, 0);
+//        setClockForName(name,0);
     }
 
     @Override

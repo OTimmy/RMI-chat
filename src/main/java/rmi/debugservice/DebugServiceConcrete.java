@@ -150,25 +150,28 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     }
 
     private void notifyObserverControllerVector(VectorContainer container) throws RemoteException{
-        try {
-            controllerObserverVector.update(ObserverEvent.DEBUG_GUI,container);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (GCOMException e) {
-            e.printStackTrace();
+        if(controllerObserverVector != null) {
+            try {
+                controllerObserverVector.update(ObserverEvent.DEBUG_GUI,container);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            } catch (GCOMException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void notifyObserverControllerMessage(Message m) throws RemoteException{
+    private void notifyObserverControllerMessage(Message m) throws RemoteException {
         try {
-            controllerObserverMessage.update(ObserverEvent.DEBUG_GUI,m);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (GCOMException e) {
+            if (controllerObserverMessage != null) {
+                controllerObserverMessage.update(ObserverEvent.DEBUG_GUI, m);
+            }else{
+                passMessages(m.getGroupName());
+            }
+        }catch(GCOMException e){
             e.printStackTrace();
         }
     }
-
     private void notifyControllerObserDelayQue(HashMap<String,ArrayList<Message>> delays) throws RemoteException{
         ArrayList<Message> del = new ArrayList<>();
         try {
@@ -179,7 +182,9 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
                     del.add(d);
                 }
             }
-            controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,del);
+            if(controllerObserDelayQue != null) {
+                controllerObserDelayQue.update(ObserverEvent.DEBUG_GUI,del);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (GCOMException e) {
