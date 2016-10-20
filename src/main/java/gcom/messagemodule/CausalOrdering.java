@@ -112,8 +112,10 @@ public class CausalOrdering implements Ordering {
         String[] keys = vectorI.keySet().toArray(new String[]{});
         for (String key : keys) {
             if (!key.equals(fromName)) {
-                if (!(vectorJ.get(key) <= vectorI.get(key))) {
-                    return false;
+                if(vectorJ.containsKey(key)) {
+                    if (!(vectorJ.get(key) <= vectorI.get(key))) {
+                        return false;
+                    }
                 }
             }
         }
