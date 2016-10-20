@@ -47,6 +47,7 @@ public class DebugClient {
         };
         groupsModel.addColumn("Groups");
         JScrollPane groupsSp = new JScrollPane(debugGroups);
+        groupsSp.setPreferredSize(new Dimension(200,0));
 
         refreshButton = new JButton("Refresh");
         refreshButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -59,8 +60,6 @@ public class DebugClient {
         groupPanel.add(g);
         groupPanel.add(groupsSp);
         groupPanel.add(refreshButton);
-
-        //--------------------------------------------------------------------->
 
         JPanel buttons = new JPanel();
         buttons.add(ds);
@@ -92,7 +91,7 @@ public class DebugClient {
                 return false;
             }
         };
-        outgoingTable.setEnabled(false);//------------------------------------------------------------->
+        outgoingTable.setEnabled(false);
         outgoingTable.getTableHeader().setReorderingAllowed(false);
         outgoingModel.addColumn("From");
         outgoingModel.addColumn("To");
@@ -118,10 +117,11 @@ public class DebugClient {
                 return false;
             }
         };
-        vectorTable.setEnabled(false);//------------------------------------------------------------->
+        vectorTable.setEnabled(false);
         vectorTable.getTableHeader().setReorderingAllowed(false);
         vectorModel.addColumn("Member");
         JScrollPane scrollvectorPane = new JScrollPane(vectorTable);
+        scrollvectorPane.setPreferredSize(new Dimension(1,160));
 
         JPanel tableBPane = new JPanel();
         tableBPane.setLayout(new BoxLayout(tableBPane, BoxLayout.Y_AXIS));
@@ -134,15 +134,15 @@ public class DebugClient {
 
         debugFrame.add(debugPane);
         debugFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        debugFrame.setMinimumSize(new Dimension(600, 400));
         debugFrame.setResizable(false);
         debugFrame.pack();
         debugFrame.setVisible(true);
     }
 
+    //---------------------------------------incomming------------------------------------->
+
     public void addIncomming(String from, String to, String message){
         incommingModel.addRow(new Object[]{from, to, message});
-
     }
 
     public void removeFromgIncomming(int row){
@@ -153,6 +153,34 @@ public class DebugClient {
         return incommingTable.rowAtPoint(p);
     }
 
+    public int getTableRowCount(){
+        return incommingModel.getRowCount();
+    }
+
+    public int dropSelected() {
+        int row = incommingTable.getSelectedRow();
+        if(row >= 0) {
+            incommingModel.removeRow(row);
+        }
+        return row;
+    }
+
+    public String getTo(Point p) {
+        int row = incommingTable.rowAtPoint(p);
+        String s = (String) incommingTable.getValueAt(row, 1);
+        return s;
+    }
+
+    public void clearIncomming() {
+        incommingModel.setRowCount(0);
+    }
+
+    public void addListenerToIncTable(MouseListener e){ incommingTable.addMouseListener(e);}
+
+
+
+    //---------------------------------------outgoing------------------------------------->
+
     public void addOutgoing(String from, String to, String message){
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -162,14 +190,23 @@ public class DebugClient {
         });
     }
 
+    public void clearOutGoingTable() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                outgoingModel.setRowCount(0);
+            }
+        });
+    }
+
+    //---------------------------------------Vector------------------------------------->
+
     public void addColVector(String member){
 
         if(vectorModel.findColumn(member) < 0) {
             vectorModel.addColumn(member);
         }
     }
-
-    //---------------------------------------------------------------------------------------------------------------->
 
     public void addVector(String mem, int[] vector){
 
@@ -205,9 +242,6 @@ public class DebugClient {
             }
         });
     }
-
-    //---------------------------------------------------------------------------------------------------------------->
-
     public String[] getVectorColumns(){
         ArrayList<String> columns = new ArrayList<>();
 
@@ -216,6 +250,7 @@ public class DebugClient {
         }
         return columns.toArray(new String[]{});
     }
+
 
     public void removeVector(String mem){
 
@@ -234,6 +269,9 @@ public class DebugClient {
         });
     }
 
+    //---------------------------------------groups------------------------------------->
+
+
     public void updateDebugGroups(String[] groups) {
         debugGroups.clearSelection();
 
@@ -245,31 +283,31 @@ public class DebugClient {
         }
     }
 
+    public String getGroupName(MouseEvent e) {
+        String s = (String) debugGroups.getValueAt(debugGroups.rowAtPoint(e.getPoint()), 0);
+        return s;
+    }
+
+    public void addCurrentGroup(String group) {
+        g.setText("Currently selected: " + group);
+    }
+
+    public void addListenerToGroupsTable(MouseListener e){debugGroups.addMouseListener(e);}
+
+    //---------------------------------------buttons------------------------------------->
+
+
     public void addListenerToDs(ActionListener a){
         ds.addActionListener(a);
     }
     public void addListenerToRa(ActionListener a){
         ra.addActionListener(a);
     }
-    public void addListenerToIncTable(MouseListener e){ incommingTable.addMouseListener(e);}
-    public void addListenerToGroupsTable(MouseListener e){debugGroups.addMouseListener(e);}
-
-    public int getTableRowCount(){
-
-        return incommingModel.getRowCount();
-    }
-
-    public int dropSelected() {
-        int row = incommingTable.getSelectedRow();
-        if(row >= 0) {
-            incommingModel.removeRow(row);
-        }
-        return row;
-    }
-
     public void addListenerToRefresh(ActionListener a) {
         refreshButton.addActionListener(a);
     }
+
+    //---------------------------------------Other------------------------------------->
 
     public String getHost() {
         return host;
@@ -285,11 +323,6 @@ public class DebugClient {
         host = userInput;
     }
 
-    public String getGroupName(MouseEvent e) {
-        String s = (String) debugGroups.getValueAt(debugGroups.rowAtPoint(e.getPoint()), 0);
-        return s;
-    }
-
     public void clearDebug() {
 
         incommingTable.clearSelection();
@@ -297,30 +330,5 @@ public class DebugClient {
         incommingModel.setRowCount(0);
         outgoingModel.setRowCount(0);
         vectorModel.setRowCount(0);
-    }
-
-    public void addCurrentGroup(String group) {
-
-        g.setText("Currently selected: " + group);
-    }
-
-    public String getTo(Point p) {
-        int row = incommingTable.rowAtPoint(p);
-        String s = (String) incommingTable.getValueAt(row, 1);
-        return s;
-    }
-
-
-    public void clearOutGoingTable() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                outgoingModel.setRowCount(0);
-            }
-        });
-    }
-
-    public void clearIncomming() {
-        incommingModel.setRowCount(0);
     }
 }

@@ -77,7 +77,8 @@ public class Controller {
 
                 String group = gui.showGroupCreation();
 
-                if (group == null) {
+                if (group.equals("")) {
+                    gui.showErrorMess("Specify the group name when creating a group");
                     return;
                 }
 
@@ -121,10 +122,11 @@ public class Controller {
                     } catch (GCOMException e1) {
                         e1.printStackTrace();
                     }
-                    gui.addGroupTab();
-                    gui.setMembers(group, new String[]{username});
-                    gui.addActionListenerSend(group, sendListern());
-                    gcomTable.put(group, gcom);
+                    if(gui.addGroupTab() != null) {
+                        gui.setMembers(group, new String[]{username});
+                        gui.addActionListenerSend(group, sendListern());
+                        gcomTable.put(group, gcom);
+                    }
                 }
             }
         };
