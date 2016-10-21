@@ -297,7 +297,6 @@ public class DebugClient {
         groupsModel.setRowCount(0);
 
         for (String group : groups) {
-            System.out.println(group);
             groupsModel.addRow(new Object[]{group});
         }
     }

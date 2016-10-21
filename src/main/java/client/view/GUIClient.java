@@ -14,15 +14,9 @@ import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Hashtable;
 
-/**
- * Causal ordering builds upon FIFO ordering.
- * If message B is broadcast from node P1 after message A has been delivered,
- * then message B must be delivered after message A is delivered, at all other nodes.
- */
-
 
 /**
- * Created by c12ton on 9/29/16.
+ * Created by c13slk on 9/29/16.
  */
 
 public class GUIClient {
@@ -88,10 +82,6 @@ public class GUIClient {
         if (host == (null)) {
             System.exit(0);
         }
-
-        //check if connection is available
-        //if not then ask again
-
 
         groupTable = new JTable(tableModel) {
             @Override
@@ -191,45 +181,12 @@ public class GUIClient {
         frame.add(tabbedPane);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(600, 400));
-        //frame.setResizable(false);
         frame.pack();
         frame.setVisible(true);
 
     }
 
-    public boolean getIfNoOrder(){
-        return noOrderRB.isSelected();
-    }
-
-
-    public boolean getIfDebug(){
-        return debugRB.isSelected();
-    }
-
-    public void showErrorMess(String s) {
-        JOptionPane.showMessageDialog(tabbedPane, s);
-    }
-
-    public void setHost() {
-        new HostDialog();
-        host = hostTextField.getText();
-    }
-
-    public String inputHostMessage() {
-        return JOptionPane.showInputDialog(tabbedPane, "Enter Host:", "localhost");
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public Boolean myNameInGroup(String group, String userName) {
-
-        if (usernameInGroup.get(group).equals(userName)) {
-            return true;
-        }
-        return false;
-    }
+    //---------------------------creation of components---------------------->
 
     private JPanel chattTab(String group) {
 
@@ -321,11 +278,117 @@ public class GUIClient {
         return null;
     }
 
+    //--------------------------------for whole chat-client-------------------------------->
+
+    public void setLeaderOf(String group) {
+        leaderOf.add(group);
+    }
+
+    public boolean getIfDebug(){
+        return debugRB.isSelected();
+    }
+
+    public void showErrorMess(String s) {
+        JOptionPane.showMessageDialog(tabbedPane, s);
+    }
+
+    public void setHost() {
+        new HostDialog();
+        host = hostTextField.getText();
+    }
+
+    public String inputHostMessage() {
+        return JOptionPane.showInputDialog(tabbedPane, "Enter Host:", "localhost");
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String selectedGroup(){
+        return (String) groupTable.getValueAt(groupTable.getSelectedRow(), 0);
+    }
+
+    public void updateGroups(String[] groups) {
+        groupTable.clearSelection();
+
+        for (int i = groupTable.getRowCount() - 1; i >= 0; i--) {
+            tableModel.removeRow(i);
+        }
+
+        for (String group : groups) {
+            tableModel.addRow(new Object[]{group});
+        }
+    }
+
+    public void addActionListenerJoin(ActionListener a) {
+        joinGroupButton.addActionListener(a);
+    }
+
+    public void addActionListenerDelete(ActionListener a) {
+        deleteGroupButton.addActionListener(a);
+    }
+
+    public void addActionListenerCreate(ActionListener a) {
+        createGroupButton.addActionListener(a);
+    }
+
+    public void addActionListererRefresh(ActionListener a) {
+        refreshGroupButton.addActionListener(a);
+    }
+
+    public String getCom() {
+
+        if (basicNonReliableRadioButton.isSelected()) {
+            return NonReliableCommunication.class.getName();
+        }
+        return null;
+    }
+
+
+    public String showGroupCreation() {
+        new JGroupCreation();
+
+        if(ok) {
+            return groupNameInput.getText();
+        }
+        return null;
+    }
+
+    public String getName() {
+        return usernameTextField.getText();
+    }
+
+    public void removeGroup(String group) {
+        JOptionPane.showMessageDialog(frame, "The group has been disbanded!");
+
+        int i = tabbedPane.getTabCount()-1;
+        for(; i >= 0 ;i--){
+            if(tabbedPane.getTitleAt(i).equals(group)){
+                tabbedPane.removeTabAt(i);
+            }
+        }
+    }
+
+    //--------------------------------for a group-------------------------------->
+
+    public Boolean myNameInGroup(String group, String userName) {
+
+        if (usernameInGroup.get(group).equals(userName)) {
+            return true;
+        }
+        return false;
+    }
+
     public void addJoinTab(String group) {
         if (!group.equals("") && (tabbedPane.getTabCount() < MAXIMUM_TABS)) {
 
             tabbedPane.addTab(group, chattTab(group));
         }
+    }
+
+    public boolean getIfNoOrder(){
+        return noOrderRB.isSelected();
     }
 
     public String joinGroup() {
@@ -345,11 +408,6 @@ public class GUIClient {
         }
         return null;
     }
-
-    public String selectedGroup(){
-        return (String) groupTable.getValueAt(groupTable.getSelectedRow(), 0);
-    }
-
 
     public void appendMessage(String group, String message) {
                 JTextArea ta = getTextArea(group, 1);
@@ -378,47 +436,6 @@ public class GUIClient {
         return null;
     }
 
-    public void deleteGroup() {
-
-        if (groupTable.getRowCount() > 0) {
-            int row = groupTable.getSelectedRow();
-            if (row != -1) {
-                String groupName = (String) tableModel.getValueAt(row, 0);
-                tableModel.removeRow(row);
-
-                for (int i = tabbedPane.getTabCount() - 1; i >= 1; i--) {
-                    if (tabbedPane.getTitleAt(i).equals(groupName)) {
-                        tabbedPane.removeTabAt(i);
-                    }
-                }
-            }
-        }
-    }
-
-    public void updateGroups(String[] groups) {
-        groupTable.clearSelection();
-
-        for (int i = groupTable.getRowCount() - 1; i >= 0; i--) {
-            tableModel.removeRow(i);
-        }
-
-        for (String group : groups) {
-            tableModel.addRow(new Object[]{group});
-        }
-    }
-
-    public void addActionListenerJoin(ActionListener a) {
-        joinGroupButton.addActionListener(a);
-    }
-
-    public void addActionListenerDelete(ActionListener a) {
-        deleteGroupButton.addActionListener(a);
-    }
-
-    public void addActionListenerCreate(ActionListener a) {
-        createGroupButton.addActionListener(a);
-    }
-
     public void addActionListenerSend(String group, ActionListener a) {
 
         for (int i = tabbedPane.getTabCount() - 1; i >= 1; i--) {
@@ -432,22 +449,6 @@ public class GUIClient {
                 send.addActionListener(a);
             }
         }
-    }
-
-    public void addActionListererRefresh(ActionListener a) {
-        refreshGroupButton.addActionListener(a);
-    }
-
-    public String getCom() {
-
-        if (basicNonReliableRadioButton.isSelected()) {
-            return NonReliableCommunication.class.getName();
-        }
-        return null;
-    }
-
-    public void setLeaderOf(String group) {
-        leaderOf.add(group);
     }
 
     private JTextArea getTextArea(String group, int index) {
@@ -468,7 +469,6 @@ public class GUIClient {
         return ta;
 
     }
-
 
     public void setMembers(String group, String[] members) {
 
@@ -497,7 +497,6 @@ public class GUIClient {
         }
     }
 
-
     public void addMember(String group, String name) {
                 JTextArea ta = getTextArea(group, 0);
 
@@ -506,34 +505,12 @@ public class GUIClient {
                 }
     }
 
-    public String showGroupCreation() {
-        new JGroupCreation();
-
-        if(ok) {
-            return groupNameInput.getText();
-        }
-        return null;
-    }
-
-    public String getName() {
-        return usernameTextField.getText();
-    }
-
     public void shiftFocusToTab() {
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
     }
 
-    public void removeGroup(String group) {
-        JOptionPane.showMessageDialog(frame, "The group has been disbanded!");
 
-        int i = tabbedPane.getTabCount()-1;
-        for(; i >= 0 ;i--){
-            if(tabbedPane.getTitleAt(i).equals(group)){
-                tabbedPane.removeTabAt(i);
-            }
-        }
-    }
-
+    //-------------------------------nested classes -------------------------->
 
     public class JGroupCreation extends JDialog {
 
