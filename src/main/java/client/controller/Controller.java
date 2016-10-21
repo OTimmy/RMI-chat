@@ -77,7 +77,7 @@ public class Controller {
 
                 String group = gui.showGroupCreation();
 
-                if (group.equals("")) {
+                if (group == null) {
                     gui.showErrorMess("Specify the group name when creating a group");
                     return;
                 }

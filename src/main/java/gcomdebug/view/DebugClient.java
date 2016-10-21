@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.concurrent.RunnableFuture;
 
 /**
@@ -262,6 +263,22 @@ public class DebugClient {
                     if (vectorModel.getValueAt(i, 0).equals(mem)) {
                         vectorModel.removeRow(i);
                         vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(vectorModel.findColumn(mem)));
+
+                        Vector newV = new Vector();
+                        Vector columns = new Vector();
+
+                        ArrayList<Object> list = new ArrayList<>(vectorModel.getDataVector());
+
+                        for(int j = 0; j< list.size(); j++){
+                            ((Vector)list.get(j)).remove(i);
+                            newV.addElement(list.get(j));
+                        }
+
+                        for(int j = 0; j < vectorTable.getColumnCount(); j++){
+                            columns.addElement(vectorTable.getColumnName(j));
+                        }
+
+                        vectorModel.setDataVector(newV, columns);
                         break;
                     }
                 }
