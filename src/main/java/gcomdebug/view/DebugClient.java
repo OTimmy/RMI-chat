@@ -261,8 +261,10 @@ public class DebugClient {
                 for(int i = 0; i < vectorModel.getRowCount(); i++){
 
                     if (vectorModel.getValueAt(i, 0).equals(mem)) {
+                        int indexColumn = vectorModel.findColumn(mem);
+
                         vectorModel.removeRow(i);
-                        vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(vectorModel.findColumn(mem)));
+                        vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(indexColumn));
 
                         Vector newV = new Vector();
                         Vector columns = new Vector();
@@ -270,7 +272,7 @@ public class DebugClient {
                         ArrayList<Object> list = new ArrayList<>(vectorModel.getDataVector());
 
                         for(int j = 0; j< list.size(); j++){
-                            ((Vector)list.get(j)).remove(i);
+                            ((Vector)list.get(j)).remove(indexColumn);
                             newV.addElement(list.get(j));
                         }
 

@@ -224,6 +224,7 @@ public class GUIClient {
     }
 
     public Boolean myNameInGroup(String group, String userName) {
+
         if (usernameInGroup.get(group).equals(userName)) {
             return true;
         }
@@ -291,6 +292,8 @@ public class GUIClient {
         String s = groupNameInput.getText();
 
         if (!s.equals("") && (tabbedPane.getTabCount() < MAXIMUM_TABS)) {
+
+
 
             ButtonModel comunication = radioButtonsGroup.getSelection();
 
