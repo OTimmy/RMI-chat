@@ -40,7 +40,6 @@ public class NonReliableCommunication extends Communication{
                 message.setToName(m.getName());
                 Message cloneMessage = (Message) message.clone();
 
-//                Message copy = cloneMessage(clo);
                 m.sendMessage(cloneMessage);
             } catch (RemoteException e) {
                 e.printStackTrace();

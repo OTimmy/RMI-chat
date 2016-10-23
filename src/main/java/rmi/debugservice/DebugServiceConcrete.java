@@ -70,8 +70,6 @@ public class DebugServiceConcrete extends UnicastRemoteObject implements DebugSe
     @Override
     public void updateVectorClock(String groupName, String name, HashMap<String, Integer> vectorClock) throws RemoteException {
         VectorData vectorData = new VectorData(groupName,name,vectorClock);
-        System.out.println("Sending vector from: " + name);
-        System.out.println("With values: " + Arrays.toString(vectorClock.values().toArray()));
         notifyObserverControllerVector(vectorData);
     }
 
