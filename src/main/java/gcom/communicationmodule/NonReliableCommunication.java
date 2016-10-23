@@ -39,8 +39,6 @@ public class NonReliableCommunication extends Communication{
     @Override
     public void sendMessage(Member[] members, Message message)  {
 
-
-
         for(Member m:members) {
             try {
 
@@ -56,50 +54,4 @@ public class NonReliableCommunication extends Communication{
             }
         }
     }
-
-
-//    private Message cloneMessage(Message m) {
-//        try {
-//            String fromName = m.getFromName();
-//            String toName  = m.getToName();
-//            String groupName = m.getGroupName();
-//            HashMap<String,Integer> vecor = m.getVectorClock();
-//
-//            Message cloneMessage = null;
-//
-//            switch(m.getMessageType()) {
-//
-//                case CHAT_MESSAGE:
-//                    Chat chat = (Chat) m;
-//                    String message = chat.getMessage();
-//                    cloneMessage = new  ChatMessage(fromName,message);
-//                    break;
-//                case LEAVE_MESSAGE:
-//                    Leave leave = (Leave) m;
-//                    cloneMessage = new LeaveMessage(leave.getName());
-//                    break;
-//                case JOIN_MESSAGE:
-//                    Join join = (Join) m;
-//                    cloneMessage = new JoinMessage(((Join) m).getMember());
-//                    break;
-//                case ELECTION_MESSAGE:
-//                    Election election = (Election) m;
-//                    cloneMessage = new ElectionMessage(election.getLeader());
-//                    break;
-//                case DELETE_MESSAGE:
-//                    Delete delete = (Delete) m;
-//                    break;
-//            }
-//
-//            cloneMessage.setVectorClock(vecor);
-//            cloneMessage.setFromName(fromName);
-//            cloneMessage.setGroupName(groupName);
-//            cloneMessage.setToName(toName);
-//            return  cloneMessage;
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-
 }

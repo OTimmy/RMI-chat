@@ -509,6 +509,10 @@ public class GUIClient {
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
     }
 
+    public void removeTab() {
+        tabbedPane.removeTabAt(tabbedPane.getTabCount()-1);
+    }
+
 
     //-------------------------------nested classes -------------------------->
 

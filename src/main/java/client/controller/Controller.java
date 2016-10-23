@@ -176,7 +176,7 @@ public class Controller {
                     gui.addJoinTab(data[1]);
                     members = gcom.connectToGroup(data[1], data[0]);
                 } catch (GCOMException e1) {
-                    gui.removeGroup(data[1]);
+                    gui.removeTab();
                     gui.showErrorMess("Error: " + e1.getMessage());
                     return;
                 }

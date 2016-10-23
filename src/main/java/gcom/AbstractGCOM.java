@@ -111,7 +111,6 @@ public abstract class AbstractGCOM implements Subject, Observer{
         } catch (GCOMException e) {
             throw e;
         } catch (Exception e) {
-            e.printStackTrace();
             throw new GCOMException(GCOMError.CANT_CONNECT_TO_GROUP);
         }
 
