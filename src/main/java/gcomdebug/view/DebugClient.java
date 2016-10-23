@@ -34,6 +34,9 @@ public class DebugClient {
 
     private JLabel g;
 
+    /**
+     * Init the debug gui
+     */
     public DebugClient() {
 
         setHost();
@@ -142,22 +145,45 @@ public class DebugClient {
 
     //---------------------------------------incomming------------------------------------->
 
+    /**
+     * add a message to the incomming window
+     * @param from
+     * @param to
+     * @param message
+     */
     public void addIncomming(String from, String to, String message){
         incommingModel.addRow(new Object[]{from, to, message});
     }
 
+    /**
+     * remove a certain row from the incoming window
+     * @param row
+     */
     public void removeFromgIncomming(int row){
         incommingModel.removeRow(row);
     }
 
+    /**
+     * get the row index that the click was on
+     * @param p
+     * @return
+     */
     public int getIndexFromPointInc(Point p){
         return incommingTable.rowAtPoint(p);
     }
 
+    /**
+     * get how manhy rows the incoming table has
+     * @return
+     */
     public int getTableRowCount(){
         return incommingModel.getRowCount();
     }
 
+    /**
+     * remove a selected row with button
+     * @return
+     */
     public int dropSelected() {
         int row = incommingTable.getSelectedRow();
         if(row >= 0) {
@@ -166,22 +192,40 @@ public class DebugClient {
         return row;
     }
 
+    /**
+     * get a valuse from what row was selected
+     * @param p
+     * @return
+     */
     public String getTo(Point p) {
         int row = incommingTable.rowAtPoint(p);
         String s = (String) incommingTable.getValueAt(row, 1);
         return s;
     }
 
+    /**
+     * clear the incomming table
+     */
     public void clearIncomming() {
         incommingModel.setRowCount(0);
     }
 
+    /**
+     * add a listener to the incoming table
+     * @param e
+     */
     public void addListenerToIncTable(MouseListener e){ incommingTable.addMouseListener(e);}
 
 
 
     //---------------------------------------outgoing------------------------------------->
 
+    /**
+     * add to the outgoing table
+     * @param from
+     * @param to
+     * @param message
+     */
     public void addOutgoing(String from, String to, String message){
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -191,6 +235,9 @@ public class DebugClient {
         });
     }
 
+    /**
+     * clear the outgoing table
+     */
     public void clearOutGoingTable() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -202,6 +249,10 @@ public class DebugClient {
 
     //---------------------------------------Vector------------------------------------->
 
+    /**
+     * add a column to the vector table
+     * @param member
+     */
     public void addColVector(String member){
 
         if(vectorModel.findColumn(member) < 0) {
@@ -209,6 +260,11 @@ public class DebugClient {
         }
     }
 
+    /**
+     * add a row or update a current row.
+     * @param mem
+     * @param vector
+     */
     public void addVector(String mem, int[] vector){
 
 
@@ -243,6 +299,11 @@ public class DebugClient {
             }
         });
     }
+
+    /**
+     * get the names of the columns in the vector table
+     * @return
+     */
     public String[] getVectorColumns(){
         ArrayList<String> columns = new ArrayList<>();
 
@@ -252,7 +313,10 @@ public class DebugClient {
         return columns.toArray(new String[]{});
     }
 
-
+    /**
+     * remove a vector row with its column
+     * @param mem
+     */
     public void removeVector(String mem){
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -291,6 +355,10 @@ public class DebugClient {
     //---------------------------------------groups------------------------------------->
 
 
+    /**
+     * update the group list
+     * @param groups
+     */
     public void updateDebugGroups(String[] groups) {
         debugGroups.clearSelection();
 
@@ -301,15 +369,28 @@ public class DebugClient {
         }
     }
 
+    /**
+     * get the selected groupname
+     * @param e
+     * @return
+     */
     public String getGroupName(MouseEvent e) {
         String s = (String) debugGroups.getValueAt(debugGroups.rowAtPoint(e.getPoint()), 0);
         return s;
     }
 
+    /**
+     * set the selected groupname to lable
+     * @param group
+     */
     public void addCurrentGroup(String group) {
         g.setText("Currently selected: " + group);
     }
 
+    /**
+     * add the listener to the group table
+     * @param e
+     */
     public void addListenerToGroupsTable(MouseListener e){debugGroups.addMouseListener(e);}
 
     //---------------------------------------buttons------------------------------------->
@@ -327,10 +408,17 @@ public class DebugClient {
 
     //---------------------------------------Other------------------------------------->
 
+    /**
+     * get the host
+     * @return
+     */
     public String getHost() {
         return host;
     }
 
+    /**
+     * set the hostname
+     */
     public void setHost() {
         String userInput = JOptionPane.showInputDialog("Enter Host: ", "localhost");
 
@@ -341,6 +429,9 @@ public class DebugClient {
         host = userInput;
     }
 
+    /**
+     * clear all the windows in the debugger
+     */
     public void clearDebug() {
 
         incommingTable.clearSelection();

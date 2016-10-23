@@ -86,6 +86,11 @@ public class DebugController {
         gui.updateDebugGroups(groups);
     }
 
+    /**
+     * observer for the vector, when its time to update
+     * @return  observer
+     * @throws RemoteException
+     */
     private static gcom.observer.Observer createVectorObserver () throws RemoteException {
         Observer ob = new Observer() {
             @Override
@@ -119,6 +124,11 @@ public class DebugController {
         return (Observer) UnicastRemoteObject.exportObject(ob,0);
     }
 
+    /**
+     * observer for when to update the outgoing table
+     * @return observer
+     * @throws RemoteException
+     */
     private static gcom.observer.Observer createDelayObserver() throws RemoteException{
         Observer ob = new Observer() {
             @Override
@@ -162,6 +172,11 @@ public class DebugController {
         return (Observer) UnicastRemoteObject.exportObject(ob,0);
     }
 
+    /**
+     * Observer for when a message has arrived
+     * @return  observer
+     * @throws RemoteException
+     */
     private static gcom.observer.Observer createMessageObserver() throws RemoteException {
         Observer ob = new Observer() {
             @Override
@@ -218,6 +233,10 @@ public class DebugController {
         return (Observer) UnicastRemoteObject.exportObject(ob,0);
     }
 
+    /**
+     * actionlistener when pressing the release all button
+     * @return
+     */
     private static ActionListener createActionlistenerRa() {
         return new ActionListener() {
             @Override
@@ -244,6 +263,10 @@ public class DebugController {
         };
     }
 
+    /**
+     * actionlistener when pressing the drop selected button
+     * @return
+     */
     private static ActionListener createActionlistenerDs() {
         return new ActionListener() {
             @Override
@@ -259,6 +282,10 @@ public class DebugController {
         };
     }
 
+    /**
+     * actionlistener when pressing the refresh button
+     * @return
+     */
     private static ActionListener createSctionListenerRefresh() {
         return new ActionListener() {
             @Override
