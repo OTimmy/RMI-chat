@@ -2,14 +2,9 @@ package gcom.communicationmodule;
 
 import gcom.groupmodule.Member;
 import gcom.message.*;
-import gcom.status.GCOMException;
-import jdk.internal.org.objectweb.asm.Handle;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
