@@ -374,10 +374,7 @@ public class GUIClient {
 
     public Boolean myNameInGroup(String group, String userName) {
 
-        if (usernameInGroup.get(group).equals(userName)) {
-            return true;
-        }
-        return false;
+        return usernameInGroup.get(group).equals(userName);
     }
 
     public void addJoinTab(String group) {

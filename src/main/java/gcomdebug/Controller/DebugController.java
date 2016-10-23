@@ -38,7 +38,7 @@ public class DebugController {
     private  static final Object lock = new Object();
 
     public DebugController(DebugClient gui) {
-        this.gui = gui;
+        DebugController.gui = gui;
     }
 
     public static void main(String[] args) {

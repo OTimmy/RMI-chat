@@ -230,7 +230,7 @@ public class Controller {
 
 
     public Controller(GUIClient gui) throws RemoteException, NotBoundException {
-        this.gui = gui;
+        Controller.gui = gui;
     }
 
     private gcom.observer.Observer createMessageObserver(final String group) {
