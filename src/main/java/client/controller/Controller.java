@@ -77,7 +77,7 @@ public class Controller {
 
                 String group = gui.showGroupCreation();
 
-                if (group == null) {
+                if (group == null || group.equals("")) {
                     gui.showErrorMess("Specify the group name when creating a group");
                     return;
                 }
@@ -170,16 +170,18 @@ public class Controller {
                 gcom.registerObservers(createMessageObserver(data[1]));
                 gcomTable.put(data[1], gcom);
 
+
                 String[] members = null;
                 try {
+                    gui.addJoinTab(data[1]);
                     members = gcom.connectToGroup(data[1], data[0]);
                 } catch (GCOMException e1) {
+                    gui.removeGroup(data[1]);
                     gui.showErrorMess("Error: " + e1.getMessage());
                     return;
                 }
 
 
-                gui.addJoinTab(data[1]);
                 gui.setMembers(data[1], members);
                 gui.addActionListenerSend(data[1], sendListern());
 
