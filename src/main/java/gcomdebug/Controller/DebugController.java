@@ -341,7 +341,7 @@ public class DebugController {
                 if (e.getClickCount() >= 2) {
 
                     if(!group.equals(gui.getGroupName(e))) {
-                        gui.clearIncomming();
+                        gui.clearDebug();
 
                         try {
                             debugService.passMessages(group);
@@ -353,7 +353,6 @@ public class DebugController {
                         }
                         group = gui.getGroupName(e);
                         gui.addCurrentGroup(group);
-                        gui.clearDebug();
 
                         String[] members = new String[0];
                         try {

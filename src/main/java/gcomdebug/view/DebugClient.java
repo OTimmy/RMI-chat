@@ -255,9 +255,13 @@ public class DebugClient {
      */
     public void addColVector(String member){
 
-        if(vectorModel.findColumn(member) < 0) {
-            vectorModel.addColumn(member);
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                if(vectorModel.findColumn(member) < 0)
+                    vectorModel.addColumn(member);
+            }
+        });
     }
 
     /**
@@ -324,28 +328,31 @@ public class DebugClient {
             public void run() {
                 for(int i = 0; i < vectorModel.getRowCount(); i++){
 
-                    if (vectorModel.getValueAt(i, 0).equals(mem)) {
-                        int indexColumn = vectorModel.findColumn(mem);
+                    if(vectorModel.getRowCount()>0){
 
-                        vectorModel.removeRow(i);
-                        vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(indexColumn));
+                        if (vectorModel.getValueAt(i, 0).equals(mem)) {
+                            int indexColumn = vectorModel.findColumn(mem);
 
-                        Vector newV = new Vector();
-                        Vector columns = new Vector();
+                            vectorModel.removeRow(i);
+                            vectorTable.removeColumn(vectorTable.getColumnModel().getColumn(indexColumn));
 
-                        ArrayList<Object> list = new ArrayList<>(vectorModel.getDataVector());
+                            Vector newV = new Vector();
+                            Vector columns = new Vector();
 
-                        for(int j = 0; j< list.size(); j++){
-                            ((Vector)list.get(j)).remove(indexColumn);
-                            newV.addElement(list.get(j));
+                            ArrayList<Object> list = new ArrayList<>(vectorModel.getDataVector());
+
+                            for(int j = 0; j< list.size(); j++){
+                                ((Vector)list.get(j)).remove(indexColumn);
+                                newV.addElement(list.get(j));
+                            }
+
+                            for(int j = 0; j < vectorTable.getColumnCount(); j++){
+                                columns.addElement(vectorTable.getColumnName(j));
+                            }
+
+                            vectorModel.setDataVector(newV, columns);
+                            break;
                         }
-
-                        for(int j = 0; j < vectorTable.getColumnCount(); j++){
-                            columns.addElement(vectorTable.getColumnName(j));
-                        }
-
-                        vectorModel.setDataVector(newV, columns);
-                        break;
                     }
                 }
             }
@@ -438,6 +445,6 @@ public class DebugClient {
 
         incommingModel.setRowCount(0);
         outgoingModel.setRowCount(0);
-        vectorModel.setRowCount(0);
+        vectorModel.setDataVector(new Object[][]{}, new Object[]{"member"});
     }
 }
