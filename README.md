@@ -17,4 +17,4 @@ Then start up the client(Client.jar), connect to the master server by its IP.
 
 ## License 
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details
