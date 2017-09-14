@@ -5,7 +5,7 @@ And if the leader disconnects, a new leader will be automatically selected.
 ### Prerequisites
 ```
 maven 3.3.9+
-Java JDK 1.8+
+Java JDK 1.8+ 
 ```
 ### Installing
 
